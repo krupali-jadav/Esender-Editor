@@ -7,9 +7,9 @@ import {
 } from "react-router-dom";
 
 import Login from "./Components/Login";
-import Dashboard from "./Components/Dashboard";
-import ProLayouts from "./Components/site/ProLayouts";
+import ProLayouts from "./Components/Site/ProLayouts";
 import Overview from "./Components/Overview/Overview";
+import Projects from "./Components/Projects/Projects";
 
 
 const ProtectedRoute = ({ component: Component }) => {
@@ -22,17 +22,15 @@ const ProtectedRoute = ({ component: Component }) => {
 
 function App() {
   const routes = [
-    { path: "/dashboard", component: Dashboard },
     { path: "/overview", component: Overview },
+    { path: "/projects", component: Projects },
   ];
 
   return (
     <BrowserRouter>
       <Routes>
-        {/* Login */}
         <Route path="/login" element={<Login />} />
 
-        {/* Application Routes */}
         {routes.map((route) => (
           <Route
             key={route.path}
@@ -46,16 +44,8 @@ function App() {
         ))}
 
         {/* Default */}
-        <Route
-          path="/"
-          element={<Navigate to="/login" replace />}
-        />
-
-        {/* Unknown routes */}
-        <Route
-          path="*"
-          element={<Navigate to="/login" replace />}
-        />
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
   );
