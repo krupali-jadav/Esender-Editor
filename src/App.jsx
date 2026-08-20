@@ -7,7 +7,6 @@ import {
 } from "react-router-dom";
 
 import Login from "./Components/Login";
-import Dashboard from "./Components/Dashboard";
 import ProLayouts from "./Components/Site/ProLayouts";
 import Overview from "./Components/Overview/Overview";
 import { ConfigProvider } from "antd";
@@ -17,6 +16,7 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Templates from "./Components/Templates/Templates";
 import Profile from "./Components/Profile/Profile";
+import Projects from "./Components/Projects/Projects";
 
 
 const ProtectedRoute = ({ component: Component }) => {
@@ -41,10 +41,10 @@ function App() {
   }, [darkMode]);
 
   const routes = [
-    { path: "/dashboard", component: Dashboard },
     { path: "/overview", component: Overview },
     { path: "/templates", component: Templates },
     { path: "/profile", component: Profile },
+    { path: "/projects", component: Projects },
   ];
 
   return (
@@ -75,7 +75,6 @@ function App() {
             path="/"
             element={<Navigate to="/login" replace />}
           />
-
           {/* Unknown routes */}
           <Route
             path="*"
@@ -84,6 +83,7 @@ function App() {
         </Routes>
       </BrowserRouter>
     </ConfigProvider>
+
   );
 }
 

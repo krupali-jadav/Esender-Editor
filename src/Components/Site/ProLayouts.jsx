@@ -1,6 +1,7 @@
 import { ProLayout } from "@ant-design/pro-components";
 import {
     AppstoreAddOutlined,
+    FolderOpenOutlined,
     HomeOutlined,
     LaptopOutlined,
     LogoutOutlined,
@@ -36,11 +37,6 @@ const ProLayouts = ({ children }) => {
         path: "/",
         routes: [
             {
-                path: "/dashboard",
-                name: "Dashboard",
-                icon: <HomeOutlined />,
-            },
-            {
                 path: "/overview",
                 name: "Overview",
                 icon: <AppstoreAddOutlined />,
@@ -49,6 +45,11 @@ const ProLayouts = ({ children }) => {
                 path: "/templates",
                 name: "Templates",
                 icon: <MailOutlined />,
+            },
+            {
+                path: "/projects",
+                name: "Projects",
+                icon: <FolderOpenOutlined />,
             },
         ],
     };
@@ -110,6 +111,7 @@ const ProLayouts = ({ children }) => {
         <ProLayout
             title={false}
             siderWidth={240}
+
             layout="mix"
             location={{
                 pathname: location.pathname,
