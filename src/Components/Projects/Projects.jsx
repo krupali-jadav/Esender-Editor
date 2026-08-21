@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { Breadcrumb, Typography, Tag, Tabs, ConfigProvider } from 'antd'
 import ProjectDomain from './projectDomain'
 import ProjectTemplate from './projectTemplate'

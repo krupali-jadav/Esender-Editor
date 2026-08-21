@@ -19,6 +19,9 @@ import { getMediaPath } from "../../util/getMediaPath";
 import lang from "../../util/lang/lang.json"
 import { logout } from "../Redux/action";
 import { t } from "i18next";
+import { IoCodeSharp } from "react-icons/io5";
+import { MdOutlineDataUsage } from "react-icons/md";
+import { FaRegMoneyBill1 } from "react-icons/fa6";
 
 const ProLayouts = ({ children }) => {
     const { useBreakpoint } = Grid;
@@ -50,6 +53,21 @@ const ProLayouts = ({ children }) => {
                 path: "/projects",
                 name: "Projects",
                 icon: <FolderOpenOutlined />,
+            },
+            {
+                path: "/usage",
+                name: "Usage",
+                icon: <MdOutlineDataUsage  />,
+            },
+            {
+                path: "/developers",
+                name: "Developers",
+                icon: <IoCodeSharp  />,
+            },
+            {
+                path: "/billing",
+                name: "Billing",
+                icon: <FaRegMoneyBill1  />,
             },
         ],
     };
@@ -109,9 +127,9 @@ const ProLayouts = ({ children }) => {
 
     return (
         <ProLayout
+        contentStyle={{ padding: "0 0 0 0" }}
             title={false}
             siderWidth={240}
-
             layout="mix"
             location={{
                 pathname: location.pathname,

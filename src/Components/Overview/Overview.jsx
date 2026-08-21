@@ -3,6 +3,7 @@ import { CreditCardOutlined, FolderOpenOutlined, TeamOutlined, ThunderboltOutlin
 import { PageContainer } from "@ant-design/pro-components";
 import AppPageHeader from "../Styles/AppHeader";
 import { t } from "i18next";
+import { useSelector } from "react-redux";
 
 const { Title, Text, Link } = Typography;
 
@@ -86,6 +87,7 @@ const projectColumns = [
 ];
 
 export default function Overview() {
+     const theme = useSelector((state) => state?.app?.theme);
     return (
         <PageContainer title={false}>
             <Flex justify="space-between" align="center">
@@ -235,11 +237,25 @@ export default function Overview() {
                     <Card
                         title="Recent Projects"
                         extra={<Link>View All</Link>}
+                        styles={{ body: { padding: 0 } }}
                     >
                         <Table
                             columns={projectColumns}
                             dataSource={recentProjects}
                             pagination={false}
+                            components={{
+                                header: {
+                                    cell: (props) => (
+                                        <th
+                                            {...props}
+                                            style={{
+                                                ...props.style,
+                                                background: theme ? "#0e1c29" : "#f0f0f0",
+                                            }}
+                                        />
+                                    ),
+                                },
+                            }}
                         />
                     </Card>
                 </Col>

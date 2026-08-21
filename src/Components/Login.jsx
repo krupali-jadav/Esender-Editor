@@ -61,7 +61,7 @@ function Login() {
 
         setTimeout(() => {
             setLoading(false);
-            navigate("/dashboard");
+            navigate("/overview");
         }, 500);
     };
 

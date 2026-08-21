@@ -17,6 +17,11 @@ import { useTranslation } from "react-i18next";
 import Templates from "./Components/Templates/Templates";
 import Profile from "./Components/Profile/Profile";
 import Projects from "./Components/Projects/Projects";
+import Usage from "./Components/Usage/Usage";
+import Developers from "./Components/Developers/Developers";
+import Billing from "./Components/Billing/Billing";
+import WorkFlow from "./Components/WorkFlow/WorkFlow";
+import CreateTemplates from "./Components/Templates/CreateTemplate";
 
 
 const ProtectedRoute = ({ component: Component }) => {
@@ -43,8 +48,13 @@ function App() {
   const routes = [
     { path: "/overview", component: Overview },
     { path: "/templates", component: Templates },
+    { path: "/templates/create-template", component: CreateTemplates },
     { path: "/profile", component: Profile },
     { path: "/projects", component: Projects },
+    { path: "/usage", component: Usage },
+    { path: "/developers", component: Developers },
+    { path: "/billing", component: Billing },
+    { path: "/workflow", component: WorkFlow },
   ];
 
   return (

@@ -4,6 +4,7 @@ import { PageContainer } from "@ant-design/pro-components";
 import AppPageHeader from "../Styles/AppHeader";
 import { t } from "i18next";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const { Text } = Typography;
 
@@ -53,6 +54,7 @@ const templates = [
 ];
 
 export default function Templates() {
+    const navigate = useNavigate();
     const theme = useSelector((state) => state?.app?.theme);
     return (
         <PageContainer title={false}  >
@@ -67,12 +69,12 @@ export default function Templates() {
                         prefix={<SearchOutlined />}
                         style={{ width: 240 }}
                     />
-                    <Button type="primary" icon={<PlusOutlined />}>
+                    <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate("/templates/create-template")}>
                         New Template
                     </Button>
                 </Space>
             </Flex>
-            <Space orientation="vertical" size={16} style={{ width: "100%" }}>
+            <Space direction="vertical" size={16} style={{ width: "100%" }}>
                 {/* Filters bar */}
                 <Card
                     size="small"
