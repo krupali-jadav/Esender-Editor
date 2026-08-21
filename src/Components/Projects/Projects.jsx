@@ -14,7 +14,6 @@ const TAB_ITEMS = [
     { key: 'credentials', label: 'Credentials' },
     { key: 'usage', label: 'Usage' },
     { key: 'integration', label: 'Integration' },
-    { key: 'settings', label: 'Settings' },
 ]
 
 function Projects() {
@@ -22,7 +21,7 @@ function Projects() {
 
     return (
         <div>
-            <div style={{ margin: 0, background: '#fff' }}>
+            <div style={{ margin: 0,/*  background: '#fff'  */}}>
                 <div style={{ padding: '24px 0 0 24px' }}>
                     {/* Breadcrumb */}
                     <Breadcrumb

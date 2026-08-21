@@ -32,7 +32,7 @@ const AppPageHeader = ({ eyebrow, title, description, tags, primaryAction, secon
             {tags}
           </Flex>
           {description && (
-            <Text type="secondary" style={{ fontSize: 14, maxWidth: 640 }}>
+            <Text type="secondary" style={{ fontSize: 14, maxWidth: 820 }}>
               {description}
             </Text>
           )}

@@ -7,6 +7,7 @@ import {
     LogoutOutlined,
     MailOutlined,
     MoonOutlined,
+    SettingOutlined,
     SunOutlined,
     UserOutlined,
 } from "@ant-design/icons";
@@ -45,29 +46,34 @@ const ProLayouts = ({ children }) => {
                 icon: <AppstoreAddOutlined />,
             },
             {
-                path: "/templates",
-                name: "Templates",
-                icon: <MailOutlined />,
-            },
-            {
                 path: "/projects",
                 name: "Projects",
                 icon: <FolderOpenOutlined />,
             },
             {
+                path: "/templates",
+                name: "Templates",
+                icon: <MailOutlined />,
+            },
+            {
                 path: "/usage",
                 name: "Usage",
-                icon: <MdOutlineDataUsage  />,
+                icon: <MdOutlineDataUsage />,
             },
             {
                 path: "/developers",
                 name: "Developers",
-                icon: <IoCodeSharp  />,
+                icon: <IoCodeSharp />,
             },
             {
                 path: "/billing",
                 name: "Billing",
-                icon: <FaRegMoneyBill1  />,
+                icon: <FaRegMoneyBill1 />,
+            },
+            {
+                path: "/settings",
+                name: "Settings",
+                icon: <SettingOutlined />,
             },
         ],
     };
@@ -127,7 +133,7 @@ const ProLayouts = ({ children }) => {
 
     return (
         <ProLayout
-        contentStyle={{ padding: "0 0 0 0" }}
+            contentStyle={{ padding: "0 0 0 0" }}
             title={false}
             siderWidth={240}
             layout="mix"
@@ -165,22 +171,6 @@ const ProLayouts = ({ children }) => {
                                             </span>
                                         ),
                                     },
-                                    // {
-                                    //   label: (
-                                    //     <Button
-                                    //       ghost={true}
-                                    //       type="secondary"
-                                    //       onClick={() => {
-                                    //         navigate("/sessions");
-                                    //       }}
-                                    //     >
-                                    //       {/* {t("session", { defaultValue: "Session" })} */}Session
-                                    //     </Button>
-                                    //   ),
-                                    //   key: "3",
-                                    //   title: t("session", { defaultValue: "Session" }),
-                                    //   icon: <LaptopOutlined />,
-                                    // },
                                     {
                                         key: "3",
                                         icon: <LaptopOutlined />,
@@ -228,6 +218,7 @@ const ProLayouts = ({ children }) => {
             route={menuRoutes}
             collapsed={collapsed}
             onCollapse={(value) => setCollapsed(value)}
+            collapsedWidth={64}
             token={{
                 sider: theme
                     ? {
@@ -251,7 +242,7 @@ const ProLayouts = ({ children }) => {
                         colorTextMenuSelected: "#FFFFFF",
                         colorTextMenuActive: "#FFFFFF",
                         colorTextMenuTitle: "#FFFFFF",
-                        colorTextSubMenuSelected: "#FFFFFF",    
+                        colorTextSubMenuSelected: "#FFFFFF",
                         colorBgMenuItemSelected: "rgba(32,166,206,0.22)",
                         colorBgMenuItemHover: "rgba(32,166,206,0.12)",
                         colorMenuItemDivider: "rgba(233,242,247,0.12)",
@@ -508,6 +499,7 @@ const ProLayouts = ({ children }) => {
                             navigate(item.path);
                         }
                     }}
+                    style={{ fontSize: 15, fontWeight: 500 }}
                 >
                     {dom}
                 </div>

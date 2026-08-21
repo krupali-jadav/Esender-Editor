@@ -22,6 +22,7 @@ import Developers from "./Components/Developers/Developers";
 import Billing from "./Components/Billing/Billing";
 import WorkFlow from "./Components/WorkFlow/WorkFlow";
 import CreateTemplates from "./Components/Templates/CreateTemplate";
+import Setting from "./Components/Setting/Setting";
 
 
 const ProtectedRoute = ({ component: Component }) => {
@@ -55,6 +56,7 @@ function App() {
     { path: "/developers", component: Developers },
     { path: "/billing", component: Billing },
     { path: "/workflow", component: WorkFlow },
+    { path: "/settings", component: Setting },
   ];
 
   return (

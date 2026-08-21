@@ -42,7 +42,7 @@ const frontendSteps = [
     {
         title: "Mount Editor",
         description: (
-            <Text code style={{ whiteSpace: "pre-wrap", display: "block",width:320 }}>
+            <Text code style={{ whiteSpace: "pre-wrap", display: "block", width: 320 }}>
                 {`import { BitBeastEditor } from '@bitbeast/editor-sdk' return (<BitBeastEditorprojectId={'prj_live_8823'}token={token}/>)`}
             </Text>
         ),
@@ -57,7 +57,7 @@ const backendSteps = [
                 <Paragraph type="secondary" style={{ marginBottom: 8 }}>
                     Sign requests using your one-time secret.
                 </Paragraph>
-                <Text code style={{ whiteSpace: "pre-wrap", display: "block",width:400 }}>
+                <Text code style={{ whiteSpace: "pre-wrap", display: "block", width: 400 }}>
                     {`const mac = crypto.createHmac('sha256', secret).update(payload)return mac.digest('hex')`}
                 </Text>
             </>
@@ -68,7 +68,7 @@ const backendSteps = [
 function ProjectIntegration() {
     return (
         <ConfigProvider theme={{ token: { colorPrimary: "#6758ff", borderRadius: 8 } }}>
-            <div style={{ background: "#f5f7fb", minHeight: "100vh", padding: 24 }}>
+            <div style={{ /* background: "#f5f7fb", */ minHeight: "100vh", padding: 24 }}>
                 <Row gutter={[16, 16]} style={{ maxWidth: 1700, margin: "0 auto" }}>
 
                     <Col xs={24} lg={16}>
@@ -95,7 +95,7 @@ function ProjectIntegration() {
                                         type="error"
                                         showIcon
                                         icon={<WarningOutlined />}
-                                        message="Security Warning"
+                                        title="Security Warning"
                                         description="Never expose your signing secret in frontend code."
                                         style={{ marginTop: 16 }}
                                     />
@@ -145,10 +145,10 @@ function ProjectIntegration() {
                             />
                         </Card>
 
-                        <Card style={{ marginTop: 16,backgroundColor: '#e9e7f7' }}>
+                        <Card style={{ marginTop: 16, backgroundColor: '#e9e7f7' }}>
                             <Space>
                                 <QuestionCircleOutlined style={{ color: "#6758ff" }} />
-                                <Text strong>Need Help?</Text>
+                                <Text strong style={{ color: "#000" }}>Need Help?</Text>
                             </Space>
                             <Paragraph type="secondary" style={{ marginTop: 8 }}>
                                 Our developer success team is available to assist with complex integration scenarios.

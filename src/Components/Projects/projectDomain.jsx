@@ -20,6 +20,8 @@ import {
     PlusOutlined,
     LoadingOutlined,
 } from '@ant-design/icons'
+import { useSelector } from 'react-redux'
+import AddDomain from './AddDomain'
 
 const { Title, Text, Paragraph } = Typography
 
@@ -38,11 +40,11 @@ const columns = [
         render: (text, record) => (
             <Space size={8}>
                 {record.type === 'Wildcard' ? (
-                    <CodeOutlined style={{ color: '#8c8c8c' }} />
+                    <CodeOutlined />
                 ) : (
-                    <GlobalOutlined style={{ color: '#8c8c8c' }} />
+                    <GlobalOutlined />
                 )}
-                <Text code style={{ background: 'transparent' }}>
+                <Text code>
                     {text}
                 </Text>
             </Space>
@@ -54,7 +56,7 @@ const columns = [
         key: 'type',
         width: 140,
         render: (type) => (
-            <Tag color={type === 'Wildcard' ? 'purple' : 'default'} bordered={false}>
+            <Tag color={type === 'Wildcard' ? 'purple' : 'default'} variant={false}>
                 {type}
             </Tag>
         ),
@@ -65,7 +67,7 @@ const columns = [
         key: 'type',
         width: 140,
         render: (type) => (
-            <Tag color={type === 'Wildcard' ? '#20A6CE' : 'default'} bordered={false}>
+            <Tag color={type === 'Wildcard' ? '#20A6CE' : 'default'} variant={false}>
                 {type}
             </Tag>
         ),
@@ -76,7 +78,7 @@ const columns = [
         key: 'type',
         width: 140,
         render: (type) => (
-            <Tag color={type === 'Wildcard' ? 'purple' : 'default'} bordered={false}>
+            <Tag color={type === 'Wildcard' ? 'purple' : 'default'} variant={false}>
                 {type}
             </Tag>
         ),
@@ -104,33 +106,43 @@ const columns = [
 
 function ProjectDomain() {
     const [originUrl, setOriginUrl] = useState('')
+    const [addDomainOpen, setAddDomainOpen] = useState(false)
+    const theme = useSelector((state) => state?.app?.theme);
 
     return (
-        <div style={{ padding: 24, background: '#f5f5f5' }}>
-            <Row gutter={16} style={{ maxWidth: 1700 }}>
+        <div style={{ padding: 24 }}>
+            <Row gutter={16}>
                 {/* Left: Allowed Domains */}
                 <Col xs={24} lg={16}>
-                    <Space direction="vertical" style={{ width: '100%' }}>
+                    <Space direction="vertical" size="middle" style={{ width: '100%' }}>
                         <Card
                             styles={{
-                                header: { padding: '16px 16px 0', border: 'none' },
+                                header: { padding: '18px 18px', border: 'none' },
                             }}
                             title={
                                 <div>
-                                    <Title level={5} style={{ margin: 0 }}>
+                                    <Title level={5}>
                                         Allowed Domains
                                     </Title>
-                                    <Text type="secondary" style={{ fontWeight: 400, fontSize: 13 }}>
-                                        Manage origins permitted to send requests. Accepts patterns
-                                        like{' '}
-                                        <Text code style={{ fontSize: 12 }}>app.example.com</Text>,{' '}
-                                        <Text code style={{ fontSize: 12 }}>*.example.com</Text>, and{' '}
-                                        <Text code style={{ fontSize: 12 }}>localhost</Text>.
+                                    <Text type="secondary">
+                                        Manage origins permitted to send requests. Accepts patternslike{' '}
+                                        <Text code>app.example.com</Text>,{' '}
+                                        <Text code>*.example.com</Text>, and{' '}
+                                        <Text code>localhost</Text>.
                                     </Text>
                                 </div>
                             }
                             extra={
-                                <Button style={{ background: '#20A6CE', color: '#fff', height: 40, borderRadius: 9 }} icon={<PlusOutlined />}>
+                                <Button
+                                    style={{
+                                        background: '#20A6CE',
+                                        color: '#fff',
+                                        height: 40,
+                                        borderRadius: 9,
+                                    }}
+                                    icon={<PlusOutlined />}
+                                    onClick={() => setAddDomainOpen(true)}
+                                >
                                     Add Domain
                                 </Button>
                             }
@@ -143,6 +155,19 @@ function ProjectDomain() {
                                 dataSource={DOMAIN_DATA}
                                 pagination={false}
                                 size="middle"
+                                components={{
+                                    header: {
+                                        cell: (props) => (
+                                            <th
+                                                {...props}
+                                                style={{
+                                                    ...props.style,
+                                                    background: theme ? "#0E1C29" : "#F0F0F0",
+                                                }}
+                                            />
+                                        ),
+                                    },
+                                }}
                             />
                         </Card>
 
@@ -158,52 +183,53 @@ function ProjectDomain() {
                                 <span>Local Validation Only</span>
                             </Space>
                         }
-                        style={{ height: 500 }}
+                        style={{ height: 515 }}
                     >
-                        <Paragraph type="secondary" style={{ fontSize: 13 }}>
+                        <Paragraph type="secondary">
                             Enter a URL to verify if it matches your current domain rules.
                         </Paragraph>
 
                         <Alert
                             type="error"
                             showIcon
-                            message="Real enforcement occurs during session creation."
+                            title="Real enforcement occurs during session creation."
                             style={{ marginBottom: 16, fontSize: 12 }}
                         />
 
-                        <Text strong style={{ fontSize: 13 }}>
-                            Origin URL
-                        </Text>
-                        <Input
-                            placeholder="https://my-app.com"
-                            value={originUrl}
-                            onChange={(e) => setOriginUrl(e.target.value)}
-                            style={{ margin: '8px 0 16px' }}
-                        />
+                        <Space direction='vertical' size="middle" style={{ width: "100%" }}>
+                            <Text strong>
+                                Origin URL
+                            </Text>
+                            <Input
+                                placeholder="https://my-app.com"
+                                value={originUrl}
+                                onChange={(e) => setOriginUrl(e.target.value)}
+                            />
 
-                        <Button type="default" block style={{ marginBottom: 16 }}>
-                            Verify Origin
-                        </Button>
-
+                            <Button type="default" block>
+                                Verify Origin
+                            </Button>
+                        </Space>
                         <div
                             style={{
-                                background: '#f5f3ff',
+                                backgroundColor: "#D3F5FFE1",
                                 borderRadius: 6,
                                 padding: '10px 12px',
                                 textAlign: 'center',
                                 marginTop: "30%",
                             }}
                         >
-                            <Space size={6}>
-                                <LoadingOutlined style={{ color: '#8c8c8c' }} />
-                                <Text type="secondary" style={{ fontSize: 12 }}>
-                                    Awaiting input...
-                                </Text>
-                            </Space>
+                            <Text type="secondary" style={{ color: "#000" }}>
+                                Awaiting input...
+                            </Text>
                         </div>
                     </Card>
                 </Col>
             </Row>
+            <AddDomain
+                open={addDomainOpen}
+                onClose={() => setAddDomainOpen(false)}
+            />
         </div>
     )
 }
