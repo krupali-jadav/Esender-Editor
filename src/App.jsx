@@ -17,6 +17,7 @@ import { useTranslation } from "react-i18next";
 import Templates from "./Components/Templates/Templates";
 import Profile from "./Components/Profile/Profile";
 import Projects from "./Components/Projects/Projects";
+import Setting from "./Components/Setting/Setting";
 
 
 const ProtectedRoute = ({ component: Component }) => {
@@ -45,6 +46,7 @@ function App() {
     { path: "/templates", component: Templates },
     { path: "/profile", component: Profile },
     { path: "/projects", component: Projects },
+    { path: "/settings", component: Setting },
   ];
 
   return (

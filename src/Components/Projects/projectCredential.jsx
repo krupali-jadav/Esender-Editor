@@ -41,7 +41,7 @@ function projectCredential() {
 
     return (
         <>
-            <div style={{ padding: 24, background: '#fafafa', width: '100%' }}>
+            <div style={{ padding: 24, width: '100%' }}>
                 {contextHolder}
                 <Space direction="vertical" size="large" style={{ width: '100%', }}>
 
@@ -174,7 +174,7 @@ function projectCredential() {
                             </Card>
 
                             {/* Rotate Signing Secret */}
-                            <Alert type="error" message="Rotate Signing Secret"
+                            <Alert type="error" title="Rotate Signing Secret"
                                 description={
                                     <Text>
                                         Rotating will immediately invalidate the current secret. Warning: any webhooks sent with the old signature will fail verification until your backend is updated.
@@ -204,7 +204,7 @@ function projectCredential() {
                         </Space>
                     </Card>
                 </Space>
-            </div>
+            </div >
         </>
     )
 }

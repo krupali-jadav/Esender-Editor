@@ -81,23 +81,15 @@ function ProjectTemplate() {
         <Flex vertical gap="middle" style={{ padding: 24 }}>
             {/* Top Actions */}
             <Flex justify="space-between" align="center" gap="middle">
-                <ConfigProvider
-                    theme={{
-                        token: {
-                            colorPrimary: '#20A6CE',
-                        },
-                    }}
-                >
-                    <Input.Search
-                        placeholder="Search..."
-                        enterButton={<SearchOutlined />}
-                        style={{ maxWidth: 350 }}
-                    />
-                </ConfigProvider>
+                <Input
+                    placeholder="Search templates..."
+                    prefix={<SearchOutlined />}
+                    style={{ width: 340 }}
+                />
 
                 <Button style={{ background: '#20A6CE', color: '#fff', height: 40, borderRadius: 9 }} icon={<PlusOutlined />} onClick={handleNewTemplate}>
                     New Template
-                </Button>
+                </Button> 
             </Flex>
 
             {/* Template Cards */}
@@ -158,7 +150,7 @@ function ProjectTemplate() {
                                 description={
                                     <Space size="small">
                                         <Tag
-                                            bordered={false}
+                                            variant={false}
                                             color={template.status === 'Published' ? 'success' : 'warning'}
                                         >
                                             {template.status}
@@ -192,9 +184,8 @@ function ProjectTemplate() {
                         hoverable
                         variant="dashed"
                         onClick={handleNewTemplate}
-                        style={{ height: '100%' }}
                     >
-                        <Flex vertical justify="center" align="center" gap="small" style={{ minHeight: 268 }}>
+                        <Flex vertical justify="center" align="center" gap="small" style={{ minHeight: 250 }}>
                             <Button shape="circle" icon={<PlusOutlined />} />
                             <Text type="secondary">Create Blank Template</Text>
                         </Flex>
