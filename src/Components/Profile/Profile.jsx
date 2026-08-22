@@ -353,7 +353,6 @@ const Profile = () => {
                   {t("save", { defaultValue: "Save" })}
                 </Button>
               </Flex>
-
             </Form>
           </Card>
         </Col>

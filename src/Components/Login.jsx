@@ -2,15 +2,22 @@ import React, { useEffect, useRef, useState } from "react";
 import {
     Button, Col, Form, Row, Space, Typography, Input, Checkbox, Divider, Card, Layout, Flex,
     Tooltip,
+    message,
 } from "antd";
 import { EditOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
+import axiosInstance from "../util/axiosInstance";
+import { setUserDetails } from "./Redux/Reducer/Reducer.user";
+import { useDispatch } from "react-redux";
+import PhoneInput from "antd-phone-input";
+import { t } from "i18next";
 
 
 const { Text } = Typography;
 const { Content } = Layout;
 
 function Login() {
+    const dispatch = useDispatch();
     const otpRef = useRef(null);
     const [phone, setPhone] = useState("");
     const [otp, setOtp] = useState("");
@@ -39,10 +46,15 @@ function Login() {
         return () => clearTimeout(timer);
     }, [isLoginPage, tick, resend]);
 
-    const handlePhoneChange = (event) => {
-        setPhone(event.target.value);
+    const handlePhoneChange = (value) => {
+        if (value && value.valid && value.valid()) {
+            const fullPhoneNumber = `+${value?.countryCode ?? ""}${value?.areaCode ?? ""
+                }${value?.phoneNumber ?? ""}`;
+            setPhone(fullPhoneNumber);
+        } else {
+            setPhone("");
+        }
     };
-
     const onSendOtp = () => {
         setLoading(true);
         setTick(30);
@@ -64,6 +76,55 @@ function Login() {
             navigate("/overview");
         }, 500);
     };
+    // const onSendOtp = async () => {
+    //     try {
+    //         setLoading(true);
+    //         setTick(30);
+    //         setResend(false);
+    //         setOtp("");
+
+    //         const { data } = await axiosInstance.post("auth/send-otp", {
+    //             auth_type: "phone",
+    //             phone: phone,
+    //         });
+
+    //         if (data.status) {
+    //             setIsLoginPage(false);
+    //             message.success(data.message);
+    //             dispatch(setUserDetails(data));
+    //         } else {
+    //             message.error(data.message);
+    //         }
+    //     } catch (error) {
+    //         message.error(error?.response?.data?.message || error.message);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+    // const onOtpVerify = async () => {
+    //     try {
+    //         setLoading(true);
+    //         const { data } = await axiosInstance.post("auth/verify-otp", {
+    //             auth_type: "phone",
+    //             phone: phone,
+    //             otp: otp,
+    //         });
+    //         if (data.status) {
+    //             message.success(
+    //                 (data.message || "Login Successfully"),
+    //             );
+    //             dispatch(setUserDetails(data));
+    //             navigate("/dashboard");
+    //         } else {
+    //             message.error(data.message);
+    //         }
+    //     } catch (error) {
+    //         message.error(error);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+
 
     return (
         <React.Fragment>
@@ -81,13 +142,16 @@ function Login() {
                                     <Form layout="vertical" onFinish={onSendOtp}>
                                         <Form.Item
                                             name="phone"
-                                            label={"Phone Number"}
+                                            label={t("phone.number", { defaultValue: "Phone Number" })}
                                             initialValue={phone}
+                                            style={{ marginBottom: 16 }}
                                         >
-                                            <Input
+                                            <PhoneInput
+                                                enableSearch
+                                                country={"in"}
                                                 value={phone}
                                                 onChange={handlePhoneChange}
-                                                placeholder="Enter Phone Number"
+                                                placeholder={t("phone.number", { defaultValue: "Enter Phone Number" })}
                                                 onKeyDown={(e) => {
                                                     if (e.key === "Enter") {
                                                         e.preventDefault();

@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import {
     Typography,
     Button,
@@ -107,7 +106,6 @@ const data = [
 ]
 
 function Auditlog() {
-    const [currentPage, setCurrentPage] = useState(1)
     const theme = useSelector((state) => state?.app?.theme);
 
     const columns = [

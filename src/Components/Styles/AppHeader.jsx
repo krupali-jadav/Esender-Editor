@@ -12,11 +12,11 @@ const AppPageHeader = ({ eyebrow, title, description, tags, primaryAction, secon
   const screens = useBreakpoint();
 
   return (
-    <Flex vertical gap={16} style={{ marginBottom: 24 }} className="ds-fade-in">
+    <Flex vertical gap={[16, 16]} style={{ marginBottom: 24 }} className="ds-fade-in">
       <Flex
         justify="space-between"
         align={screens.md ? "center" : "flex-start"}
-        gap={16}
+        gap={[16, 16]}
         vertical={!screens.md}
       >
         <Flex vertical gap={4} style={{ minWidth: 0 }}>

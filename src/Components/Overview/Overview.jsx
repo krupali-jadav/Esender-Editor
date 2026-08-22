@@ -6,7 +6,6 @@ import { t } from "i18next";
 import { useSelector } from "react-redux";
 
 const { Title, Text, Link } = Typography;
-
 const setupChecklist = [
     { title: "Create Project", done: true },
     { title: "Save Credentials", done: false },
@@ -87,7 +86,7 @@ const projectColumns = [
 ];
 
 export default function Overview() {
-     const theme = useSelector((state) => state?.app?.theme);
+    const theme = useSelector((state) => state?.app?.theme);
     return (
         <PageContainer title={false}>
             <Flex justify="space-between" align="center">
@@ -122,7 +121,7 @@ export default function Overview() {
                         <Title level={3} style={{ margin: "8px 0" }}>
                             Active
                         </Title>
-                        <Tag color="#20A6CE">Pro Plan</Tag>
+                        <Tag color="cyan">Pro Plan</Tag>
                     </Card>
                 </Col>
 
@@ -176,7 +175,7 @@ export default function Overview() {
             </Row>
 
             {/* Usage trend + Setup checklist */}
-            <Row gutter={16} style={{ marginBottom: 16 }}>
+            <Row gutter={[16,16]} style={{ marginBottom: 16 }}>
                 <Col xs={24} lg={16}>
                     <Card
                         title="Usage Trend"
@@ -232,7 +231,7 @@ export default function Overview() {
             </Row>
 
             {/* Recent projects + Quick actions */}
-            <Row gutter={16}>
+            <Row gutter={[16, 16]}>
                 <Col xs={24} lg={16}>
                     <Card
                         title="Recent Projects"
@@ -243,6 +242,7 @@ export default function Overview() {
                             columns={projectColumns}
                             dataSource={recentProjects}
                             pagination={false}
+                            scroll={{ x: "max-content" }}
                             components={{
                                 header: {
                                     cell: (props) => (

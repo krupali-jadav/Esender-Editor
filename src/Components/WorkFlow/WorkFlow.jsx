@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card, Steps } from "antd";
+import {  Steps } from "antd";
 
 import StepWorkspaceBasics from "./StepWorkspaceBasics";
 import StepCreateProject from "./StepCreateProject";
@@ -38,7 +38,6 @@ export default function WorkFlow() {
         <div
             style={{
                 minHeight: "100vh",
-                background: "#F5F8FA",
                 padding: "32px 24px",
             }}
         >
@@ -50,23 +49,13 @@ export default function WorkFlow() {
                 }}
             >
                 {/* Steps */}
-                <Card
-                    style={{
-                        width: "100%",
-                        marginBottom: 24,
-                    }}
-                    styles={{
-                        body: {
-                            padding: "20px 24px",
-                        },
-                    }}
-                >
+                <div style={{ marginBottom: 24 }}>
                     <Steps
                         current={step}
                         items={stepItems}
                         responsive
                     />
-                </Card>
+                </div>
 
                 {/* Current step */}
                 {step === 0 && (

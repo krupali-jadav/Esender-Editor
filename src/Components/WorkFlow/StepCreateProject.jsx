@@ -17,16 +17,17 @@ import {
     ArrowRightOutlined,
     LockOutlined,
 } from "@ant-design/icons";
+import { useSelector } from "react-redux";
 
 const { Title, Text, Paragraph, Link } = Typography;
 
 export default function StepCreateProject({ onNext, onBack }) {
     const [env, setEnv] = useState("test");
+    const theme = useSelector((state) => state?.app?.theme);
 
     return (
         <Card
-            style={{ width: "100%" }}
-            styles={{ body: { padding: 24, borderTop: "3px solid #20A6CE", } }}
+            style={{ width: "100%", borderTop: "3px solid #20A6CE" }}
         >
             <Text
                 strong
@@ -92,6 +93,51 @@ export default function StepCreateProject({ onNext, onBack }) {
                         description="Ready to go. Data here will affect live users and active integrations immediately."
                     />
                 </Col>
+                <Col lg={24}>
+                    <div
+                        style={{
+                            background: theme ? "#142b42" : "#F5F7FA",
+                            borderRadius: 8,
+                            padding: "10px 16px",
+                            marginBottom: 12,
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 24,
+                        }}
+                    >
+                        <Text
+                            strong
+                            style={{ color: "#20A6CE", fontSize: 12, minWidth: 40 }}
+                        >
+                            POST
+                        </Text>
+                        <Text code style={{ background: "transparent" }}>
+                            /api/projects
+                        </Text>
+                    </div>
+
+                    <div
+                        style={{
+                            background: theme ? "#142b42" : "#F5F7FA",
+                            borderRadius: 8,
+                            padding: "10px 16px",
+                            marginBottom: 24,
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 24,
+                        }}
+                    >
+                        <Text
+                            strong
+                            style={{ color: "#20A6CE", fontSize: 12, minWidth: 40 }}
+                        >
+                            RETURNS
+                        </Text>
+                        <Text>
+                            project id, public project id, license key, signing secret
+                        </Text>
+                    </div>
+                </Col>
             </Row>
 
             <Divider style={{ margin: "0 0 20px" }} />
@@ -105,7 +151,7 @@ export default function StepCreateProject({ onNext, onBack }) {
                     iconPosition="end"
                     onClick={onNext}
                 >
-                    Continue
+                    Next
                 </Button>
             </Row>
 
@@ -131,6 +177,7 @@ function EnvironmentCard({
     description,
     recommended,
 }) {
+    const theme = useSelector((state) => state?.app?.theme);
     return (
         <div
             onClick={onClick}
@@ -138,10 +185,16 @@ function EnvironmentCard({
                 width: "100%",
                 minHeight: 150,
                 boxSizing: "border-box",
-                border: `1px solid ${
-                    selected ? "#20A6CE" : "#E7E9F0"
-                }`,
-                background: selected ? "#F4FBFD" : "#FFFFFF",
+                border: theme
+                    ? `1px solid ${selected ? "#142b42" : "#2b313b"}`
+                    : `1px solid ${selected ? "#20A6CE" : "#E7E9F0"}`,
+                background: theme
+                    ? selected
+                        ? "#2b313b"
+                        : "#142b42"
+                    : selected
+                        ? "#F4FBFD"
+                        : "#FFFFFF",
                 borderRadius: 8,
                 padding: 16,
                 cursor: "pointer",
@@ -180,6 +233,8 @@ function EnvironmentCard({
                     Recommended
                 </Text>
             )}
+
         </div>
+
     );
 }

@@ -434,7 +434,7 @@ const ProLayouts = ({ children }) => {
                         ) : (
                             <Select
                                 showSearch
-                                placeholder={t("selectCurrencies")}
+                                placeholder={t("Select Currencies")}
                                 defaultValue={
                                     typeof panel?.defaultCurrency === "object"
                                         ? panel?.defaultCurrency
@@ -448,7 +448,7 @@ const ProLayouts = ({ children }) => {
                                         ? panel?.defaultCurrency
                                         : panel?.defaultCurrency
                                 }
-                                style={{ width: 80, padding: "3px" }}
+                                style={{ width: 100, padding: "3px" }}
                             >
                                 <Select.Option
                                     value={

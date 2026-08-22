@@ -111,18 +111,30 @@ const sessionFailures = [
 ];
 
 const failureColumns = [
-    { title: "Timestamp", dataIndex: "timestamp", key: "timestamp" },
+    {
+        title: "Timestamp",
+        dataIndex: "timestamp",
+        key: "timestamp",
+        width: 190,
+    },
     {
         title: "Event ID",
         dataIndex: "eventId",
         key: "eventId",
+        width: 150,
         render: (id) => <Text code>{id}</Text>,
     },
-    { title: "Endpoint", dataIndex: "endpoint", key: "endpoint" },
+    {
+        title: "Endpoint",
+        dataIndex: "endpoint",
+        key: "endpoint",
+        width: 180,
+    },
     {
         title: "Error Code",
         dataIndex: "errorCode",
         key: "errorCode",
+        width: 210,
         render: (code) => <Tag color="error">{code}</Tag>,
     },
 ];
@@ -149,175 +161,360 @@ async function authenticateSession(userId) {
 
 export default function Developers() {
     const theme = useSelector((state) => state?.app?.theme);
+
     return (
-        <PageContainer title={false}  >
-            <Flex justify="space-between" align="center">
-                <AppPageHeader
-                    title="Developers"
-                    description="Manage your API keys, monitor integration health, and access comprehensive technical resources to build on the BitBeast platform."
-                />
-                <Space>
-                    <Button icon={<HistoryOutlined />}>Audit Logs</Button>
-                    <Button type="primary" icon={<KeyOutlined />}>
-                        Generate Token
-                    </Button>
-                </Space>
-            </Flex>
-            <Space direction="vertical" size={16} >
-                {/* Feature cards */}
-                <Row gutter={16} >
-                    {featureCards.map((f) => (
-                        <Col key={f.key} xs={24} sm={12} lg={6}>
-                            <Card>
-                                <Avatar
-                                    shape="square"
-                                    size={40}
-                                    style={{ background: f.bg, color: f.color }}
-                                    icon={f.icon}
-                                />
-                                <Title level={5} style={{ margin: "12px 0 4px" }}>
-                                    {f.title}
-                                </Title>
-                                <Paragraph type="secondary" >
-                                    {f.desc}
-                                </Paragraph>
-                                <Link>
-                                    {f.action} <ArrowRightOutlined />
-                                </Link>
-                            </Card>
-                        </Col>
-                    ))}
-                </Row>
-
-                {/* Auth sequence + License/Webhooks */}
-                <Row gutter={16}>
-                    <Col xs={24} lg={16}>
-                        <Space direction="vertical" size={16} style={{ width: "100%" }}>
-                            <Card
-                                title={
-                                    <Space>
-                                        <LockOutlined />
-                                        Authentication Sequence
-                                    </Space>
-                                }
-                                extra={
-                                    <Segmented
-                                        defaultValue="Node.js"
-                                        options={["Node.js", "Python", "Go"]}
-                                    />
-                                }
-                            >
-                                <pre
-                                    style={{
-                                        background: theme ? "#141414" : "#f8f8f8d5",
-                                        color: theme ? "#d9d9d9" : "#585858",
-                                        padding: 16,
-                                        borderRadius: 8,
-                                        overflowX: "auto",
-                                        fontSize: 13,
-                                        lineHeight: 1.7,
-                                        margin: 0,
-                                    }}
-                                >
-                                    <code>{codeSample}</code>
-                                </pre>
-                            </Card>
-
-                            <Card
-                                title="Recent Session Failures"
-                                extra={<Link>VIEW ALL</Link>}
-                                styles={{ body: { padding: 0 } }}
-                            >
-                                <Table
-                                    columns={failureColumns}
-                                    dataSource={sessionFailures}
-                                    pagination={false}
-                                    components={{
-                                        header: {
-                                            cell: (props) => (
-                                                <th
-                                                    {...props}
-                                                    style={{
-                                                        ...props.style,
-                                                        background: theme ? "#0e1c29" : "#f0f0f0",
-                                                    }}
-                                                />
-                                            ),
-                                        },
-                                    }}
-                                    padding={0}
-                                />
-                            </Card>
-                        </Space>
+        <PageContainer title={false}>
+            {/* Header */}
+            <Flex
+                vertical
+                gap={16}
+                style={{ marginBottom: 16 }}
+            >
+                <Row
+                    gutter={[16, 16]}
+                    align="middle"
+                    justify="space-between"
+                >
+                    <Col xs={24} lg={18}>
+                        <AppPageHeader
+                            title="Developers"
+                            description="Manage your API keys, monitor integration health, and access comprehensive technical resources to build on the BitBeast platform."
+                        />
                     </Col>
 
-                    <Col xs={24} lg={8}>
-                        <Card title="License & Project Health" style={{ marginBottom: 16 }}>
+                    <Col xs={24} lg={6}>
+                        <Flex
+                            gap={8}
+                            justify="flex-end"
+                            wrap="wrap"
+                        >
+                            <Button icon={<HistoryOutlined />}>
+                                Audit Logs
+                            </Button>
+
+                            <Button
+                                type="primary"
+                                icon={<KeyOutlined />}
+                            >
+                                Generate Token
+                            </Button>
+                        </Flex>
+                    </Col>
+                </Row>
+            </Flex>
+
+            {/* Feature Cards */}
+            <Row gutter={[16, 16]}>
+                {featureCards.map((f) => (
+                    <Col key={f.key} xs={24} sm={12} lg={6}>
+                        <Card
+                            style={{ height: "100%" }}
+                            styles={{
+                                body: {
+                                    height: "100%",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                },
+                            }}
+                        >
+                            <Avatar
+                                shape="square"
+                                size={40}
+                                style={{
+                                    background: f.bg,
+                                    color: f.color,
+                                }}
+                                icon={f.icon}
+                            />
+
+                            <Title
+                                level={5}
+                                style={{
+                                    margin: "12px 0 4px",
+                                }}
+                            >
+                                {f.title}
+                            </Title>
+
+                            <Paragraph type="secondary"style={{marginBottom: 12,}}>
+                                {f.desc}
+                            </Paragraph>
+
+                            <Link>
+                                {f.action} <ArrowRightOutlined />
+                            </Link>
+                        </Card>
+                    </Col>
+                ))}
+            </Row>
+
+            {/* Main Content */}
+            <Row
+                gutter={[16, 16]}
+                style={{ marginTop: 16 }}
+            >
+                {/* Left */}
+                <Col xs={24} lg={16}>
+                    <Space
+                        direction="vertical"
+                        size={16}
+                        style={{ width: "100%" }}
+                    >
+                        {/* Authentication */}
+                        <Card
+                            title={
+                                <Space>
+                                    <LockOutlined />
+                                    Authentication Sequence
+                                </Space>
+                            }
+                            extra={
+                                <Segmented
+                                    size="small"
+                                    defaultValue="Node.js"
+                                    options={[
+                                        "Node.js",
+                                        "Python",
+                                        "Go",
+                                    ]}
+                                />
+                            }
+                        >
+                            <pre
+                                style={{
+                                    background: theme? "#141414": "#f8f8f8",
+                                    color: theme ? "#d9d9d9": "#585858",
+                                    padding: 16,
+                                    borderRadius: 8,
+                                    overflowX: "auto",
+                                    fontSize: 13,
+                                    lineHeight: 1.7,
+                                    margin: 0,
+                                    maxWidth: "100%",
+                                }}
+                            >
+                                <code>{codeSample}</code>
+                            </pre>
+                        </Card>
+
+                        {/* Session Failures */}
+                        <Card
+                            title="Recent Session Failures"
+                            extra={
+                                <Link>
+                                    VIEW ALL
+                                </Link>
+                            }
+                            styles={{
+                                body: {
+                                    padding: 0,
+                                },
+                            }}
+                        >
+                            <Table
+                                columns={failureColumns}
+                                dataSource={sessionFailures}
+                                pagination={false}
+                                scroll={{ x: 730 }}
+                                size="small"
+                                components={{
+                                    header: {
+                                        cell: (props) => (
+                                            <th
+                                                {...props}
+                                                style={{
+                                                    ...props.style,
+                                                    background: theme
+                                                        ? "#0e1c29"
+                                                        : "#f0f0f0",
+                                                }}
+                                            />
+                                        ),
+                                    },
+                                }}
+                            />
+                        </Card>
+                    </Space>
+                </Col>
+
+                {/* Right */}
+                <Col xs={24} lg={8}>
+                    <Space
+                        direction="vertical"
+                        size={16}
+                        style={{ width: "100%" }}
+                    >
+                        {/* License */}
+                        <Card title="License & Project Health">
                             <Space
                                 direction="vertical"
                                 size={16}
                                 style={{ width: "100%" }}
                             >
-                                <Row justify="space-between" align="middle">
-                                    <Text type="secondary">Production API Key</Text>
-                                    <Badge status="success" text="Active" />
-                                </Row>
-                                <Row justify="space-between" align="middle">
-                                    <Text code>sk_live_...9f82</Text>
-                                    <Button type="text" size="small" icon={<CopyOutlined />} />
+                                <Row
+                                    justify="space-between"
+                                    align="middle"
+                                    gutter={[8, 8]}
+                                >
+                                    <Col>
+                                        <Text type="secondary">
+                                            Production API Key
+                                        </Text>
+                                    </Col>
+
+                                    <Col>
+                                        <Badge
+                                            status="success"
+                                            text="Active"
+                                        />
+                                    </Col>
                                 </Row>
 
-                                <Row justify="space-between" align="middle">
-                                    <Text type="secondary">Test API Key</Text>
-                                    <Badge status="success" text="Active" />
-                                </Row>
-                                <Row justify="space-between" align="middle">
-                                    <Text code>sk_test_...3b21</Text>
-                                    <Button type="text" size="small" icon={<CopyOutlined />} />
+                                <Flex
+                                    justify="space-between"
+                                    align="center"
+                                    gap={8}
+                                >
+                                    <Text
+                                        code
+                                        ellipsis
+                                        style={{ minWidth: 0 }}
+                                    >
+                                        sk_live_...9f82
+                                    </Text>
+
+                                    <Button
+                                        type="text"
+                                        size="small"
+                                        icon={<CopyOutlined />}
+                                    />
+                                </Flex>
+
+                                <Row
+                                    justify="space-between"
+                                    align="middle"
+                                    gutter={[8, 8]}
+                                >
+                                    <Col>
+                                        <Text type="secondary">
+                                            Test API Key
+                                        </Text>
+                                    </Col>
+
+                                    <Col>
+                                        <Badge
+                                            status="success"
+                                            text="Active"
+                                        />
+                                    </Col>
                                 </Row>
 
-                                <div >
-                                    <Row justify="space-between">
-                                        <Text type="secondary">Monthly API Requests</Text>
-                                        <Text strong>84%</Text>
+                                <Flex
+                                    justify="space-between"
+                                    align="center"
+                                    gap={8}
+                                >
+                                    <Text
+                                        code
+                                        ellipsis
+                                        style={{ minWidth: 0 }}
+                                    >
+                                        sk_test_...3b21
+                                    </Text>
+
+                                    <Button
+                                        type="text"
+                                        size="small"
+                                        icon={<CopyOutlined />}
+                                    />
+                                </Flex>
+
+                                <div>
+                                    <Row
+                                        justify="space-between"
+                                        align="middle"
+                                    >
+                                        <Col>
+                                            <Text type="secondary">
+                                                Monthly API Requests
+                                            </Text>
+                                        </Col>
+
+                                        <Col>
+                                            <Text strong>84%</Text>
+                                        </Col>
                                     </Row>
+
                                     <Progress
                                         percent={84}
                                         showInfo={false}
                                     />
-                                    <Text type="secondary" style={{ fontSize: 12 }}>
+
+                                    <Text type="secondary">
                                         842,019 / 1,000,000
                                     </Text>
                                 </div>
                             </Space>
                         </Card>
 
+                        {/* Webhooks */}
                         <Card title="Configured Webhooks">
-                            <Space direction="vertical" size={12} >
+                            <Space
+                                direction="vertical"
+                                size={12}
+                                style={{ width: "100%" }}
+                            >
                                 {configuredWebhooks.map((w) => (
-                                    <Space key={w.key} align="start">
+                                    <Flex
+                                        key={w.key}
+                                        align="flex-start"
+                                        gap={8}
+                                    >
                                         {w.status === "ok" ? (
-                                            <CheckCircleFilled style={{ color: "#52c41a" }} />
+                                            <CheckCircleFilled
+                                                style={{
+                                                    color: "#52c41a",
+                                                    marginTop: 4,
+                                                }}
+                                            />
                                         ) : (
-                                            <CloseCircleFilled style={{ color: "#f5222d" }} />
+                                            <CloseCircleFilled
+                                                style={{
+                                                    color: "#f5222d",
+                                                    marginTop: 4,
+                                                }}
+                                            />
                                         )}
-                                        <div>
-                                            <Text style={{ wordBreak: "break-all" }}>{w.url}</Text>
-                                            <br />
+
+                                        <div style={{ minWidth: 0 }}>
                                             <Text
-                                                type={w.status === "ok" ? "secondary" : "danger"}
-                                                style={{ fontSize: 12 }}
+                                                style={{
+                                                    wordBreak:
+                                                        "break-word",
+                                                }}
+                                            >
+                                                {w.url}
+                                            </Text>
+
+                                            <br />
+
+                                            <Text
+                                                type={
+                                                    w.status === "ok"
+                                                        ? "secondary"
+                                                        : "danger"
+                                                }
                                             >
                                                 {w.note}
                                             </Text>
                                         </div>
-                                    </Space>
+                                    </Flex>
                                 ))}
                             </Space>
                         </Card>
-                    </Col>
-                </Row>
-            </Space>
+                    </Space>
+                </Col>
+            </Row>
         </PageContainer>
     );
 }

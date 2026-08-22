@@ -1,5 +1,5 @@
-import { Row, Col, Card, Input, Button, Select, Segmented, Tag, Typography, Space, Empty, Flex,} from "antd";
-import { SearchOutlined, PlusOutlined, FilterOutlined, ClockCircleOutlined, FolderOutlined, FileImageOutlined, DownOutlined} from "@ant-design/icons";
+import { Row, Col, Card, Input, Button, Select, Segmented, Tag, Typography, Space, Empty, Flex, } from "antd";
+import { SearchOutlined, PlusOutlined, FilterOutlined, ClockCircleOutlined, FolderOutlined, FileImageOutlined, DownOutlined } from "@ant-design/icons";
 import { PageContainer } from "@ant-design/pro-components";
 import AppPageHeader from "../Styles/AppHeader";
 import { t } from "i18next";
@@ -58,79 +58,125 @@ export default function Templates() {
     const theme = useSelector((state) => state?.app?.theme);
     return (
         <PageContainer title={false}  >
-            <Flex justify="space-between" align="center" >
-                <AppPageHeader
-                    title={t("templates.library", { defaultValue: "Template Library" })}
-                    description="  Manage and discover email templates across your workspace."
-                />
-                <Space>
-                    <Input
-                        placeholder="Search templates..."
-                        prefix={<SearchOutlined />}
-                        style={{ width: 240 }}
-                    />
-                    <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate("/templates/create-template")}>
-                        New Template
-                    </Button>
-                </Space>
-            </Flex>
             <Space direction="vertical" size={16} style={{ width: "100%" }}>
+                <Row gutter={[16, 16]} align="middle">
+                    <Col xs={24} lg={14}>
+                        <AppPageHeader
+                            title={t("templates.library", {
+                                defaultValue: "Template Library",
+                            })}
+                            description="Manage and discover email templates across your workspace."
+                        />
+                    </Col>
+
+                    <Col xs={24} lg={10}>
+                        <Flex
+                            gap={8}
+                            justify="end"
+                            wrap
+                        >
+
+                            <Button
+                                type="primary"
+                                icon={<PlusOutlined />}
+                                onClick={() => navigate("/templates/create-template")}
+                            >
+                                New Template
+                            </Button>
+                        </Flex>
+                    </Col>
+                </Row>
+
                 {/* Filters bar */}
                 <Card
                     size="small"
                     styles={{ body: { padding: "12px 16px" } }}
                 >
-                    <Row justify="space-between" align="middle" wrap>
-                        <Col>
-                            <Space size="large">
-                                <Space size={4}>
-                                    <FilterOutlined />
-                                    <Text strong>FILTERS</Text>
-                                </Space>
+                    <Flex
+                        gap={24}
+                        justify="space-between"
+                        align="center"
+                        wrap="wrap"
+                    >
+                        {/* Search */}
+                        <Input
+                            placeholder="Search templates..."
+                            prefix={<SearchOutlined />}
+                            allowClear
+                            style={{ flex: 1, width: "100%", maxWidth: 500 ,minWidth: 200}}
+                        />
 
-                                <Space size={8}>
-                                    <Text type="secondary">Project:</Text>
-                                    <Select
-                                        defaultValue="all"
-                                        variant="borderless"
-                                        suffixIcon={<DownOutlined />}
-                                        style={{ width: 130, background: theme ? "#0A1622" : "#F5F8FA" }}
-                                        options={[
-                                            { value: "all", label: "All Projects" },
-                                            { value: "marketing", label: "Marketing Hub" },
-                                            { value: "internal", label: "Internal Comms" },
-                                            { value: "transactional", label: "Transactional" },
-                                        ]}
-                                    />
-                                </Space>
+                        {/* Filters */}
+                        <Flex
+                            gap={16}
+                            justify="end"
+                            wrap="wrap"
+                        >
+                            <Space size={8}>
+                                <Text type="secondary">Project:</Text>
 
-                                <Space size={8}>
-                                    <Text type="secondary">Status:</Text>
-                                    <Segmented
-                                        defaultValue="All"
-                                        options={["All", "Published", "Draft"]}
-                                    />
-                                </Space>
+                                <Select
+                                    defaultValue="all"
+                                    variant="borderless"
+                                    suffixIcon={<DownOutlined />}
+                                    style={{
+                                        width: 130,
+                                        background: theme ? "#0A1622" : "#F5F8FA",
+                                        borderRadius: 8,
+                                    }}
+                                    options={[
+                                        { value: "all", label: "All Projects" },
+                                        { value: "marketing", label: "Marketing Hub" },
+                                        { value: "internal", label: "Internal Comms" },
+                                        { value: "transactional", label: "Transactional" },
+                                    ]}
+                                />
                             </Space>
-                        </Col>
 
-                        <Col>
+                            <Space size={4}>
+                                <FilterOutlined />
+                                <Text strong>FILTERS</Text>
+                            </Space>
+
+                            <Space size={8}>
+                                <Text type="secondary">Status:</Text>
+
+                                <Segmented
+                                    defaultValue="All"
+                                    options={["All", "Published", "Draft"]}
+                                />
+                            </Space>
+
                             <Space size={8}>
                                 <Text type="secondary">Sort:</Text>
+
                                 <Select
                                     defaultValue="recent"
                                     variant="borderless"
                                     suffixIcon={<DownOutlined />}
-                                    style={{ width: 150, background: theme ? "#0A1622" : "#F5F8FA" }}
+                                    style={{
+                                        width: 150,
+                                        background: theme ? "#0A1622" : "#F5F8FA",
+                                        borderRadius: 8,
+                                    }}
                                     options={[
-                                        { value: "recent", label: "Recently Updated" },
-                                        { value: "name", label: "Name (A-Z)" },
-                                        { value: "oldest", label: "Oldest First" },
+                                        {
+                                            value: "recent",
+                                            label: "Recently Updated",
+                                        },
+                                        {
+                                            value: "name",
+                                            label: "Name (A-Z)",
+                                        },
+                                        {
+                                            value: "oldest",
+                                            label: "Oldest First",
+                                        },
                                     ]}
                                 />
                             </Space>
-                        </Col>
-                    </Row>
+                        </Flex>
+                    </Flex>
                 </Card>
 
                 {/* Template cards */}
