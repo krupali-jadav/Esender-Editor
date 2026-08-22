@@ -95,7 +95,7 @@ function ProjectIntegration() {
                                         type="error"
                                         showIcon
                                         icon={<WarningOutlined />}
-                                        title="Security Warning"
+                                        message="Security Warning"
                                         description="Never expose your signing secret in frontend code."
                                         style={{ marginTop: 16 }}
                                     />

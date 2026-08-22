@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import {
     Typography,
     Button,
@@ -8,9 +8,10 @@ import {
     Avatar,
     Tag,
     Space,
-    Pagination,
     Card,
     Flex,
+    Row,
+    Col,
 } from 'antd'
 import {
     DownloadOutlined,
@@ -25,8 +26,7 @@ import {
 import AppPageHeader from '../Styles/AppHeader'
 import { useSelector } from 'react-redux'
 
-const { Title, Text, Paragraph } = Typography
-const { Option } = Select
+const { Text, } = Typography
 
 const iconWrapperStyle = (bg, color) => ({
     width: 32,
@@ -102,7 +102,7 @@ const data = [
         actorEmail: 'michael@bitbeast.io',
         ip: '98.214.33.15',
         ipDanger: false,
-        date: 'Oct 22, 2023 11:20:05 UTC',
+        date: 'Oct 22, 2023',
     },
 ]
 
@@ -189,53 +189,61 @@ function Auditlog() {
         <div style={{ padding: 24 }}>
             <AppPageHeader title="Audit Log" description="A comprehensive record of security and administrative events  within your workspace. Logs are retained for 90 days." />
 
-            {/* Filters row */}
+            {/* header */}
             <Space direction='vertical' size="middle" style={{ width: "100%" }}>
                 <Card>
-                    <Flex justify="space-between" align="center" wrap="wrap" gap={12}>
-                        <Space size={12} wrap>
+                    <Row gutter={[12, 12]} align="middle">
+
+                        <Col xs={24} sm={24} md={10} lg={10} xl={10}>
                             <Input
                                 placeholder="Search templates..."
                                 prefix={<SearchOutlined />}
-                                style={{ width: 240 }}
+                                style={{ width: "70%" }}
                             />
-                            <Select
-                                defaultValue="all"
-                                variant="borderless"
-                                suffixIcon={<CalendarOutlined />}
-                                style={{ width: 130, background: theme ? "#0A1622" : "#F5F8FA" }}
-                                options={[
-                                    { value: "all", label: "All Days" },
-                                    { value: "7days", label: "Last 7 Days" },
-                                    { value: "30days", label: "Last 30 Days" },
-                                    { value: "90days", label: "Last 90 Days" },
-                                ]}
-                            />
-                            <Select
-                                defaultValue="all"
-                                variant="borderless"
-                                style={{ width: 130, background: theme ? "#0A1622" : "#F5F8FA" }}
-                                options={[
-                                    { value: "all_events", label: "All Events" },
-                                    { value: "login", label: "Login" },
-                                    { value: "security", label: "Security" },
-                                ]}
-                            />
-                            <Select
-                                defaultValue="all_actors"
-                                variant="borderless"
-                                style={{ width: 130, background: theme ? "#0A1622" : "#F5F8FA" }}
-                                options={[
-                                    { value: "all_actors", label: "All Actors" },
-                                    { value: "jane", label: "Jane Doe" },
-                                    { value: "michael", label: "Michael Smith" },
-                                ]}
-                            />
-                            <Button icon={<FilterOutlined />} style={{ width: 40, height: 40, background: theme ? "#0A1622" : "#F5F8FA" }} />
-                        </Space>
+                        </Col>
 
-                        <Button style={{ backgroundColor: "#20A6CE", color: "#fff" }} icon={<DownloadOutlined />}>Export CSV</Button>
-                    </Flex>
+                        <Col xs={24} sm={24} md={14} lg={14} xl={14}>
+                            <Flex justify="end" align="center" wrap="wrap" gap="small">
+
+                                <Select
+                                    defaultValue="all"
+                                    variant="filled"
+                                    suffixIcon={<CalendarOutlined />}
+                                    options={[
+                                        { value: "all", label: "All Days" },
+                                        { value: "7days", label: "Last 7 Days" },
+                                        { value: "30days", label: "Last 30 Days" },
+                                        { value: "90days", label: "Last 90 Days" },
+                                    ]}
+                                />
+
+                                <Select
+                                    defaultValue="all_events"
+                                    variant="filled"
+                                    options={[
+                                        { value: "all_events", label: "All Events" },
+                                        { value: "login", label: "Login" },
+                                        { value: "security", label: "Security" },
+                                    ]}
+                                />
+
+                                <Select
+                                    defaultValue="all_actors"
+                                    variant="filled"
+                                    options={[
+                                        { value: "all_actors", label: "All Actors" },
+                                        { value: "jane", label: "Jane Doe" },
+                                        { value: "michael", label: "Michael Smith" },
+                                    ]}
+                                />
+
+                                <Button icon={<FilterOutlined />} />
+                                <Button type="primary" icon={<DownloadOutlined />}>
+                                    Export
+                                </Button>
+                            </Flex>
+                        </Col>
+                    </Row>
                 </Card>
 
                 {/* Table */}
@@ -244,6 +252,7 @@ function Auditlog() {
                         columns={columns}
                         dataSource={data}
                         pagination={true}
+                        scroll={{ x: "max-content" }}
                         components={{
                             header: {
                                 cell: (props) => (
@@ -260,7 +269,6 @@ function Auditlog() {
                     />
                 </Card>
             </Space>
-
         </div>
     )
 }

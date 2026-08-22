@@ -11,6 +11,7 @@ import {
     Alert,
     Space,
     Dropdown,
+    Flex,
 } from 'antd'
 import {
     GlobalOutlined,
@@ -56,7 +57,7 @@ const columns = [
         key: 'type',
         width: 140,
         render: (type) => (
-            <Tag color={type === 'Wildcard' ? 'purple' : 'default'} variant={false}>
+            <Tag color={type === 'Wildcard' ? 'purple' : 'default'} bordered={false}>
                 {type}
             </Tag>
         ),
@@ -67,7 +68,7 @@ const columns = [
         key: 'type',
         width: 140,
         render: (type) => (
-            <Tag color={type === 'Wildcard' ? '#20A6CE' : 'default'} variant={false}>
+            <Tag color={type === 'Wildcard' ? '#20A6CE' : 'default'} bordered={false}>
                 {type}
             </Tag>
         ),
@@ -78,7 +79,7 @@ const columns = [
         key: 'type',
         width: 140,
         render: (type) => (
-            <Tag color={type === 'Wildcard' ? 'purple' : 'default'} variant={false}>
+            <Tag color={type === 'Wildcard' ? 'purple' : 'default'} bordered={false}>
                 {type}
             </Tag>
         ),
@@ -114,47 +115,43 @@ function ProjectDomain() {
             <Row gutter={16}>
                 {/* Left: Allowed Domains */}
                 <Col xs={24} lg={16}>
-                    <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-                        <Card
-                            styles={{
-                                header: { padding: '18px 18px', border: 'none' },
-                            }}
+                    <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+                        <Card styles={{ header: { padding: "18px", }, body: { padding: 0, } }}
+
                             title={
-                                <div>
-                                    <Title level={5}>
+                                <Flex vertical gap={4}>
+                                    <Title level={5} style={{ margin: 0, whiteSpace: "normal", }}>
                                         Allowed Domains
                                     </Title>
-                                    <Text type="secondary">
-                                        Manage origins permitted to send requests. Accepts patternslike{' '}
-                                        <Text code>app.example.com</Text>,{' '}
-                                        <Text code>*.example.com</Text>, and{' '}
+
+                                    <Text type="secondary" style={{ whiteSpace: "normal", }}>
+                                        Manage origins permitted to send requests. Accepts
+                                        patterns like{" "}
+                                        <Text code>app.example.com</Text>,{" "}
+                                        <Text code>*.example.com</Text>, and{" "}
                                         <Text code>localhost</Text>.
                                     </Text>
-                                </div>
+                                </Flex>
                             }
                             extra={
                                 <Button
-                                    style={{
-                                        background: '#20A6CE',
-                                        color: '#fff',
-                                        height: 40,
-                                        borderRadius: 9,
-                                    }}
+                                    type="primary"
                                     icon={<PlusOutlined />}
                                     onClick={() => setAddDomainOpen(true)}
+                                    style={{ background: "#20A6CE", }}
                                 >
                                     Add Domain
                                 </Button>
                             }
-                        >
+                        />
 
-                        </Card>
-                        <Card styles={{ body: { padding: 0 }, }}>
+                        <Card styles={{ body: { padding: 0, }, }}>
                             <Table
                                 columns={columns}
                                 dataSource={DOMAIN_DATA}
                                 pagination={false}
                                 size="middle"
+                                scroll={{ x: "max-content" }}
                                 components={{
                                     header: {
                                         cell: (props) => (
@@ -162,7 +159,9 @@ function ProjectDomain() {
                                                 {...props}
                                                 style={{
                                                     ...props.style,
-                                                    background: theme ? "#0E1C29" : "#F0F0F0",
+                                                    background: theme
+                                                        ? "#0E1C29"
+                                                        : "#F0F0F0",
                                                 }}
                                             />
                                         ),
@@ -170,7 +169,6 @@ function ProjectDomain() {
                                 }}
                             />
                         </Card>
-
                     </Space>
                 </Col>
 
@@ -192,7 +190,7 @@ function ProjectDomain() {
                         <Alert
                             type="error"
                             showIcon
-                            title="Real enforcement occurs during session creation."
+                            message="Real enforcement occurs during session creation."
                             style={{ marginBottom: 16, fontSize: 12 }}
                         />
 

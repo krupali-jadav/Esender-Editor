@@ -17,6 +17,7 @@ import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Package from "esender-email-editor";
 import AppPageHeader from "../Styles/AppHeader";
+import { useSelector } from "react-redux";
 
 const { Text } = Typography;
 
@@ -24,6 +25,7 @@ function CreateTemplates() {
     const navigate = useNavigate();
     const editorRef = useRef(null);
     const [form] = Form.useForm();
+    const theme = useSelector((state) => state?.app?.theme);
 
     const handleSubmit = (values) => {
         const html = editorRef.current?.getHtml?.();
@@ -80,8 +82,7 @@ function CreateTemplates() {
                 >
                     <div
                         style={{
-                            background: "#fff",
-                            border: "1px solid #E7E9F0",
+                            background: theme ? "#0F2233" : "#fff",
                             borderRadius: 10,
                             padding: 20,
                         }}
@@ -156,8 +157,7 @@ function CreateTemplates() {
                 {/* Email Editor */}
                 <div
                     style={{
-                        background: "#fff",
-                        border: "1px solid #E7E9F0",
+                        background: theme ? "#0F2233" : "#fff",
                         borderRadius: 10,
                         minHeight: 600,
                         overflow: "hidden",

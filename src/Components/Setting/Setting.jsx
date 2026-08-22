@@ -19,7 +19,7 @@ const TAB_HEADERS = {
     },
     'team-roles': {
         title: 'Team & Roles',
-        description: 'Manage workspace members, roles, and access permissions.',
+        description: 'Manage who has access to this workspace and their permission levels.',
     },
     security: {
         title: 'Security',
@@ -31,8 +31,7 @@ const TAB_HEADERS = {
     },
     'audit-log': {
         title: 'Settings',
-        description:
-            'Manage your workspace configuration, security protocols, and team access.',
+        description: 'Manage your workspace configuration, security protocols, and team access.',
     },
 }
 

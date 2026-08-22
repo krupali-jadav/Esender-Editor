@@ -4,7 +4,7 @@ import { t } from 'i18next'
 function AddDomain({ open, onClose }) {
     return (
         <Modal
-            title={t("add.group", { defaultValue: "Add Group" })}
+            title={t("add.domain", { defaultValue: "Add Domain" })}
             open={open}
             onCancel={onClose}
             width={500}
@@ -20,7 +20,7 @@ function AddDomain({ open, onClose }) {
         >
             <Form layout="vertical" >
                 <Form.Item
-                    label={t("group.name", { defaultValue: "Domain Name" })}
+                    label={t("domain.name", { defaultValue: "Domain Name" })}
                     name="name"
                     rules={[
                         {

@@ -22,6 +22,7 @@ import {
     MoreOutlined,
     EditOutlined,
 } from '@ant-design/icons'
+import { useNavigate } from 'react-router-dom'
 
 const { Text } = Typography
 
@@ -51,7 +52,7 @@ const TEMPLATE_DATA = [
         icon: <FileTextOutlined />,
     },
     {
-        key: '3',
+        key: '4',
         name: 'Order Confirmation',
         status: 'Published',
         version: 'v1.0.4',
@@ -59,7 +60,7 @@ const TEMPLATE_DATA = [
         icon: <FileTextOutlined />,
     },
     {
-        key: '3',
+        key: '5',
         name: 'Order Confirmation',
         status: 'Published',
         version: 'v1.0.4',
@@ -69,9 +70,7 @@ const TEMPLATE_DATA = [
 ]
 
 function ProjectTemplate() {
-    const handleNewTemplate = () => {
-        console.log('New Template')
-    }
+    const navigate = useNavigate();
 
     const handleEdit = (template) => {
         console.log('Edit template:', template)
@@ -87,15 +86,16 @@ function ProjectTemplate() {
                     style={{ width: 340 }}
                 />
 
-                <Button style={{ background: '#20A6CE', color: '#fff', height: 40, borderRadius: 9 }} icon={<PlusOutlined />} onClick={handleNewTemplate}>
+                <Button style={{ background: '#20A6CE', color: '#fff', height: 40, borderRadius: 9 }} icon={<PlusOutlined />}
+                    onClick={() => navigate("/templates/create-template")}>
                     New Template
-                </Button> 
+                </Button>
             </Flex>
 
             {/* Template Cards */}
             <Row gutter={[16, 16]}>
                 {TEMPLATE_DATA.map((template) => (
-                    <Col key={template.key} xs={24} sm={12} md={8} lg={6}>
+                    <Col key={template.key} xs={22} sm={12} md={8} lg={8} xl={6}>
                         <Card
                             size="small"
                             cover={
@@ -150,7 +150,7 @@ function ProjectTemplate() {
                                 description={
                                     <Space size="small">
                                         <Tag
-                                            variant={false}
+                                            bordered={false}
                                             color={template.status === 'Published' ? 'success' : 'warning'}
                                         >
                                             {template.status}
@@ -179,11 +179,11 @@ function ProjectTemplate() {
                 ))}
 
                 {/* Create Blank Template */}
-                <Col xs={24} sm={12} md={8} lg={5}>
+                <Col xs={22} sm={12} md={8} lg={8} xl={6}>
                     <Card
                         hoverable
                         variant="dashed"
-                        onClick={handleNewTemplate}
+                        onClick={() => navigate("/templates/create-template")}
                     >
                         <Flex vertical justify="center" align="center" gap="small" style={{ minHeight: 250 }}>
                             <Button shape="circle" icon={<PlusOutlined />} />

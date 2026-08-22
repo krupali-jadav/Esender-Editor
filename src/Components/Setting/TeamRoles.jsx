@@ -104,7 +104,7 @@ function TeamRoles() {
         <Select
           defaultValue="all"
           variant="borderless"
-          style={{ width: 130, background: theme ? '#0A1622' : '#F5F8FA', }}
+          style={{ width: 130, background: theme ? '#0A1622' : '#F5F8FA', borderRadius: 8 }}
           options={[
             { value: 'owner', label: 'Owner', },
             { value: 'admin', label: 'Admin', },
@@ -154,7 +154,7 @@ function TeamRoles() {
             <Select
               defaultValue="all"
               variant="borderless"
-              style={{ width: 130, background: theme ? '#0A1622' : '#F5F8FA', }}
+              style={{ width: 130, background: theme ? '#0A1622' : '#F5F8FA', borderRadius: 8 }}
               options={[
                 { value: 'all', label: 'All', },
                 { value: 'owner', label: 'Owner', },
@@ -170,6 +170,7 @@ function TeamRoles() {
             columns={columns}
             dataSource={members}
             pagination={true}
+            scroll={{ x: "max-content" }}
             components={{
               header: {
                 cell: (props) => (
