@@ -10,32 +10,24 @@ import {
 import {
     CopyOutlined,
 } from "@ant-design/icons";
+import { useSelector } from "react-redux";
 
 const { Title, Text, Paragraph, Link } = Typography;
 
-const appTsxCode = `import { SignalProvider } from "@signalcanvas/react";
+const appTsxCode = `import { BitBeastEditor } from '@bitbeast/editor-sdk';;
 
-export default function App() {
+export function Editor({ token }) {
   return (
-    <SignalProvider
-      publishableKey="pk_test_a1b2c3d4e5f6g7h8i9j0"
-    >
-      <YourApp />
-    </SignalProvider>
+    <BitBeastEditor
+      projectId="prj_test_8823"
+      token={token}
+    />
   );
 }`;
 
-const serverJsCode = `const crypto = require("crypto");
-
-function signIdentity(userId) {
-  return crypto
-    .createHmac(
-      "sha256",
-      process.env.SIGNAL_SECRET_KEY
-    )
-    .update(userId)
-    .digest("hex");
-}`;
+const serverJsCode = `// Keep license key and signing secret on your server.
+// Your backend creates the signed request, then calls:
+POST /api/v1/editor-sessions`;
 
 export default function StepIntegrationSetup({
     onBack,
@@ -43,9 +35,7 @@ export default function StepIntegrationSetup({
 }) {
     return (
         <Card
-            style={{ width: "100%", borderTop: "3px solid #20A6CE", }}
-            styles={{ body: { padding: 24 } }}
-        >
+            style={{ width: "100%", borderTop: "3px solid #20A6CE", }}>
             <Text
                 strong
                 style={{
@@ -62,8 +52,7 @@ export default function StepIntegrationSetup({
             </Title>
 
             <Paragraph type="secondary">
-                Connect your frontend and backend to complete your
-                workspace setup.
+                Connect your frontend and backend to complete your workspace setup.
             </Paragraph>
 
             <Divider />
@@ -106,14 +95,13 @@ export default function StepIntegrationSetup({
 }
 
 function CodeBlock({ code }) {
+    const theme = useSelector((state) => state?.app?.theme);
     return (
         <Card
             size="small"
-            styles={{
-                body: {
-                    padding: 16,
-                },
-            }}
+           style={{
+            background: theme ? "#142b42" : "#F5F7FA",
+           }}
         >
             <pre
                 style={{
@@ -122,7 +110,7 @@ function CodeBlock({ code }) {
                     overflowX: "auto",
                 }}
             >
-                {code}
+               {code}
             </pre>
         </Card>
     );

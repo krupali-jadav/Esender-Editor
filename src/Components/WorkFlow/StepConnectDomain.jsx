@@ -7,26 +7,34 @@ import {
     Divider,
     Row,
     Alert,
+    message,
 } from "antd";
 
 import {
-    GlobalOutlined,
     InfoCircleOutlined,
-    WarningOutlined,
     ArrowRightOutlined,
+    CopyOutlined,
 } from "@ant-design/icons";
+import { useSelector } from "react-redux";
 
-const { Title, Text, Paragraph, Link } = Typography;
+const { Title, Text, Link } = Typography;
 
 export default function StepConnectDomain({
     onNext,
     onBack,
     onSkip,
+    publicProjectId = "prj_test_8823",
 }) {
+    const theme = useSelector((state) => state?.app?.theme);
+
+    const handleCopy = () => {
+        navigator.clipboard.writeText(publicProjectId);
+        message.success("Copied to clipboard");
+    };
+
     return (
         <Card
-            style={{ width: "100%" }}
-            styles={{ body: { padding: 24, borderTop: "3px solid #20A6CE", } }}
+            style={{ width: "100%", borderTop: "3px solid #20A6CE" }}
         >
             <Text
                 strong
@@ -43,20 +51,44 @@ export default function StepConnectDomain({
                 Connect your domain
             </Title>
 
-            <Paragraph type="secondary">
-                Link a custom hostname to your Signal Canvas environment.
-                This enables custom tracking links and branded editor access.
-            </Paragraph>
+            <Alert
+                type="warning"
+                showIcon
+                message="One-time credentials should be shown before this step. Require the user to copy the license key and signing secret before continuing."
+                style={{ marginBottom: 20 }}
+            />
+
+            <div
+                style={{
+                    background: theme ? "#142b42" : "#FAFAFA",
+                    borderRadius: 8,
+                    padding: "12px 16px",
+                    marginBottom: 20,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                }}
+            >
+                <div>
+                    <Text strong style={{ fontSize: 12, display: "block" }}>
+                        PUBLIC PROJECT ID
+                    </Text>
+                    <Text code style={{ background: "transparent" }}>
+                        {publicProjectId}
+                    </Text>
+                </div>
+
+                <Button icon={<CopyOutlined />} onClick={handleCopy}>
+                    Copy
+                </Button>
+            </div>
 
             <Text strong style={{ fontSize: 12 }}>
-                HOSTNAME
+                ALLOWED DOMAIN
             </Text>
 
             <Input
-                prefix={
-                    <GlobalOutlined style={{ color: "#98A2B3" }} />
-                }
-                placeholder="app.example.com"
+                placeholder="localhost:3000"
                 style={{
                     marginTop: 6,
                     marginBottom: 16,
@@ -67,26 +99,37 @@ export default function StepConnectDomain({
                 type="info"
                 showIcon
                 icon={<InfoCircleOutlined />}
-                message="Wildcard Domains Supported"
-                description={
+                message={
                     <>
-                        You can use a wildcard, for example{" "}
-                        <Text code>*.example.com</Text> to route all
-                        subdomains automatically. SSL certificates will be
-                        provisioned via Let&apos;s Encrypt.
+                        Wildcards are supported. Use{" "}
+                        <Text code>*.example.com</Text> for subdomains, or
+                        add a local host during test setup.
                     </>
                 }
-                style={{ marginBottom: 12 }}
-            />
-
-            <Alert
-                type="warning"
-                showIcon
-                icon={<WarningOutlined />}
-                message="Live Project Requirements"
-                description="For production environments, ensure your DNS provider supports CNAME flattening or ALIAS records if mapping a root domain."
                 style={{ marginBottom: 20 }}
             />
+
+            <div
+                style={{
+                    // background: "#F5F7FA",
+                    borderRadius: 8,
+                    padding: "10px 16px",
+                    marginBottom: 20,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 24,
+                }}
+            >
+                <Text
+                    strong
+                    style={{ color: "#20A6CE", fontSize: 12, minWidth: 40 }}
+                >
+                    PUT
+                </Text>
+                <Text code style={{ background: "transparent" }}>
+                    /api/projects/:projectId/domains
+                </Text>
+            </div>
 
             <Divider style={{ margin: "0 0 20px" }} />
 
@@ -104,7 +147,7 @@ export default function StepConnectDomain({
                         iconPosition="end"
                         onClick={onNext}
                     >
-                        Continue
+                        Next
                     </Button>
                 </Space>
             </Row>

@@ -170,7 +170,7 @@ const Profile = () => {
                     rules={[
                       {
                         required: true,
-                        message: t("please.enter.name", { defaultValue: "Please enter your name" }),
+                        message: t("please.enter.name", { defaultValue: "Please enter your Name" }),
                       },
                     ]}
                   >
@@ -255,7 +255,7 @@ const Profile = () => {
                 rules={[
                   {
                     required: true,
-                    message: t("please.enter.city", { defaultValue: "Please Enter City" }),
+                    message: t("please.enter.city", { defaultValue: "P" }),
                   },
                 ]}
               >

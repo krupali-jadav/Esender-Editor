@@ -52,15 +52,7 @@ export default function StepWorkspaceBasics({ onNext }) {
 
     return (
         <>
-            <div
-                style={{
-                    textAlign: "center",
-                    marginBottom: 24,
-                }}
-            >
-                <Title level={3} style={{ marginBottom: 4 }}>
-                    Signal Canvas
-                </Title>
+            <div style={{ textAlign: "center", marginBottom: 24, }}>
 
                 <Text type="secondary">
                     Let&apos;s set up your workspace.
@@ -150,7 +142,7 @@ export default function StepWorkspaceBasics({ onNext }) {
 
                 <Row justify="end">
                     <Button type="primary" onClick={onNext}>
-                        Continue to Step 2
+                        Next
                         <ArrowRightOutlined />
                     </Button>
                 </Row>

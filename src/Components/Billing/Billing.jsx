@@ -10,21 +10,12 @@ import {
     Tag,
     Table,
 } from "antd";
-import {
-    CreditCardOutlined,
-    WarningOutlined,
-    CheckCircleOutlined,
-    FilePdfOutlined,
-} from "@ant-design/icons";
+import {CreditCardOutlined, WarningOutlined, CheckCircleOutlined, FilePdfOutlined,} from "@ant-design/icons";
 import { PageContainer } from "@ant-design/pro-components";
 import { useSelector } from "react-redux";
 import AppPageHeader from "../Styles/AppHeader";
 
 const { Title, Text, Link, Paragraph } = Typography;
-
-// ---------------------------------------------------------------------------
-// Static data — replace with real data from your API layer
-// ---------------------------------------------------------------------------
 
 const proFeatures = ["20 Workspace Users", "50 Projects", "Standard Support"];
 const businessFeatures = [
@@ -88,7 +79,7 @@ export default function Billing() {
             />
             <Space direction="vertical" size={16} style={{ width: "100%" }}>
                 {/* Current Subscription + Usage Quotas */}
-                <Row gutter={16}>
+                <Row gutter={[16, 16]}>
                     <Col xs={24} lg={8}>
                         <Card style={{ height: "100%" }}>
                             <Space
@@ -181,19 +172,12 @@ export default function Billing() {
                     }}
                 >
                     {/* Section Header */}
-                    <div
-                        style={{
-                            textAlign: "center",
-                            marginBottom: 24,
-                        }}
-                    >
+                    <div style={{ textAlign: "center", marginBottom: 24,}}>
                         <Title level={3} >
                             Available Plans
                         </Title>
 
-                        <Paragraph
-                            type="secondary"
-                        >
+                        <Paragraph type="secondary">
                             Upgrade to unlock more features and higher limits.
                         </Paragraph>
                     </div>
@@ -215,27 +199,11 @@ export default function Billing() {
                                     direction="vertical"
                                     size={4}
                                 >
-                                    <Tag
-                                        style={{
-                                            width: "fit-content",
-                                            margin: 0,
-                                            background: "#262626",
-                                            color: "#fff",
-                                            border: "none",
-                                            borderRadius: 16,
-                                            padding: "2px 12px",
-                                            fontWeight: 600,
-                                        }}
-                                    >
+                                    <Tag style={{ color: theme ? "#20A6CE" : "#4797af", }}>
                                         Current Plan
                                     </Tag>
 
-                                    <Title
-                                        level={2}
-                                        style={{
-                                            margin: "12px 0 0",
-                                        }}
-                                    >
+                                    <Title level={2} style={{ margin: "12px 0 0" }}>
                                         Pro
                                     </Title>
 
@@ -295,12 +263,7 @@ export default function Billing() {
                                     direction="vertical"
                                     size={4}
                                 >
-                                    <Title
-                                        level={2}
-                                        style={{
-                                            margin: 0,
-                                        }}
-                                    >
+                                    <Title level={2} style={{ margin: 0, }}>
                                         Business
                                     </Title>
 
@@ -323,11 +286,7 @@ export default function Billing() {
                                 >
                                     {businessFeatures.map((feature) => (
                                         <Space key={feature} size={10}>
-                                            <CheckCircleOutlined
-                                                style={{
-                                                    color: "#20A6CE",
-                                                }}
-                                            />
+                                            <CheckCircleOutlined style={{ color: "#20A6CE" }} />
                                             <Text strong>
                                                 {feature}
                                             </Text>
@@ -368,6 +327,7 @@ export default function Billing() {
                     columns={invoiceColumns}
                     dataSource={invoices}
                     pagination={false}
+                    scroll={{ x: "max-content" }}
                     components={{
                         header: {
                             cell: (props) => (

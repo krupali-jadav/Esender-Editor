@@ -1,4 +1,3 @@
-import React, { useState } from 'react'
 import {
     Typography,
     Button,
@@ -8,7 +7,6 @@ import {
     Avatar,
     Tag,
     Space,
-    Pagination,
     Card,
     Flex,
 } from 'antd'
@@ -25,8 +23,7 @@ import {
 import AppPageHeader from '../Styles/AppHeader'
 import { useSelector } from 'react-redux'
 
-const { Title, Text, Paragraph } = Typography
-const { Option } = Select
+const { Text } = Typography
 
 const iconWrapperStyle = (bg, color) => ({
     width: 32,
@@ -107,7 +104,6 @@ const data = [
 ]
 
 function Auditlog() {
-    const [currentPage, setCurrentPage] = useState(1)
     const theme = useSelector((state) => state?.app?.theme);
 
     const columns = [

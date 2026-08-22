@@ -163,7 +163,7 @@ export default function Usage() {
                 </Row>
 
                 {/* Session trend + Resource alerts */}
-                <Row gutter={16} >
+                <Row gutter={[16,16]} >
                     <Col xs={24} lg={11}>
                         <Card
                             title="Session Trend"

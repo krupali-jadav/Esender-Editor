@@ -56,7 +56,7 @@ const columns = [
         key: 'type',
         width: 140,
         render: (type) => (
-            <Tag color={type === 'Wildcard' ? 'purple' : 'default'} variant={false}>
+            <Tag color={type === 'Wildcard' ? 'cyan' : 'default'} variant={false}>
                 {type}
             </Tag>
         ),
@@ -67,7 +67,7 @@ const columns = [
         key: 'type',
         width: 140,
         render: (type) => (
-            <Tag color={type === 'Wildcard' ? '#20A6CE' : 'default'} variant={false}>
+            <Tag color={type === 'Wildcard' ? 'cyan' : 'default'} variant={false}>
                 {type}
             </Tag>
         ),
@@ -78,7 +78,7 @@ const columns = [
         key: 'type',
         width: 140,
         render: (type) => (
-            <Tag color={type === 'Wildcard' ? 'purple' : 'default'} variant={false}>
+            <Tag color={type === 'Wildcard' ? 'cyan' : 'default'} variant={false}>
                 {type}
             </Tag>
         ),
