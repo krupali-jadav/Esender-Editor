@@ -23,6 +23,8 @@ import Billing from "./Components/Billing/Billing";
 import WorkFlow from "./Components/WorkFlow/WorkFlow";
 import CreateTemplates from "./Components/Templates/CreateTemplate";
 import Setting from "./Components/Setting/Setting";
+import Sessions from "./Components/Session/Session";
+import SelectProject from "./Components/SelectProject/SelectProject";
 
 
 const ProtectedRoute = ({ component: Component }) => {
@@ -51,11 +53,11 @@ function App() {
     { path: "/templates", component: Templates },
     { path: "/templates/create-template", component: CreateTemplates },
     { path: "/profile", component: Profile },
+    { path: "/sessions", component: Sessions },
     { path: "/projects", component: Projects },
     { path: "/usage", component: Usage },
     { path: "/developers", component: Developers },
     { path: "/billing", component: Billing },
-    { path: "/workflow", component: WorkFlow },
     { path: "/settings", component: Setting },
   ];
 
@@ -68,6 +70,11 @@ function App() {
         <Routes>
           {/* Login */}
           <Route path="/login" element={<Login />} />
+          <Route
+            path="/select-project"
+            element={<SelectProject />}
+          />
+          <Route path="/workflow" element={<WorkFlow />} />
 
           {/* Application Routes */}
           {routes.map((route) => (

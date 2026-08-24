@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import {
     Row,
     Col,
@@ -19,7 +19,6 @@ import {
     MoreOutlined,
     SafetyCertificateOutlined,
     PlusOutlined,
-    LoadingOutlined,
 } from '@ant-design/icons'
 import { useSelector } from 'react-redux'
 import AddDomain from './AddDomain'
@@ -27,7 +26,7 @@ import AddDomain from './AddDomain'
 const { Title, Text, Paragraph } = Typography
 
 const DOMAIN_DATA = [
-    { key: '1', domain: 'app.acme.com', domain: 'app.acme.com', type: 'Exact' },
+    { key: '1', domain: 'app.acme.com', type: 'Exact' },
     { key: '2', domain: '*.acme.com', type: 'Wildcard' },
     { key: '3', domain: 'localhost:3000', type: 'Exact' },
 ]
@@ -57,7 +56,7 @@ const columns = [
         key: 'type',
         width: 140,
         render: (type) => (
-            <Tag color={type === 'Wildcard' ? 'cyan' : 'default'} variant={false}>
+            <Tag color={type === 'Wildcard' ? 'cyan' : 'default'} bordered={false}>
                 {type}
             </Tag>
         ),
@@ -68,7 +67,7 @@ const columns = [
         key: 'type',
         width: 140,
         render: (type) => (
-            <Tag color={type === 'Wildcard' ? 'cyan' : 'default'} variant={false}>
+            <Tag color={type === 'Wildcard' ? 'cyan' : 'default'} bordered={false}>
                 {type}
             </Tag>
         ),
@@ -79,7 +78,7 @@ const columns = [
         key: 'type',
         width: 140,
         render: (type) => (
-            <Tag color={type === 'Wildcard' ? 'cyan' : 'default'} variant={false}>
+            <Tag color={type === 'Wildcard' ? 'cyan' : 'default'} bordered={false}>
                 {type}
             </Tag>
         ),

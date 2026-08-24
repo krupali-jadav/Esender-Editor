@@ -11,6 +11,7 @@ import { setUserDetails } from "./Redux/Reducer/Reducer.user";
 import { useDispatch } from "react-redux";
 import PhoneInput from "antd-phone-input";
 import { t } from "i18next";
+import { listProjects } from "./SelectProject/SelectProjectApi";
 
 
 const { Text } = Typography;
@@ -55,75 +56,82 @@ function Login() {
             setPhone("");
         }
     };
-    const onSendOtp = () => {
-        setLoading(true);
-        setTick(30);
-        setResend(false);
-        setOtp("");
+    const onSendOtp = async () => {
+        try {
+            setLoading(true);
+            setTick(30);
+            setResend(false);
+            setOtp("");
 
-        // Static OTP flow - no API call.
-        setTimeout(() => {
-            setIsLoginPage(false);
+            const { data } = await axiosInstance.post("auth/send-otp", {
+                auth_type: "phone",
+                phone: phone,
+            });
+
+            if (data.status) {
+                setIsLoginPage(false);
+                message.success(data.message);
+                dispatch(setUserDetails(data));
+            } else {
+                message.error(data.message);
+            }
+        } catch (error) {
+            message.error(error?.response?.data?.message || error.message);
+        } finally {
             setLoading(false);
-        }, 500);
+        }
     };
+    const onOtpVerify = async () => {
+        try {
+            setLoading(true);
 
-    const onOtpVerify = () => {
-        setLoading(true);
+            const { data } = await axiosInstance.post(
+                "auth/verify-otp",
+                {
+                    auth_type: "phone",
+                    phone: phone,
+                    otp: otp,
+                }
+            );
 
-        setTimeout(() => {
+            if (data.status) {
+                message.success(
+                    data.message || "Login Successfully"
+                );
+
+                dispatch(setUserDetails(data));
+
+                // Get user's projects after successful login
+                const projectResponse = await listProjects();
+
+                const projectList =
+                    projectResponse?.projects || [];
+
+                if (
+                    Array.isArray(projectList) &&
+                    projectList.length > 0
+                ) {
+                    // User already has project(s)
+                    navigate("/select-project");
+                } else {
+                    // User doesn't have any project
+                    navigate("/workflow");
+                }
+            } else {
+                message.error(data.message);
+            }
+        } catch (error) {
+            console.error("LOGIN ERROR:", error);
+
+            message.error(
+                error?.response?.data?.message ||
+                error?.message ||
+                "Login failed"
+            );
+        } finally {
             setLoading(false);
-            navigate("/overview");
-        }, 500);
+        }
     };
-    // const onSendOtp = async () => {
-    //     try {
-    //         setLoading(true);
-    //         setTick(30);
-    //         setResend(false);
-    //         setOtp("");
-
-    //         const { data } = await axiosInstance.post("auth/send-otp", {
-    //             auth_type: "phone",
-    //             phone: phone,
-    //         });
-
-    //         if (data.status) {
-    //             setIsLoginPage(false);
-    //             message.success(data.message);
-    //             dispatch(setUserDetails(data));
-    //         } else {
-    //             message.error(data.message);
-    //         }
-    //     } catch (error) {
-    //         message.error(error?.response?.data?.message || error.message);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-    // const onOtpVerify = async () => {
-    //     try {
-    //         setLoading(true);
-    //         const { data } = await axiosInstance.post("auth/verify-otp", {
-    //             auth_type: "phone",
-    //             phone: phone,
-    //             otp: otp,
-    //         });
-    //         if (data.status) {
-    //             message.success(
-    //                 (data.message || "Login Successfully"),
-    //             );
-    //             dispatch(setUserDetails(data));
-    //             navigate("/dashboard");
-    //         } else {
-    //             message.error(data.message);
-    //         }
-    //     } catch (error) {
-    //         message.error(error);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
 
 
     return (

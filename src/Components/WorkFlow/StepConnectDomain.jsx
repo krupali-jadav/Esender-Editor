@@ -12,30 +12,94 @@ import {
 
 import {
     InfoCircleOutlined,
-    ArrowRightOutlined,
     CopyOutlined,
 } from "@ant-design/icons";
+
 import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { getProject, updateProjectDomains } from "./WorkFlowApi";
 
 const { Title, Text, Link } = Typography;
 
 export default function StepConnectDomain({
-    onNext,
     onBack,
-    onSkip,
-    publicProjectId = "prj_test_8823",
+    onComplete,
+    projectId,
 }) {
     const theme = useSelector((state) => state?.app?.theme);
+
+    const [domain, setDomain] = useState("");
+    const [publicProjectId, setPublicProjectId] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const handleCopy = () => {
         navigator.clipboard.writeText(publicProjectId);
         message.success("Copied to clipboard");
     };
+    useEffect(() => {
+        const fetchProject = async () => {
+            if (!projectId) return;
+
+            try {
+                console.log("GET PROJECT USING ID:", projectId);
+
+                const data = await getProject(projectId);
+
+                console.log("GET PROJECT RESPONSE:", data);
+
+                if (data?.status) {
+                    setPublicProjectId(
+                        data?.project?.publicProjectId || ""
+                    );
+                } else {
+                    message.error(
+                        data?.message || "Failed to get project"
+                    );
+                }
+            } catch (error) {
+                console.error("GET PROJECT ERROR:", error);
+
+                message.error(
+                    error?.response?.data?.message ||
+                    error?.message ||
+                    "Failed to fetch project details"
+                );
+            }
+        };
+
+        fetchProject();
+    }, [projectId]);
+    const handleComplete = async () => {
+        if (!domain.trim()) {
+            message.warning("Please enter a domain");
+            return;
+        }
+
+        try {
+            setLoading(true);
+
+            const payload = {
+                allowedDomains: [domain.trim()],
+            };
+
+            const data = await updateProjectDomains(projectId, payload);
+
+            if (data?.status) {
+                message.success(
+                    data?.message || "Domain connected successfully"
+                );
+
+                onComplete();
+            }
+        } catch (error) {
+            console.error("DOMAIN UPDATE ERROR:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
-        <Card
-            style={{ width: "100%", borderTop: "3px solid #20A6CE" }}
-        >
+        <Card style={{ width: "100%", borderTop: "3px solid #20A6CE" }}>
             <Text
                 strong
                 style={{
@@ -54,7 +118,7 @@ export default function StepConnectDomain({
             <Alert
                 type="warning"
                 showIcon
-                message="One-time credentials should be shown before this step. Require the user to copy the license key and signing secret before continuing."
+                message="One-time credentials should be shown before this step."
                 style={{ marginBottom: 20 }}
             />
 
@@ -73,12 +137,16 @@ export default function StepConnectDomain({
                     <Text strong style={{ fontSize: 12, display: "block" }}>
                         PUBLIC PROJECT ID
                     </Text>
+
                     <Text code style={{ background: "transparent" }}>
-                        {publicProjectId}
+                        {publicProjectId || "Loading..."}
                     </Text>
                 </div>
 
-                <Button icon={<CopyOutlined />} onClick={handleCopy}>
+                <Button
+                    icon={<CopyOutlined />}
+                    onClick={handleCopy}
+                >
                     Copy
                 </Button>
             </div>
@@ -89,6 +157,8 @@ export default function StepConnectDomain({
 
             <Input
                 placeholder="localhost:3000"
+                value={domain}
+                onChange={(e) => setDomain(e.target.value)}
                 style={{
                     marginTop: 6,
                     marginBottom: 16,
@@ -102,34 +172,11 @@ export default function StepConnectDomain({
                 message={
                     <>
                         Wildcards are supported. Use{" "}
-                        <Text code>*.example.com</Text> for subdomains, or
-                        add a local host during test setup.
+                        <Text code>*.example.com</Text> for subdomains.
                     </>
                 }
                 style={{ marginBottom: 20 }}
             />
-
-            <div
-                style={{
-                    // background: "#F5F7FA",
-                    borderRadius: 8,
-                    padding: "10px 16px",
-                    marginBottom: 20,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 24,
-                }}
-            >
-                <Text
-                    strong
-                    style={{ color: "#20A6CE", fontSize: 12, minWidth: 40 }}
-                >
-                    PUT
-                </Text>
-                <Text code style={{ background: "transparent" }}>
-                    /api/projects/:projectId/domains
-                </Text>
-            </div>
 
             <Divider style={{ margin: "0 0 20px" }} />
 
@@ -137,17 +184,17 @@ export default function StepConnectDomain({
                 <Link onClick={onBack}>Back</Link>
 
                 <Space>
-                    <Link onClick={onSkip}>
+                    <Link onClick={onComplete}>
                         Skip for now
                     </Link>
 
                     <Button
                         type="primary"
-                        icon={<ArrowRightOutlined />}
-                        iconPosition="end"
-                        onClick={onNext}
+                        loading={loading}
+                        icon={<CopyOutlined />}
+                        onClick={handleComplete}
                     >
-                        Next
+                        Complete Setup
                     </Button>
                 </Space>
             </Row>
