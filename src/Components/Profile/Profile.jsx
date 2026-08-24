@@ -1,57 +1,73 @@
 
 import { useEffect, useState } from "react";
-import { Form, Row, Col, Input, Button, Avatar, Upload, Flex, Select, Card, } from "antd";
+import { Form, Row, Col, Input, Button, Avatar, Upload, Flex, Select, Card, message, } from "antd";
 import PhoneInput from "antd-phone-input";
 import { PageContainer } from "@ant-design/pro-components";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import countryList from "../../util/countryList.json";
 import { getMediaPath } from "../../util/getMediaPath";
 import { t } from "i18next";
 import AppPageHeader from "../Styles/AppHeader";
-import { getProfile } from "./ProfileApi";
-// import { saveProfile, uploadImage } from "./ProfileApi";
-// import { refreshProfile } from "../../Components/Redux/action";
-// import { AppCard, AppPageHeader } from "../../design-system";
-
+import { saveProfile } from "./ProfileApi";
+import { refreshProfile } from "../Redux/action";
 
 const Profile = () => {
-  //   const dispatch = useDispatch();
-
   const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const [phone, setPhone] = useState("");
   const [profileUrl, setProfileUrl] = useState("");
   //   const [isProfileUploading, setIsProfileUploading] = useState(false);
-
   const profile = useSelector((state) => state?.user?.profile);
-  const phoneCountry = useSelector(
-    (state) => state?.setting?.panel?.crm?.country?.toLowerCase() ?? "in"
-  );
+  const dispatch = useDispatch();
+  const phoneCountry = useSelector((state) => state?.setting?.panel?.crm?.country?.toLowerCase() ?? "in");
 
-  const fetchProfile = async () => {
+  useEffect(() => {
+    if (!profile) return;
+
+    setProfileUrl(profile.profile || "");
+    setPhone(profile.phone || "");
+
+    form.setFieldsValue({
+      name: profile.name || "",
+      email: profile.email || "",
+      addressLine1: profile.address?.addressLine1 || "",
+      addressLine2: profile.address?.addressLine2 || "",
+      city: profile.address?.city || "",
+      state: profile.address?.state || "",
+      zip: profile.address?.zip || "",
+      country: profile.address?.country || "",
+    });
+  }, [profile, form]);
+
+  useEffect(() => {
+    dispatch(refreshProfile());
+  }, [dispatch]);
+
+  const onProfileSave = async (values) => {
     try {
       setLoading(true);
 
-      const data = await getProfile();
+      const payload = {
+        name: values.name,
+        email: values.email,
+        profile: profileUrl,
+        address: {
+          addressLine1: values.addressLine1,
+          addressLine2: values.addressLine2,
+          city: values.city,
+          state: values.state,
+          zip: values.zip,
+          country: values.country,
+          type: "home",
+        },
+      };
+
+      const data = await saveProfile(payload);
 
       if (data?.status) {
-        const profileData = data?.data;
+        message.success(data?.message || "Profile saved successfully");
 
-        setProfileUrl(profileData?.profile || "");
-
-        setPhone(profileData?.phone || "");
-
-        form.setFieldsValue({
-          name: profileData?.name,
-          email: profileData?.email,
-          phone: profileData?.phone,
-          addressLine1: profileData?.address?.addressLine1,
-          addressLine2: profileData?.address?.addressLine2,
-          city: profileData?.address?.city,
-          state: profileData?.address?.state,
-          zip: profileData?.address?.zip,
-          country: profileData?.address?.country,
-        });
+        dispatch(refreshProfile());
       }
     } catch (error) {
       console.log(error);
@@ -60,89 +76,6 @@ const Profile = () => {
     }
   };
 
-  useEffect(() => {
-    if (!profile) return;
-
-    setProfileUrl(profile.profile || "");
-
-    form.setFieldsValue({
-      name: profile.name,
-      email: profile.email,
-      phone: profile.phone,
-      addressLine1: profile.address?.addressLine1,
-      addressLine2: profile.address?.addressLine2,
-      city: profile.address?.city,
-      state: profile.address?.state,
-      zip: profile.address?.zip,
-      country: profile.address?.country,
-    });
-
-    setPhone(profile.phone || "");
-  }, [profile]);
-
-  useEffect(() => {
-    console.log("🔥 Profile page loaded");
-    fetchProfile();
-  }, []);
-
-  //   const onProfileSave = async (values) => {
-  //     try {
-  //       setLoading(true);
-
-  //       const payload = {
-  //         name: values.name,
-  //         email: values.email,
-  //         profile: profileUrl,
-  //         address: {
-  //           addressLine1: values.addressLine1,
-  //           addressLine2: values.addressLine2,
-  //           city: values.city,
-  //           state: values.state,
-  //           zip: values.zip,
-  //           country: values.country,
-  //           type: "home",
-  //         }
-  //       };
-  //       const data = await saveProfile(payload);
-
-  //       if (data?.status) {
-  //         message.success(data.message);
-  //         dispatch(refreshProfile());
-  //       }
-  //     } catch (e) {
-  //       console.log(e);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   const imageUpload = async ({ file }) => {
-  //     const formData = new FormData();
-
-  //     formData.append("type", "image");
-  //     formData.append("file", file);
-
-  //     try {
-  //       setIsProfileUploading(true);
-
-  //       const data = await uploadImage(formData);
-
-  //       if (data?.status) {
-  //         message.success(data.message);
-
-  //         setProfileUrl(
-  //           data.downloadUrl ||
-  //           data.url ||
-  //           data.profile ||
-  //           ""
-  //         );
-  //       }
-  //     } catch (error) {
-  //       console.log(error);
-  //     } finally {
-  //       setIsProfileUploading(false);
-  //     }
-  //   };
   return (
     <PageContainer title={false} breadcrumb={false}>
       <AppPageHeader
@@ -159,7 +92,7 @@ const Profile = () => {
               form={form}
               layout="vertical"
               autoComplete="off"
-            //   onFinish={onProfileSave}
+              onFinish={onProfileSave}
             >
               <Row gutter={[14, 0]}>
 
@@ -221,10 +154,10 @@ const Profile = () => {
                         name="phone"
                       >
                         <PhoneInput
+                          key={`${phoneCountry}-${phone}`}
                           enableSearch
-                          country={phoneCountry}
-                          value={phone}
-                          // autoFormat={false}
+                          country={phoneCountry || "in"}
+                          value={phone || ""}
                           readOnly
                           disableDropdown
                         />
@@ -348,7 +281,7 @@ const Profile = () => {
                 <Button
                   type="primary"
                   htmlType="submit"
-                //   loading={loading}
+                  loading={loading}
                 >
                   {t("save", { defaultValue: "Save" })}
                 </Button>

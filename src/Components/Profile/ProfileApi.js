@@ -16,3 +16,30 @@ export const getProfile = async () => {
         message.error(error?.message || "Failed to get profile");
     }
 };
+
+export const saveProfile = async (payload) => {
+    try {
+        const response = await axiosInstance.post(
+            "auth/profile/save",
+            payload
+        );
+
+        if (response.data?.status) {
+            return response.data;
+        }
+
+        message.error(response.data?.message || "Failed to save profile");
+
+        return null;
+    } catch (error) {
+        console.log(error);
+
+        message.error(
+            error?.response?.data?.message ||
+            error?.message ||
+            "Failed to save profile"
+        );
+
+        return null;
+    }
+};

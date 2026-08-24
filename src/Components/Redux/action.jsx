@@ -1,6 +1,7 @@
 import axiosInstance from "../../util/axiosInstance";
-import {  setCurrencyRates, setPanel } from "../Redux/Reducer/reducer.app";
-import { removeUserDetails, } from "../Redux/Reducer/Reducer.user";
+import { getProfile } from "../Profile/ProfileApi";
+import { setCurrencyRates, setPanel } from "../Redux/Reducer/reducer.app";
+import { removeUserDetails, setProfile, } from "../Redux/Reducer/Reducer.user";
 // import { getProfile } from "../Components/Profile/ProfileApi";
 
 export function logout() {
@@ -47,13 +48,13 @@ export const getExchangeRates = () => {
 };
 
 export const refreshProfile = () => {
-  return async () => {
+  return async (dispatch) => {
     try {
-      // const data = await getProfile();
+      const data = await getProfile();
 
-      // if (data?.status) {
-      //   dispatch(setProfile(data.profile));
-      // }
+      if (data?.status) {
+        dispatch(setProfile(data.profile));
+      }
     } catch (error) {
       console.log(error);
     }
