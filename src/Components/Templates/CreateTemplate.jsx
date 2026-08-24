@@ -13,11 +13,12 @@ import {
 import {
     ArrowLeftOutlined,
 } from "@ant-design/icons";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Package from "esender-email-editor";
 import AppPageHeader from "../Styles/AppHeader";
 import { useSelector } from "react-redux";
+import { createTemplate } from "./TemplateApi";
 
 const { Text } = Typography;
 
@@ -25,32 +26,67 @@ function CreateTemplates() {
     const navigate = useNavigate();
     const editorRef = useRef(null);
     const [form] = Form.useForm();
+    const [loading, setLoading] = useState(false);
     const theme = useSelector((state) => state?.app?.theme);
 
-    const handleSubmit = (values) => {
-        const html = editorRef.current?.getHtml?.();
-        const text = values.text?.trim();
+    const handleSubmit = async (values) => {
+        try {
+            setLoading(true);
 
-        const hasHtml =
-            html &&
-            html.replace(/<[^>]*>/g, "").trim().length > 0;
+            const html = editorRef.current?.getHtml?.() || "";
+            const text = values.text?.trim() || "";
 
-        if (!hasHtml && !text) {
-            message.warning(
-                "Add email content or a plain text version before saving."
+            const hasHtml =
+                html &&
+                html.replace(/<[^>]*>/g, "").trim().length > 0;
+
+            if (!hasHtml && !text) {
+                message.warning(
+                    "Add email content or a plain text version before saving."
+                );
+                return;
+            }
+
+            const json = editorRef.current?.getJson?.() || {
+                body: {
+                    rows: [],
+                },
+            };
+
+            const payload = {
+                name: values.templateName,
+                subject: values.subject,
+                HTML: html,
+                text: text,
+                JSON: json,
+            };
+
+            console.log("CREATE TEMPLATE PAYLOAD:", payload);
+
+            const data = await createTemplate(payload);
+
+            console.log("CREATE TEMPLATE RESPONSE:", data);
+
+            if (data?.status) {
+                message.success(
+                    data?.message || "Template created successfully"
+                );
+
+                form.resetFields();
+
+                navigate("/templates");
+            }
+        } catch (error) {
+            console.log("CREATE TEMPLATE ERROR:", error);
+
+            message.error(
+                error?.response?.data?.message ||
+                error?.message ||
+                "Failed to create template"
             );
-            return;
+        } finally {
+            setLoading(false);
         }
-
-        // UI only
-        console.log("Template values:", {
-            name: values.templateName,
-            subject: values.subject,
-            text,
-            html,
-        });
-
-        message.success("Template saved successfully");
     };
 
     return (
@@ -125,6 +161,7 @@ function CreateTemplates() {
                                     <Button
                                         type="primary"
                                         htmlType="submit"
+                                        loading={loading}
                                         block
                                     >
                                         Create
