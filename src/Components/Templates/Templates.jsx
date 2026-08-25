@@ -1,5 +1,5 @@
 import { Row, Col, Card, Input, Button, Select, Segmented, Tag, Typography, Space, Empty, Flex, Spin, Switch, message, Modal, Pagination, } from "antd";
-import { SearchOutlined, PlusOutlined, FilterOutlined, ClockCircleOutlined, FolderOutlined, FileImageOutlined, DownOutlined, DeleteOutlined } from "@ant-design/icons";
+import { SearchOutlined, PlusOutlined, FilterOutlined, ClockCircleOutlined, FolderOutlined, FileImageOutlined, DownOutlined, DeleteOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
 import { PageContainer } from "@ant-design/pro-components";
 import AppPageHeader from "../Styles/AppHeader";
 import { t } from "i18next";
@@ -30,6 +30,7 @@ export default function Templates() {
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [statusLoading, setStatusLoading] = useState(null);
+    const [previewTemplate, setPreviewTemplate] = useState(null);
     const [totalTemplates, setTotalTemplates] = useState(0);
     const theme = useSelector((state) => state?.app?.theme);
     const debouncedSearch = useDebounce(search, 700);
@@ -146,12 +147,7 @@ export default function Templates() {
                     </Col>
 
                     <Col xs={24} lg={10}>
-                        <Flex
-                            gap={8}
-                            justify="end"
-                            wrap
-                        >
-
+                        <Flex gap={8} justify="end" wrap>
                             <Button
                                 type="primary"
                                 icon={<PlusOutlined />}
@@ -164,16 +160,8 @@ export default function Templates() {
                 </Row>
 
                 {/* Filters bar */}
-                <Card
-                    size="small"
-                    styles={{ body: { padding: "12px 16px" } }}
-                >
-                    <Flex
-                        gap={24}
-                        justify="space-between"
-                        align="center"
-                        wrap="wrap"
-                    >
+                <Card size="small" styles={{ body: { padding: "12px 16px" } }}>
+                    <Flex gap={24} justify="space-between" align="center" wrap="wrap" >
                         {/* Search */}
                         <Input
                             placeholder="Search templates..."
@@ -181,20 +169,11 @@ export default function Templates() {
                             allowClear
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            style={{
-                                flex: 1,
-                                width: "100%",
-                                maxWidth: 500,
-                                minWidth: 200,
-                            }}
+                            style={{ flex: 1, width: "100%", maxWidth: 500, minWidth: 200, }}
                         />
 
                         {/* Filters */}
-                        <Flex
-                            gap={16}
-                            justify="end"
-                            wrap="wrap"
-                        >
+                        <Flex gap={16} justify="end" wrap="wrap">
                             <Space size={8}>
                                 <Text type="secondary">Project:</Text>
 
@@ -223,7 +202,6 @@ export default function Templates() {
 
                             <Space size={8}>
                                 <Text type="secondary">Status:</Text>
-
                                 <Segmented
                                     defaultValue="All"
                                     options={["All", "Published", "Draft"]}
@@ -262,11 +240,7 @@ export default function Templates() {
                 <Row gutter={[16, 16]}>
                     {loading ? (
                         <Col span={24}>
-                            <Flex
-                                align="center"
-                                justify="center"
-                                style={{ height: "40vh" }}
-                            >
+                            <Flex align="center" justify="center" style={{ height: "40vh" }}>
                                 <Spin size="default" />
                             </Flex>
                         </Col>
@@ -276,7 +250,7 @@ export default function Templates() {
                             >
                                 <Card
                                     hoverable
-                                    styles={{ body: { padding: 16 } }}
+                                    styles={{ body: { padding: 16 } }}                                                                  
                                     cover={
                                         <div
                                             style={{
@@ -284,30 +258,80 @@ export default function Templates() {
                                                 height: 200,
                                                 background: "#dcdfe4",
                                                 borderBottom: "1px solid #f0f0f0",
-                                                display: "flex",
-                                                alignItems: "center",
-                                                justifyContent: "center",
+                                                overflow: "hidden",
                                             }}
-                                            onMouseEnter={() => setHoveredTemplate(tpl._id)} onMouseLeave={() => setHoveredTemplate(null)}
+                                            onMouseEnter={() => setHoveredTemplate(tpl._id)}
+                                            onMouseLeave={() => setHoveredTemplate(null)}
                                         >
-                                            <FileImageOutlined
-                                                style={{
-                                                    fontSize: 28,
-                                                    color: "#bfbfbf",
-                                                }}
-                                            />
+                                            {tpl.HTML?.trim() ? (
+                                                <iframe
+                                                    title={`template-${tpl._id}`}
+                                                    srcDoc={tpl.HTML}
+                                                    scrolling="no"
+                                                    style={{
+                                                        width: "100%",
+                                                        height: "100%",
+                                                        border: "none",
+                                                        pointerEvents: "none",
+                                                        background: "#fff",
+                                                    }}
+                                                />
+                                            ) : tpl.text?.trim() ? (
+                                                <Flex
+                                                    align="center"
+                                                    justify="center"
+                                                    style={{
+                                                        height: "100%",
+                                                        padding: 16,
+                                                    }}
+                                                >
+                                                    <Text type="secondary">
+                                                        {tpl.text}
+                                                    </Text>
+                                                </Flex>
+                                            ) : (
+                                                <Flex
+                                                    align="center"
+                                                    justify="center"
+                                                    style={{
+                                                        height: "100%",
+                                                    }}
+                                                >
+                                                    <FileImageOutlined
+                                                        style={{
+                                                            fontSize: 28,
+                                                            color: "#bfbfbf",
+                                                        }}
+                                                    />
+                                                </Flex>
+                                            )}
 
-                                            {/* Delete button - visible only on hover */}
+                                            {/* Delete button */}
                                             {hoveredTemplate === tpl._id && (
-                                                <Flex justify="center" align="center" gap={8}
+                                                <Flex justify="center" align="center" gap={10}
                                                     style={{
                                                         position: "absolute",
                                                         inset: 0,
-                                                        height: 200,
                                                         background: "rgba(0,0,0,0.4)",
                                                     }}
                                                 >
-                                                    {/* Delete */}
+                                                    <Button
+                                                        shape="circle"
+                                                        icon={<EyeOutlined />}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setPreviewTemplate(tpl);
+                                                        }}
+                                                    />
+                                                    <Button
+                                                        shape="circle"
+                                                        icon={<EditOutlined />}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            navigate(`/templates/edit-template/${tpl._id}`);
+                                                        }}
+                                                    />
+
                                                     <Button
                                                         danger
                                                         shape="circle"
@@ -322,19 +346,9 @@ export default function Templates() {
                                         </div>
                                     }
                                 >
-                                    <Space
-                                        style={{
-                                            width: "100%",
-                                            justifyContent: "space-between",
-                                        }}
-                                        align="start"
-                                    >
+                                    <Space style={{ width: "100%", justifyContent: "space-between", }} align="start">
                                         <Space>
-                                            <Text
-                                                strong
-                                                ellipsis
-                                                style={{ maxWidth: 130 }}
-                                            >
+                                            <Text strong ellipsis style={{ maxWidth: 130 }}>
                                                 {tpl.name}
                                             </Text>
                                         </Space>
@@ -348,7 +362,6 @@ export default function Templates() {
                                         <Space style={{ width: "100%", justifyContent: "space-between" }}>
                                             <Space size={4}>
                                                 <FolderOutlined style={{ color: "#8c8c8c" }} />
-
                                                 <Text type="secondary">
                                                     {tpl.project}
                                                 </Text>
@@ -356,16 +369,9 @@ export default function Templates() {
                                         </Space>
                                     </div>
 
-                                    <Row
-                                        justify="space-between"
-                                        align="middle"
-                                        style={{ marginTop: 16 }}
-                                    >
+                                    <Row justify="space-between" align="middle" style={{ marginTop: 16 }}>
                                         <Space size={4}>
-                                            <ClockCircleOutlined
-                                                style={{ color: "#8c8c8c" }}
-                                            />
-
+                                            <ClockCircleOutlined style={{ color: "#8c8c8c" }} />
                                             <Text type="secondary">
                                                 {formatDate(tpl.updatedAt)}
                                             </Text>
@@ -379,19 +385,9 @@ export default function Templates() {
                                                 onChange={(checked) =>
                                                     handleChangeStatus(tpl, checked)
                                                 }
-                                                style={{
-                                                    marginRight: 4,
-                                                    transform: "scale(0.85)",
-                                                }}
+                                                style={{ marginRight: 4, transform: "scale(0.85)", }}
                                             />
-                                            <Tag
-                                                variant="filled"
-                                                style={{
-                                                    background: theme
-                                                        ? "#0A1622"
-                                                        : "#F5F8FA",
-                                                }}
-                                            >
+                                            <Tag variant="filled" style={{ background: theme ? "#0A1622" : "#F5F8FA", }} >
                                                 {tpl.HTML?.trim() ? "HTML" : "TEXT"}
                                             </Tag>
                                         </Row>
@@ -422,9 +418,7 @@ export default function Templates() {
 
                 {!loading && templates.length > 0 && (
                     <Flex justify="space-between" align="center" style={{ marginTop: 16 }}>
-                        <strong>
-                            Total: {totalTemplates} templates
-                        </strong>
+                        <strong> Total: {totalTemplates} templates </strong>
                         <Pagination
                             current={currentPage}
                             pageSize={pageSize}
@@ -438,6 +432,40 @@ export default function Templates() {
                     </Flex>
                 )}
             </Space>
+
+            <Modal
+                open={!!previewTemplate}
+                onCancel={() => setPreviewTemplate(null)}
+                footer={null}
+                centered
+                width={500}
+                title={previewTemplate?.name}
+                styles={{ body: { padding: 0, height: "55vh", }, }}
+            >
+                {previewTemplate?.HTML?.trim() ? (
+                    <iframe
+                        title={`preview-${previewTemplate._id}`}
+                        srcDoc={previewTemplate.HTML}
+                        style={{ width: "100%", height: "55vh", border: "none", background: "#fff", }}
+                    />
+                ) : previewTemplate?.text?.trim() ? (
+                    <Flex
+                        align="center"
+                        justify="center"
+                        style={{ height: "75vh", padding: 24, }}
+                    >
+                        <Text>{previewTemplate.text}</Text>
+                    </Flex>
+                ) : (
+                    <Flex
+                        align="center"
+                        justify="center"
+                        style={{ height: "75vh", }}
+                    >
+                        <FileImageOutlined style={{ fontSize: 48, color: "#bfbfbf", }} />
+                    </Flex>
+                )}
+            </Modal>
 
         </PageContainer>
     );

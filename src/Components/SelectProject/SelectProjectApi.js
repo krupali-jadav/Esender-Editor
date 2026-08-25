@@ -26,3 +26,16 @@ export const listProjects = async () => {
         return null;
     }
 };
+
+export const getProjectById = async (projectId) => {
+    try {
+        const response = await axiosInstance.get(
+            `projects/${projectId}`
+        );
+
+        return response.data;
+    } catch (error) {
+        console.error("GET PROJECT BY ID ERROR:", error);
+        throw error;
+    }
+};

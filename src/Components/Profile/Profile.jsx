@@ -151,10 +151,11 @@ const Profile = () => {
                     <Col md={12} sm={12} xl={12} xs={24}>
                       <Form.Item
                         label={t("phone", { defaultValue: "Phone" })}
-                        name="phone"
+                        // name="phone"
                       >
                         <PhoneInput
-                          key={`${phoneCountry}-${phone}`}
+                          // key={`${phoneCountry}-${phone}`}
+                          key={phone}
                           enableSearch
                           country={phoneCountry || "in"}
                           value={phone || ""}

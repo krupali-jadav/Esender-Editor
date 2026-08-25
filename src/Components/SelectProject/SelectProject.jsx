@@ -3,8 +3,8 @@ import { Layout, Typography, Card, Tag, Space, ConfigProvider, theme as antdThem
 import { MoonOutlined, SunOutlined, RightOutlined, FolderOpenOutlined, CalendarOutlined, GlobalOutlined, PlusOutlined, } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { setPanel, setTheme } from "../Redux/Reducer/reducer.app";
-import { listProjects } from "./SelectProjectApi";
+import { setPanel, setTheme,setSelectedProject } from "../Redux/Reducer/reducer.app";
+import { getProjectById, listProjects } from "./SelectProjectApi";
 import { useNavigate } from "react-router-dom";
 import { formatDate } from "../../util/commom.utils";
 import lang from "../../util/lang/lang.json";
@@ -63,7 +63,7 @@ export default function SelectProject() {
                     : []
             );
         } catch (error) {
-            console.error("FETCH PROJECTS ERROR:", error);
+            console.error(error);
             message.error("Failed to load projects");
         } finally {
             setLoading(false);
@@ -71,7 +71,7 @@ export default function SelectProject() {
     };
 
     const handleProjectSelect = async (project) => {
-        const projectId = project?.id || project?._id;
+        const projectId = project?._id || project?.id;
 
         if (!projectId) {
             message.error("Project ID not found");
@@ -79,18 +79,37 @@ export default function SelectProject() {
         }
 
         try {
-            const response = await listProjects(projectId);
+            setLoading(true);
 
-            if (response?.status) {
-                message.success(
-                    response?.message ||
-                    "Project selected successfully"
+            const response = await getProjectById(projectId);
+
+            console.log("GET PROJECT RESPONSE:", response);
+
+            if (response?.status && response?.project) {
+                const selectedProject = response.project;
+
+                // Save selected project in Redux
+                dispatch(setSelectedProject(selectedProject));
+
+                // Save selected project for refresh
+                localStorage.setItem(
+                    "selectedProject",
+                    JSON.stringify(selectedProject)
                 );
+
+                message.success(response?.message ||"Project selected successfully");
 
                 navigate("/overview");
             }
         } catch (error) {
             console.error("GET PROJECT ERROR:", error);
+
+            message.error(
+                error?.response?.data?.message ||
+                "Failed to select project"
+            );
+        } finally {
+            setLoading(false);
         }
     };
 

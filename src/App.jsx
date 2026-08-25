@@ -28,11 +28,13 @@ import { refreshProfile } from "./Components/Redux/action";
 import Settings from "./Components/Settings/Settings";
 import Order from "./Components/Order/Order";
 
-const ProtectedRoute = ({ component: Component, isAuthenticated }) => {
+const ProtectedRoute = ({ component: Component, isAuthenticated,selectedProject }) => {
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
-
+    if (!selectedProject) {
+    return <Navigate to="/select-project" replace />;
+  }
   return (
     <ProLayouts>
       <Component />
@@ -46,6 +48,9 @@ function App() {
   const isAuthenticated = !!token;
   const darkMode = useSelector((state) => state?.app?.theme);
   const lang = useSelector((state) => state.app.lang);
+  const selectedProject = useSelector(
+    (state) => state?.app?.selectedProject
+  );
   const { i18n } = useTranslation();
 
   useEffect(() => {
@@ -67,6 +72,7 @@ function App() {
     { path: "/overview", component: Overview },
     { path: "/templates", component: Templates },
     { path: "/templates/create-template", component: CreateTemplates },
+    { path: "/templates/edit-template/:templateId?", component: CreateTemplates },
     { path: "/profile", component: Profile },
     { path: "/sessions", component: Sessions },
     { path: "/projects", component: Projects },
@@ -127,6 +133,7 @@ function App() {
                 <ProtectedRoute
                   component={route.component}
                   isAuthenticated={isAuthenticated}
+                  selectedProject={selectedProject}
                 />
               }
             />
@@ -137,7 +144,13 @@ function App() {
             path="/"
             element={
               <Navigate
-                to={isAuthenticated ? "/overview" : "/login"}
+                to={
+                  !isAuthenticated
+                    ? "/login"
+                    : selectedProject
+                      ? "/overview"
+                      : "/select-project"
+                }
                 replace
               />
             }
