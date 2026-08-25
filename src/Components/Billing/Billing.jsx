@@ -1,81 +1,46 @@
-import {
-    Row,
-    Col,
-    Card,
-    Badge,
-    Progress,
-    Typography,
-    Space,
-    Button,
-    Tag,
-    Table,
-} from "antd";
-import {CreditCardOutlined, WarningOutlined, CheckCircleOutlined, FilePdfOutlined,} from "@ant-design/icons";
+import { Row, Col, Card, Badge, Progress, Typography, Space, Button, Flex, Spin, Empty, } from "antd";
+import { CreditCardOutlined, WarningOutlined, CheckCircleFilled, CloseCircleFilled, } from "@ant-design/icons";
 import { PageContainer } from "@ant-design/pro-components";
 import { useSelector } from "react-redux";
 import AppPageHeader from "../Styles/AppHeader";
+import { t } from "i18next";
+import { useEffect, useState } from "react";
+import { getPlans } from "./PlanApi";
 
-const { Title, Text, Link, Paragraph } = Typography;
 
-const proFeatures = ["20 Workspace Users", "50 Projects", "Standard Support"];
-const businessFeatures = [
-    "Unlimited Workspace Users",
-    "Unlimited Projects",
-    "White-labeling",
-    "Priority 24/7 Support",
-];
-
-const invoices = [
-    {
-        key: "1",
-        id: "INV-2823-09",
-        date: "Sep 24, 2023",
-        amount: "$49.00",
-        status: "Paid",
-    },
-    {
-        key: "2",
-        id: "INV-2823-08",
-        date: "Aug 24, 2023",
-        amount: "$49.00",
-        status: "Paid",
-    },
-];
-
-const invoiceColumns = [
-    {
-        title: "Invoice ID",
-        dataIndex: "id",
-        key: "id",
-        render: (id) => <Text underline strong>{id}</Text>,
-    },
-    { title: "Date", dataIndex: "date", key: "date" },
-    { title: "Amount", dataIndex: "amount", key: "amount" },
-    {
-        title: "Status",
-        dataIndex: "status",
-        key: "status",
-        render: (status) => <Tag color="success">{status}</Tag>,
-    },
-    {
-        title: "Action",
-        key: "action",
-        align: "right",
-        render: () => (
-            <Link>
-                <FilePdfOutlined /> View PDF
-            </Link>
-        ),
-    },
-];
 
 export default function Billing() {
+    const { Title, Text, Paragraph } = Typography;
     const theme = useSelector((state) => state?.app?.theme);
+    const [plans, setPlans] = useState([]);
+    const [plansLoading, setPlansLoading] = useState(false);
+
+    const fetchPlans = async () => {
+        try {
+            setPlansLoading(true);
+            const response = await getPlans();
+
+            if (response?.status) {
+                setPlans(response?.plans || []);
+            } else {
+                setPlans([]);
+            }
+        } catch (error) {
+            console.error("FETCH PLANS ERROR:", error);
+            setPlans([]);
+        } finally {
+            setPlansLoading(false);
+        }
+    };
+    useEffect(() => {
+        fetchPlans();
+    }, []);
+
     return (
         <PageContainer title={false}>
             <AppPageHeader
-                title="Billing"
-                description="Manage your subscription, payment methods, and view your billing history."
+                title={t("billing.title", { defaultValue: "Billing" })}
+                description={t("billing.description", { defaultValue: "Manage your subscription, payment methods, and view your billing history." })}
             />
             <Space direction="vertical" size={16} style={{ width: "100%" }}>
                 {/* Current Subscription + Usage Quotas */}
@@ -87,39 +52,37 @@ export default function Billing() {
                                 align="start"
                             >
                                 <Title level={5} >
-                                    Current Subscription
+                                    {t("current.Subscription", { defaultValue: "Current Subscription" })}
                                 </Title>
                                 <Badge status="success" text="Active" />
                             </Space>
 
                             <Space direction="vertical" style={{ width: "100%" }} size={15}>
                                 <Row justify="space-between" >
-                                    <Text type="secondary">Plan</Text>
-                                    <Text strong>Pro Plan</Text>
+                                    <Text type="secondary">{t("plan", { defaultValue: "Plan" })}</Text>
+                                    <Text strong>{t("pro.Plan", { defaultValue: "Pro Plan" })}</Text>
                                 </Row>
                                 <Row justify="space-between" >
-                                    <Text type="secondary">Renewal Date</Text>
-                                    <Text strong>Oct 24, 2024</Text>
+                                    <Text type="secondary">{t("renewalDate", { defaultValue: "Renewal Date" })}</Text>
+                                    <Text strong>{t("renewal.Date", { defaultValue: "Oct 24, 2024" })}</Text>
                                 </Row>
                                 <Row justify="space-between" align="top">
-                                    <Text type="secondary">Payment Method</Text>
+                                    <Text type="secondary">{t("paymentMethod", { defaultValue: "Payment Method" })}</Text>
                                     <Space size={4}>
                                         <CreditCardOutlined />
-                                        <Text strong>Visa ending in 4242</Text>
+                                        <Text strong>{t("payment.method", { defaultValue: "Visa ending in 4242" })}</Text>
                                     </Space>
                                 </Row>
-                                <Button block >
-                                    Manage Billing
-                                </Button>
+                                <Button block >{t("manage.Billing", { defaultValue: "Manage Billing" })}</Button>
                             </Space>
                         </Card>
                     </Col>
 
                     <Col xs={24} lg={16}>
-                        <Card title="Usage Quotas" style={{ height: "100%" }}>
+                        <Card title={t("billing.usageQuotas", { defaultValue: "Usage Quotas" })} style={{ height: "100%" }}>
                             <Row gutter={32}>
                                 <Col span={12}>
-                                    <Text type="secondary">Total Workspace Users</Text>
+                                    <Text type="secondary">{t("billing.totalWorkspaceUsers", { defaultValue: "Total Workspace Users" })}</Text>
                                     <Row justify="space-between" align="bottom">
                                         <Title level={3} style={{ margin: "4px 0" }}>
                                             12 <Text type="secondary" >/ 20</Text>
@@ -131,14 +94,12 @@ export default function Billing() {
                                             showInfo={false}
                                             style={{ width: "85%" }}
                                         />
-                                        <Text type="secondary">
-                                            60%
-                                        </Text>
+                                        <Text type="secondary">{t("billing.percentage", { defaultValue: "60%" })}</Text>
                                     </Row>
                                 </Col>
 
                                 <Col span={12}>
-                                    <Text type="secondary">Total Project Count</Text>
+                                    <Text type="secondary">{t("billing.totalProjectCount", { defaultValue: "Total Project Count" })}</Text>
                                     <Row justify="space-between" align="bottom">
                                         <Title level={3} style={{ margin: "4px 0" }}>
                                             45 <Text type="secondary" >/ 50</Text>
@@ -152,11 +113,11 @@ export default function Billing() {
                                             style={{ width: "85%" }}
                                         />
                                         <Text type="secondary" >
-                                            90%
+                                            {t("billing.percentage", { defaultValue: "90%" })}
                                         </Text>
                                     </Row>
                                     <Text type="danger" style={{ fontSize: 12 }}>
-                                        <WarningOutlined /> Approaching limit
+                                        <WarningOutlined /> {t("approaching.Limit", { defaultValue: "Approaching limit" })}
                                     </Text>
                                 </Col>
                             </Row>
@@ -167,182 +128,296 @@ export default function Billing() {
                 {/* Available Plans */}
                 <Card
                     style={{
-                        marginBottom: 16,
-                        background: theme ? "#0f2435" : "#fff",
+                        marginBottom: 60,
+                        background: "transparent",
+                        border: "none",
+                        boxShadow: "none",
                     }}
+                    styles={{ body: { padding: 0, }, }}
                 >
-                    {/* Section Header */}
-                    <div style={{ textAlign: "center", marginBottom: 24,}}>
-                        <Title level={3} >
-                            Available Plans
+                    {/* Heading */}
+                    <div style={{ textAlign: "center", marginTop: 50, }}>
+                        <Title
+                            level={2}
+                            style={{
+                                margin: 0,
+                                color: theme ? "#FFFFFF" : "#1F2937",
+                                fontWeight: 700,
+                            }}
+                        >
+                            {t("available.Plans", { defaultValue: "Available Plans" })}
                         </Title>
 
-                        <Paragraph type="secondary">
-                            Upgrade to unlock more features and higher limits.
+                        <Paragraph
+                            style={{
+                                marginTop: 8,
+                                fontSize: 14,
+                                color: theme ? "#98A2B3" : "#667085",
+                            }}
+                        >
+                            {t("upgrade.To.Unlock.Features", { defaultValue: "Upgrade to unlock more features and higher limits." })}
                         </Paragraph>
                     </div>
 
-                    {/* Plans */}
-                    <Row gutter={[16, 16]}>
-                        {/* Pro Plan */}
-                        <Col xs={24} md={12}>
-                            <Card
-                                style={{
-                                    height: "100%",
-                                    background: theme ? "#10283a" : "#fff",
-                                    border: theme
-                                        ? "1px solid #1d3a4e"
-                                        : "1px solid #e6e6e6",
-                                }}
-                            >
-                                <Space
-                                    direction="vertical"
-                                    size={4}
-                                >
-                                    <Tag style={{ color: theme ? "#20A6CE" : "#4797af", }}>
-                                        Current Plan
-                                    </Tag>
-
-                                    <Title level={2} style={{ margin: "12px 0 0" }}>
-                                        Pro
-                                    </Title>
-
-                                    <Text type="secondary" style={{ fontSize: 16, fontWeight: 600, }}>
-                                        $49 <Text type="secondary">/mo</Text>
-                                    </Text>
-                                </Space>
-
-                                <Space
-                                    direction="vertical"
-                                    size={12}
+                    {plansLoading ? (
+                        <Flex
+                            justify="center"
+                            align="center"
+                            style={{ minHeight: 300 }}
+                        >
+                            <Spin size="middle" />
+                        </Flex>
+                    ) : plans.length === 0 ? (
+                        <Empty
+                            description={
+                                <span
                                     style={{
-                                        marginTop: 24,
-                                        width: "100%",
-                                        flex: 1,
+                                        color: theme ? "#98A2B3" : "#667085",
                                     }}
                                 >
-                                    {proFeatures.map((feature) => (
-                                        <Space key={feature} size={10}>
-                                            <CheckCircleOutlined
-                                            />
-                                            <Text type="secondary">
-                                                {feature}
-                                            </Text>
-                                        </Space>
-                                    ))}
-                                </Space>
+                                    {t("no.Plans.Available", { defaultValue: "No plans available" })}
+                                </span>
+                            }
+                        />
+                    ) : (
+                        <Row
+                            gutter={[32, 60]}
+                            justify="center"
+                        >
+                            {plans.map((plan, index) => {
+                                const isFree = plan.price === 0;
 
-                                <Button
-                                    block
-                                    size="large"
-                                    icon={<CreditCardOutlined />}
-                                    style={{
-                                        marginTop: 28,
-                                        borderRadius: 24,
-                                        fontWeight: 600,
-                                    }}
-                                >
-                                    Renew Plan
-                                </Button>
-                            </Card>
-                        </Col>
+                                const planColors = [
+                                    {
+                                        start: "#22C1DC",
+                                        end: "#1677FF",
+                                    },
+                                    {
+                                        start: "#14B8A6",
+                                        end: "#0F766E",
+                                    },
+                                    {
+                                        start: "#6366F1",
+                                        end: "#4338CA",
+                                    },
+                                    {
+                                        start: "#A855F7",
+                                        end: "#7C3AED",
+                                    },
+                                ];
+                                const color =
+                                    planColors[index % planColors.length];
 
-                        {/* Business Plan */}
-                        <Col xs={24} md={12}>
-                            <Card
-                                style={{
-                                    height: "100%",
-                                    background: theme ? "#0e1c29" : "#f5fcff",
-                                    border: theme
-                                        ? "1px solid #1d3a4e"
-                                        : "1px solid #d6eef5",
-                                }}
+                                const features = Object.entries(plan.features || {}).map(
+                                    ([key, enabled]) => ({
+                                        key,
+                                        label: key
+                                            .replace(/([A-Z])/g, " $1")
+                                            .replace(/^./, (char) => char.toUpperCase()),
+                                        enabled,
+                                    })
+                                );
 
-                            >
-                                <Space
-                                    direction="vertical"
-                                    size={4}
-                                >
-                                    <Title level={2} style={{ margin: 0, }}>
-                                        Business
-                                    </Title>
+                                return (
+                                    <Col xs={24} sm={12} md={8} lg={6} key={plan._id}>
+                                        <div
+                                            style={{
+                                                position: "relative",
+                                                paddingTop: 42,
+                                            }}
+                                        >
+                                            {/* PRICE CIRCLE */}
+                                            <div
+                                                style={{
+                                                    position: "absolute",
+                                                    top: 0,
+                                                    left: "50%",
+                                                    transform: "translateX(-50%)",
+                                                    zIndex: 3,
+                                                    width: 105,
+                                                    height: 105,
+                                                    borderRadius: "50%",
+                                                    background: `linear-gradient(135deg,${color.start},${color.end})`,
+                                                    display: "flex",
+                                                    flexDirection: "column",
+                                                    alignItems: "center",
+                                                    justifyContent: "center",
+                                                    /** Theme-aware border*/
+                                                    border: `8px solid ${theme ? "#0A101C" : "#EEF3FA"}`,
+                                                    boxShadow: theme
+                                                        ? "0 8px 25px rgba(0,0,0,0.45)"
+                                                        : "0 8px 25px rgba(30,50,80,0.15)",
+                                                }}
+                                            >
+                                                <div
+                                                    style={{
+                                                        display: "flex",
+                                                        alignItems: "flex-start",
+                                                        color: "#FFFFFF",
+                                                    }}
+                                                >
+                                                    <span style={{ fontSize: 14, marginTop: 4, }}>₹</span>
 
-                                    <Text style={{ fontSize: 18, fontWeight: 600, }}>
-                                        $199{" "}
-                                        <Text type="secondary">
-                                            /mo
-                                        </Text>
-                                    </Text>
-                                </Space>
+                                                    <span style={{ fontSize: 32, lineHeight: 1, fontWeight: 700, }}>
+                                                        {plan.price}
+                                                    </span>
+                                                </div>
 
-                                <Space
-                                    direction="vertical"
-                                    size={12}
-                                    style={{
-                                        marginTop: 24,
-                                        width: "100%",
-                                        flex: 1,
-                                    }}
-                                >
-                                    {businessFeatures.map((feature) => (
-                                        <Space key={feature} size={10}>
-                                            <CheckCircleOutlined style={{ color: "#20A6CE" }} />
-                                            <Text strong>
-                                                {feature}
-                                            </Text>
-                                        </Space>
-                                    ))}
-                                </Space>
+                                                <span
+                                                    style={{
+                                                        color: "rgba(255,255,255,0.9)",
+                                                        fontSize: 10,
+                                                    }}
+                                                >
+                                                    /{plan.billingInterval}
+                                                </span>
+                                            </div>
 
-                                <Button
-                                    type="primary"
-                                    block
-                                    size="large"
-                                    icon={<CheckCircleOutlined />}
-                                    style={{
-                                        marginTop: 28,
-                                        background: theme
-                                            ? "#17708b"
-                                            : "#4797af",
-                                        borderColor: theme
-                                            ? "#17708b"
-                                            : "#4797af",
-                                        borderRadius: 24,
-                                        fontWeight: 600,
-                                    }}
-                                >
-                                    Upgrade to Business
-                                </Button>
-                            </Card>
-                        </Col>
-                    </Row>
+                                            {/* MAIN CARD */}
+                                            <Card
+                                                bordered={false}
+                                                style={{
+                                                    height: 630,
+                                                    borderRadius: "14px 14px 18px 18px",
+                                                    background: theme
+                                                        ? "#152A3C"
+                                                        : "#FFFFFF",
+
+                                                    boxShadow: theme
+                                                        ? "0 12px 35px rgba(0,0,0,0.35)"
+                                                        : "0 12px 35px rgba(30,50,80,0.12)",
+
+                                                    overflow: "hidden",
+
+                                                    border: theme
+                                                        ? "1px solid rgba(255,255,255,0.08)"
+                                                        : "1px solid rgba(30,50,80,0.08)",
+                                                }}
+                                                styles={{
+                                                    body: {
+                                                        padding: "82px 28px 0",
+                                                        height: "100%",
+                                                        display: "flex",
+                                                        flexDirection: "column",
+                                                    },
+                                                }}
+                                            >
+                                                {/* PLAN NAME */}
+                                                <Title
+                                                    level={3}
+                                                    style={{
+                                                        textAlign: "center",
+                                                        margin: 0,
+                                                        color: theme
+                                                            ? "#FFFFFF"
+                                                            : "#1D2939",
+
+                                                        fontSize: 22,
+                                                        letterSpacing: 1,
+                                                        fontWeight: 700,
+                                                    }}
+                                                >
+                                                    {plan.name.toUpperCase()}
+                                                </Title>
+
+                                                {/* DIVIDER */}
+                                                <div
+                                                    style={{
+                                                        width: 70,
+                                                        height: 2,
+                                                        background: color.end,
+                                                        margin: "18px auto 20px",
+                                                    }}
+                                                />
+
+                                                {/* FEATURES */}
+                                                <div
+                                                    style={{
+                                                        display: "flex",
+                                                        flexDirection: "column",
+                                                        gap: 8,
+                                                        marginTop: 4,
+                                                    }}
+                                                >
+                                                    {features.map(({ key, label, enabled }) => (
+                                                        <div
+                                                            key={key}
+                                                            style={{
+                                                                display: "flex",
+                                                                alignItems: "center",
+                                                                gap: 8,
+                                                                minHeight: 20,
+                                                            }}
+                                                        >
+                                                            {enabled ? (
+                                                                <CheckCircleFilled
+                                                                    style={{
+                                                                        color: "#20A6CE",
+                                                                        fontSize: 16,
+                                                                        flexShrink: 0,
+                                                                    }}
+                                                                />
+                                                            ) : (
+                                                                <CloseCircleFilled
+                                                                    style={{
+                                                                        color: theme
+                                                                            ? "#667085"
+                                                                            : "#98A2B3",
+                                                                        fontSize: 16,
+                                                                        flexShrink: 0,
+                                                                    }}
+                                                                />
+                                                            )}
+
+                                                            <Text
+                                                                style={{
+                                                                    fontSize: 14,
+                                                                    lineHeight: "18px",
+                                                                    color: theme
+                                                                        ? "#D0D5DD"
+                                                                        : "#475467",
+                                                                }}
+                                                            >
+                                                                {label}
+                                                            </Text>
+                                                        </div>
+                                                    ))}
+                                                </div>
+
+                                                {/* BUTTON */}
+                                                <div style={{ marginTop: "20px" }}>
+                                                    <Button
+                                                        type="primary"
+                                                        block
+                                                        style={{
+                                                            height: 38,
+                                                            // marginBottom:18,
+                                                            border: "none",
+                                                            borderRadius: 8,
+                                                            background: `linear-gradient(90deg,${color.start},${color.end})`,
+                                                            fontSize: 12,
+                                                            fontWeight: 600,
+                                                            boxShadow: theme
+                                                                ? "0 5px 15px rgba(0,0,0,0.35)"
+                                                                : "0 5px 12px rgba(0,0,0,0.12)",
+                                                        }}
+                                                    >
+                                                        {isFree
+                                                            ? "CURRENT PLAN"
+                                                            : `CHOOSE ${plan.name.toUpperCase()}`}
+                                                    </Button>
+                                                </div>
+                                            </Card>
+                                        </div>
+                                    </Col>
+                                );
+                            })}
+                        </Row>
+                    )}
                 </Card>
+
             </Space>
 
-            {/* Invoice History */}
-            <Card title="Invoice History"
-                styles={{ body: { padding: 0 } }}
-            >
-                <Table
-                    columns={invoiceColumns}
-                    dataSource={invoices}
-                    pagination={false}
-                    scroll={{ x: "max-content" }}
-                    components={{
-                        header: {
-                            cell: (props) => (
-                                <th
-                                    {...props}
-                                    style={{
-                                        ...props.style,
-                                        background: theme ? "#0e1c29" : "#f0f0f0",
-                                    }}
-                                />
-                            ),
-                        },
-                    }}
-                />
-            </Card>
         </PageContainer>
     );
 }

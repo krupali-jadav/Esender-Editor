@@ -4,6 +4,7 @@ import {
     ConfigProvider,
     theme as antdTheme,
     Button,
+    Layout,
 } from "antd";
 import {
     MoonOutlined,
@@ -16,7 +17,10 @@ import StepWorkspaceBasics from "./StepWorkspaceBasics";
 import StepCreateProject from "./StepCreateProject";
 import StepConnectDomain from "./StepConnectDomain";
 
+const { Content } = Layout;
+
 const WIZARD_WIDTH = 900;
+const PRIMARY_COLOR = "#20A6CE";
 
 export default function WorkFlow() {
     const [step, setStep] = useState(0);
@@ -55,94 +59,137 @@ export default function WorkFlow() {
                     : antdTheme.defaultAlgorithm,
 
                 token: {
-                    colorPrimary: "#20A6CE",
+                    colorPrimary: PRIMARY_COLOR,
+
+                    // Background
                     colorBgBase: isDark
-                        ? "#0A101C"
-                        : "#F5F7FA",
+                        ? "#071923"
+                        : "#F0F9FC",
+
                     colorBgLayout: isDark
-                        ? "#0A101C"
-                        : "#F5F7FA",
+                        ? "#071923"
+                        : "#F0F9FC",
+
                     colorBgContainer: isDark
-                        ? "#152A3C"
+                        ? "#102A38"
                         : "#FFFFFF",
+
+                    borderRadius: 12,
+                },
+
+                
+                components: {
+                    Steps: {
+                        colorPrimary: PRIMARY_COLOR,
+                        colorText: isDark
+                            ? "#FFFFFF"
+                            : "#1F2937",
+                        colorTextDescription: isDark
+                            ? "#8FA6B3"
+                            : "#667085",
+                    },
+
+                    Button: {
+                        colorPrimary: PRIMARY_COLOR,
+                    },
                 },
             }}
         >
-            <div
+            <Layout
                 style={{
                     minHeight: "100vh",
-                    padding: "32px 24px",
                     background: isDark
-                        ? "#0A101C"
-                        : "#F5F7FA",
+                        ? "#071923"
+                        : "#F0F9FC",
                 }}
             >
-                {/* Theme Toggle */}
-                <div
+                <Content
                     style={{
-                        display: "flex",
-                        justifyContent: "flex-end",
-                        marginBottom: 16,
+                        minHeight: "100vh",
+                        padding: "32px 24px",
                     }}
                 >
-                    <Button
-                        shape="circle"
-                        icon={
-                            isDark ? (
-                                <MoonOutlined />
-                            ) : (
-                                <SunOutlined />
-                            )
-                        }
-                        onClick={() =>
-                            dispatch(setTheme(!isDark))
-                        }
-                    />
-                </div>
-
-                <div
-                    style={{
-                        width: "100%",
-                        maxWidth: WIZARD_WIDTH,
-                        margin: "0 auto",
-                    }}
-                >
-                    <div style={{ marginBottom: 24 }}>
-                        <Steps
-                            current={step}
-                            items={stepItems}
-                            responsive
+                    {/* Theme Toggle */}
+                    <div
+                        style={{
+                            display: "flex",
+                            justifyContent: "flex-end",
+                            marginBottom: 24,
+                        }}
+                    >
+                        <Button
+                            shape="circle"
+                            size="large"
+                            icon={
+                                isDark ? (
+                                    <MoonOutlined />
+                                ) : (
+                                    <SunOutlined />
+                                )
+                            }
+                            onClick={() =>
+                                dispatch(setTheme(!isDark))
+                            }
                         />
                     </div>
 
-                    {step === 0 && (
-                        <StepWorkspaceBasics
-                            onNext={next}
-                        />
-                    )}
-
-                    {step === 1 && (
-                        <StepCreateProject
-                            onNext={(projectId) => {
-                                setCreatedProjectId(projectId);
-                                next();
+                    {/* Wizard */}
+                    <div
+                        style={{
+                            width: "100%",
+                            maxWidth: WIZARD_WIDTH,
+                            margin: "0 auto",
+                        }}
+                    >
+                        {/* Steps */}
+                        <div
+                            style={{
+                                marginBottom: 32,
                             }}
-                            onBack={back}
-                        />
-                    )}
+                        >
+                            <Steps
+                                current={step}
+                                items={stepItems}
+                                responsive
+                            />
+                        </div>
 
-                    {step === 2 && (
-                        <StepConnectDomain
-                            projectId={createdProjectId}
-                            onBack={back}
-                            onComplete={() => {
-                                window.location.href =
-                                    "/overview";
-                            }}
-                        />
-                    )}
-                </div>
-            </div>
+                        {/* Step 1 */}
+                        {step === 0 && (
+                            <StepWorkspaceBasics
+                                onNext={next}
+                            />
+                        )}
+
+                        {/* Step 2 */}
+                        {step === 1 && (
+                            <StepCreateProject
+                                onNext={(projectId) => {
+                                    setCreatedProjectId(
+                                        projectId
+                                    );
+                                    next();
+                                }}
+                                onBack={back}
+                            />
+                        )}
+
+                        {/* Step 3 */}
+                        {step === 2 && (
+                            <StepConnectDomain
+                                projectId={
+                                    createdProjectId
+                                }
+                                onBack={back}
+                                onComplete={() => {
+                                    window.location.href =
+                                        "/overview";
+                                }}
+                            />
+                        )}
+                    </div>
+                </Content>
+            </Layout>
         </ConfigProvider>
     );
 }

@@ -22,12 +22,17 @@ import Developers from "./Components/Developers/Developers";
 import Billing from "./Components/Billing/Billing";
 import WorkFlow from "./Components/WorkFlow/WorkFlow";
 import CreateTemplates from "./Components/Templates/CreateTemplate";
-import Setting from "./Components/Setting/Setting";
 import Sessions from "./Components/Session/Session";
 import SelectProject from "./Components/SelectProject/SelectProject";
-import { getExchangeRates, refreshProfile } from "./Components/Redux/action";
+import { refreshProfile } from "./Components/Redux/action";
+import Settings from "./Components/Settings/Settings";
+import Order from "./Components/Order/Order";
 
-const ProtectedRoute = ({ component: Component }) => {
+const ProtectedRoute = ({ component: Component, isAuthenticated }) => {
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
   return (
     <ProLayouts>
       <Component />
@@ -65,10 +70,11 @@ function App() {
     { path: "/profile", component: Profile },
     { path: "/sessions", component: Sessions },
     { path: "/projects", component: Projects },
+    { path: "/orders", component: Order },
     { path: "/usage", component: Usage },
     { path: "/developers", component: Developers },
     { path: "/billing", component: Billing },
-    { path: "/settings", component: Setting },
+    { path: "/settings", component: Settings },
   ];
 
   return (
@@ -91,9 +97,25 @@ function App() {
           />
           <Route
             path="/select-project"
-            element={<SelectProject />}
+            element={
+              isAuthenticated ? (
+                <SelectProject />
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            }
           />
-          <Route path="/workflow" element={<WorkFlow />} />
+
+          <Route
+            path="/workflow"
+            element={
+              isAuthenticated ? (
+                <WorkFlow />
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            }
+          />
 
 
           {/* Application Routes */}
