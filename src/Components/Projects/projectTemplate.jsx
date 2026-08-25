@@ -1,14 +1,15 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
     Button,
     Card,
     Col,
-    ConfigProvider,
     Dropdown,
     Flex,
     Input,
+    Modal,
     Row,
     Space,
+    Spin,
     Tag,
     Typography,
 } from 'antd'
@@ -16,65 +17,66 @@ import {
 import {
     SearchOutlined,
     PlusOutlined,
-    MailOutlined,
-    NotificationOutlined,
     FileTextOutlined,
-    MoreOutlined,
-    EditOutlined,
+    EyeOutlined,
+    ClockCircleOutlined,
+    FolderOutlined,
 } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
-
+import { getAllTemplates } from "../Templates/TemplateApi";
+import EmptyState from '../Styles/EmptyState';
+import { useDebounce } from '../../util/useDebounce';
+import { useSelector } from 'react-redux';
+import { formatDate } from '../../util/commom.utils';
 const { Text } = Typography
 
-const TEMPLATE_DATA = [
-    {
-        key: '1',
-        name: 'Welcome Series - Introduction',
-        status: 'Published',
-        version: 'v2.1.8',
-        updated: '2h ago',
-        icon: <MailOutlined />,
-    },
-    {
-        key: '2',
-        name: 'Monthly Newsletter',
-        status: 'Draft',
-        version: 'v1.3.0',
-        updated: '1d ago',
-        icon: <NotificationOutlined />,
-    },
-    {
-        key: '3',
-        name: 'Order Confirmation',
-        status: 'Published',
-        version: 'v1.0.4',
-        updated: '2w ago',
-        icon: <FileTextOutlined />,
-    },
-    {
-        key: '4',
-        name: 'Order Confirmation',
-        status: 'Published',
-        version: 'v1.0.4',
-        updated: '2w ago',
-        icon: <FileTextOutlined />,
-    },
-    {
-        key: '5',
-        name: 'Order Confirmation',
-        status: 'Published',
-        version: 'v1.0.4',
-        updated: '2w ago',
-        icon: <FileTextOutlined />,
-    },
-]
+const statusColors = {
+    published: "success",
+    draft: "warning",
+    archived: "default",
+};
+
 
 function ProjectTemplate() {
     const navigate = useNavigate();
+    const [templates, setTemplates] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [hoveredTemplate, setHoveredTemplate] = useState(null);
+    const [previewTemplate, setPreviewTemplate] = useState(null);
+    const [search, setSearch] = useState("");
+    const debouncedSearch = useDebounce(search, 700);
+    const selectedProject = useSelector(
+        (state) => state?.app?.selectedProject
+    );
+    const theme = useSelector((state) => state?.app?.theme);
+    const projectId = selectedProject?._id;
 
-    const handleEdit = (template) => {
-        console.log('Edit template:', template)
-    }
+    const fetchTemplates = async (projectId) => {
+        if (!projectId) {
+            return;
+        }
+
+        try {
+            setLoading(true);
+            const payload = {
+                projectId: projectId,
+                search: debouncedSearch,
+            };
+
+            const response = await getAllTemplates(payload);
+
+            setTemplates(response?.templates || []);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (!projectId) return;
+        fetchTemplates(projectId);
+    }, [projectId, debouncedSearch]);
 
     return (
         <Flex vertical gap="middle" style={{ padding: 24 }}>
@@ -83,6 +85,8 @@ function ProjectTemplate() {
                 <Input
                     placeholder="Search templates..."
                     prefix={<SearchOutlined />}
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
                     style={{ width: 340 }}
                 />
 
@@ -94,104 +98,159 @@ function ProjectTemplate() {
 
             {/* Template Cards */}
             <Row gutter={[16, 16]}>
-                {TEMPLATE_DATA.map((template) => (
-                    <Col key={template.key} xs={22} sm={12} md={8} lg={8} xl={6}>
-                        <Card
-                            size="small"
-                            cover={
-                                <div
-                                    style={{
-                                        display: 'flex',
-                                        justifyContent: 'center',
-                                        alignItems: 'center',
-                                        height: 200,
-                                        background: '#dcdfe4',
-                                        fontSize: 24,
-                                        color: '#b6b9be',
-                                    }}
-                                >
-                                    {template.icon}
-                                </div>
-                            }
-                        >
-                            <Card.Meta
-                                title={
-                                    <Flex justify="space-between" align="center" gap="small">
-                                        <Text strong ellipsis style={{ maxWidth: '85%', }}>
+                {loading ? (
+                    <Col span={24}>
+                        <Flex justify="center" style={{ padding: 40 }}>
+                            <Spin />
+                        </Flex>
+                    </Col>
+                ) : templates.length === 0 ? (
+                    <Col span={24}>
+                        <EmptyState
+                            icon={<FileTextOutlined />}
+                            title="No templates found"
+                            description="There are no templates available for this project."
+                        />
+                    </Col>
+                ) : (
+                    templates.map((template) => (
+                        <Col key={template._id} xs={22} sm={12} md={8} lg={8} xl={6}>
+                            <Card size="small" hoverable
+                                cover={
+                                    <div
+                                        style={{
+                                            position: "relative",
+                                            height: 200,
+                                            background: "#dcdfe4",
+                                            borderBottom: "1px solid #f0f0f0",
+                                            overflow: "hidden",
+                                        }}
+                                        onMouseEnter={() => setHoveredTemplate(template._id)}
+                                        onMouseLeave={() => setHoveredTemplate(null)}
+                                    >
+                                        {/* Template HTML Preview */}
+                                        {template.HTML?.trim() ? (
+                                            <iframe
+                                                title={`template-${template._id}`}
+                                                srcDoc={template.HTML}
+                                                scrolling="no"
+                                                style={{
+                                                    width: "100%",
+                                                    height: "100%",
+                                                    border: "none",
+                                                    pointerEvents: "none",
+                                                    background: "#fff",
+                                                }}
+                                            />
+                                        ) : template.text?.trim() ? (
+                                            <Flex align="center" justify="center" style={{ height: "100%", padding: 16, }}>
+                                                <Text type="secondary">
+                                                    {template.text}
+                                                </Text>
+                                            </Flex>
+                                        ) : (
+                                            <Flex align="center" justify="center" style={{ height: "100%", }}>
+                                                <FileTextOutlined style={{ fontSize: 32, color: "#bfbfbf", }} />
+                                            </Flex>
+                                        )}
+
+                                        {/* Hover Eye */}
+                                        {hoveredTemplate === template._id && (
+                                            <Flex justify="center" align="center"
+                                                style={{
+                                                    position: "absolute",
+                                                    inset: 0,
+                                                    background: "rgba(0,0,0,0.4)",
+                                                }}
+                                            >
+                                                <Button
+                                                    shape="circle"
+                                                    icon={<EyeOutlined />}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setPreviewTemplate(template);
+                                                    }}
+                                                />
+                                            </Flex>
+                                        )}
+                                    </div>
+                                }
+                            >
+                                <Space style={{ width: "100%", justifyContent: "space-between", }} align="start">
+                                    <Space>
+                                        <Text strong ellipsis style={{ maxWidth: 130 }}>
                                             {template.name}
                                         </Text>
+                                    </Space>
 
-                                        <Dropdown
-                                            menu={{
-                                                items: [
-                                                    {
-                                                        key: 'edit',
-                                                        label: 'Edit',
-                                                        icon: <EditOutlined />,
-                                                        onClick: () =>
-                                                            handleEdit(template),
-                                                    },
-                                                    {
-                                                        key: 'delete',
-                                                        label: 'Delete',
-                                                        danger: true,
-                                                    },
-                                                ],
-                                            }}
-                                            trigger={['click']}
-                                        >
-                                            <MoreOutlined
-                                                onClick={(e) => e.stopPropagation()}
-                                                style={{ cursor: 'pointer', }}
-                                            />
-                                        </Dropdown>
-                                    </Flex>
-                                }
-                                description={
-                                    <Space size="small">
-                                        <Tag
-                                            bordered={false}
-                                            color={template.status === 'Published' ? 'success' : 'warning'}
-                                        >
-                                            {template.status}
-                                        </Tag>
+                                    <Tag color={statusColors[template.status]}>
+                                        {template.status}
+                                    </Tag>
+                                </Space>
 
-                                        <Text type="secondary" code>
-                                            {template.version}
+
+                                <div style={{ marginTop: 8 }}>
+                                    <Space style={{ width: "100%", justifyContent: "space-between" }}>
+                                        <Space size={4}>
+                                            <FolderOutlined style={{ color: "#8c8c8c" }} />
+                                            <Text type="secondary">
+                                                {template.project}
+                                            </Text>
+                                        </Space>
+                                    </Space>
+                                </div>
+
+                                <Row justify="space-between" align="middle" style={{ marginTop: 16 }}>
+                                    <Space size={4}>
+                                        <ClockCircleOutlined style={{ color: "#8c8c8c" }} />
+                                        <Text type="secondary">
+                                            {formatDate(template.updatedAt)}
                                         </Text>
                                     </Space>
-                                }
-                            />
 
-                            {/* Updated + Edit */}
-                            <Flex justify="space-between" align="center" style={{ marginTop: 12, }}>
-                                <Text type="secondary" style={{ fontSize: 13, }}>
-                                    Updated {template.updated}
-                                </Text>
+                                    <Row>
 
-                                <EditOutlined
-                                    onClick={() => handleEdit(template)}
-                                    style={{ color: '#aeb5c8', cursor: 'pointer', fontSize: 16, }}
-                                />
-                            </Flex>
-                        </Card>
-                    </Col>
-                ))}
-
-                {/* Create Blank Template */}
-                <Col xs={22} sm={12} md={8} lg={8} xl={6}>
-                    <Card
-                        hoverable
-                        variant="dashed"
-                        onClick={() => navigate("/templates/create-template")}
-                    >
-                        <Flex vertical justify="center" align="center" gap="small" style={{ minHeight: 250 }}>
-                            <Button shape="circle" icon={<PlusOutlined />} />
-                            <Text type="secondary">Create Blank Template</Text>
-                        </Flex>
-                    </Card>
-                </Col>
+                                        <Tag variant="filled" style={{ background: theme ? "#0A1622" : "#F5F8FA", }} >
+                                            {template.HTML?.trim() ? "HTML" : "TEXT"}
+                                        </Tag>
+                                    </Row>
+                                </Row>
+                            </Card>
+                        </Col>
+                    ))
+                )}
             </Row>
+
+            <Modal
+                open={!!previewTemplate}
+                onCancel={() => setPreviewTemplate(null)}
+                footer={null}
+                centered
+                width={500}
+                title={previewTemplate?.name}
+                styles={{ body: { padding: 0, height: "55vh", }, }}
+            >
+                {previewTemplate?.HTML?.trim() ? (
+                    <iframe
+                        title={`preview-${previewTemplate._id}`}
+                        srcDoc={previewTemplate.HTML}
+                        style={{
+                            width: "100%",
+                            height: "55vh",
+                            border: "none",
+                            background: "#fff",
+                        }}
+                    />
+                ) : previewTemplate?.text?.trim() ? (
+                    <Flex align="center" justify="center" style={{ height: "55vh", padding: 24, }}>
+                        <Text>{previewTemplate.text}</Text>
+                    </Flex>
+                ) : (
+                    <Flex align="center" justify="center" style={{ height: "70vh", }}>
+                        <FileTextOutlined style={{ fontSize: 48, color: "#bfbfbf", }} />
+                    </Flex>
+                )}
+            </Modal>
         </Flex>
     )
 }

@@ -49,6 +49,32 @@ export const changeTemplateStatus = async (templateId, enable) => {
         return response.data;
     } catch (error) {
         console.log(error);
+    }
+};
+
+export const updateTemplate = async (payload) => {
+    try {
+        const response = await axiosInstance.post(
+            "templates/save",
+            payload
+        );
+
+        return response.data;
+    } catch (error) {
+        console.log("UPDATE TEMPLATE ERROR:", error);
+        throw error;
+    }
+};
+
+export const getTemplateById = async (templateId) => {
+    try {
+        const response = await axiosInstance.get(
+            `templates/${templateId}`
+        );
+
+        return response.data;
+    } catch (error) {
+        console.log("GET TEMPLATE ERROR:", error);
         throw error;
     }
 };

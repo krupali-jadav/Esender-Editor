@@ -7,18 +7,19 @@ import {
     Input,
     Row,
     Space,
+    Spin,
     Typography,
     message,
 } from "antd";
 import {
     ArrowLeftOutlined,
 } from "@ant-design/icons";
-import { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import Package from "esender-email-editor";
 import AppPageHeader from "../Styles/AppHeader";
 import { useSelector } from "react-redux";
-import { createTemplate } from "./TemplateApi";
+import { createTemplate, getTemplateById, updateTemplate } from "./TemplateApi";
 
 const { Text } = Typography;
 
@@ -27,30 +28,91 @@ function CreateTemplates() {
     const editorRef = useRef(null);
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
+    const [templateData, setTemplateData] = useState(null);
+    const { templateId } = useParams();
+    const [editorLoading, setEditorLoading] = useState(!!templateId);
     const theme = useSelector((state) => state?.app?.theme);
+    const selectedProject = useSelector(
+        (state) => state?.app?.selectedProject
+    );
+
+    const projectId = selectedProject?._id;
+
+    const fetchTemplate = async () => {
+        try {
+            setEditorLoading(true);
+
+            const data = await getTemplateById(templateId);
+
+            if (data?.status) {
+                setTemplateData(data.template);
+            } else {
+                message.error(data?.message || "Failed to load template");
+            }
+        } catch (error) {
+            console.log(error);
+            message.error(error?.message ||
+                "Failed to load template"
+            );
+        } finally {
+            setEditorLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        if (templateId) {
+            fetchTemplate();
+        }
+    }, [templateId]);
+
+    useEffect(() => {
+        if (!templateData) return;
+
+        form.setFieldsValue({
+            templateName: templateData.name,
+            subject: templateData.subject || "",
+            text: templateData.text || "",
+
+        });
+    }, [templateData, form]);
+
+    useEffect(() => {
+        if (!templateData?.JSON) return;
+        if (!editorRef.current?.loadJson) return;
+
+        const timer = setTimeout(() => {
+            try {
+                const json =
+                    typeof templateData.JSON === "string"
+                        ? JSON.parse(templateData.JSON)
+                        : templateData.JSON;
+
+                editorRef.current.loadJson(json, false);
+
+            } catch (error) {
+                console.error(error);
+            }
+        }, 500);
+
+        return () => clearTimeout(timer);
+    }, [templateData]);
 
     const handleSubmit = async (values) => {
+        console.log("FORM SUBMIT CALLED:", values);
         try {
             setLoading(true);
 
-            const html = editorRef.current?.getHtml?.() || "";
+            const html = editorRef.current?.getHtml?.()?.trim() || "";
             const text = values.text?.trim() || "";
+            const hasHtmlContent = html && html.replace(/<[^>]*>/g, "").trim().length > 0;
 
-            const hasHtml =
-                html &&
-                html.replace(/<[^>]*>/g, "").trim().length > 0;
-
-            if (!hasHtml && !text) {
-                message.warning(
-                    "Add email content or a plain text version before saving."
-                );
+            if (!hasHtmlContent && !text) {
+                message.warning("Add email content or a plain text version before saving.");
                 return;
             }
 
             const json = editorRef.current?.getJson?.() || {
-                body: {
-                    rows: [],
-                },
+                body: { rows: [], },
             };
 
             const payload = {
@@ -61,29 +123,34 @@ function CreateTemplates() {
                 JSON: json,
             };
 
-            console.log("CREATE TEMPLATE PAYLOAD:", payload);
+            let data;
 
-            const data = await createTemplate(payload);
+            // edit
+            if (templateId) {
+                data = await updateTemplate({
+                    id: templateId,
+                    ...payload,
+                });
+            }
 
-            console.log("CREATE TEMPLATE RESPONSE:", data);
+            // create
+            else {
+                data = await createTemplate({
+                    projectId: projectId,
+                    ...payload,
+                });
+            }
 
             if (data?.status) {
-                message.success(
-                    data?.message || "Template created successfully"
-                );
-
+                message.success(data?.message || (templateId ? "Template updated successfully" : "Template created successfully"));
                 form.resetFields();
-
                 navigate("/templates");
+            } else {
+                message.error(data?.message || (templateId ? "Failed to update template" : "Failed to create template"));
             }
         } catch (error) {
-            console.log("CREATE TEMPLATE ERROR:", error);
-
-            message.error(
-                error?.response?.data?.message ||
-                error?.message ||
-                "Failed to create template"
-            );
+            console.log(error);
+            message.error(error?.message || (templateId ? "Failed to update template" : "Failed to create template"));
         } finally {
             setLoading(false);
         }
@@ -115,6 +182,9 @@ function CreateTemplates() {
                     form={form}
                     layout="vertical"
                     onFinish={handleSubmit}
+                    onFinishFailed={(errorInfo) => {
+                        console.log("FORM VALIDATION FAILED:", errorInfo);
+                    }}
                 >
                     <div
                         style={{
@@ -164,7 +234,7 @@ function CreateTemplates() {
                                         loading={loading}
                                         block
                                     >
-                                        Create
+                                        {templateId ? "Save" : "Create"}
                                     </Button>
                                 </Form.Item>
                             </Col>
@@ -200,10 +270,12 @@ function CreateTemplates() {
                         overflow: "hidden",
                     }}
                 >
-                    <Package
-                        ref={editorRef}
-                        apiKey="eed_live_9a24888b38c2ac94f5f55a37ff190d8752e2ced121449e7c"
-                    />
+                    <Spin spinning={editorLoading}>
+                        <Package
+                            ref={editorRef}
+                            apiKey="eed_live_9a24888b38c2ac94f5f55a37ff190d8752e2ced121449e7c"
+                        />
+                    </Spin>
                 </div>
             </Space>
         </PageContainer>

@@ -19,8 +19,8 @@ import {
 } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { setTheme } from "../Redux/Reducer/reducer.app";
-import {  listProjects } from "./SelectProjectApi";
+import { setSelectedProject, setTheme } from "../Redux/Reducer/reducer.app";
+import { getProjectById, listProjects } from "./SelectProjectApi";
 import { useNavigate } from "react-router-dom";
 import { formatDate } from "../../util/commom.utils";
 
@@ -46,14 +46,14 @@ export default function SelectProject() {
 
             setProjects(Array.isArray(projectList) ? projectList : []);
         } catch (error) {
-            console.error("FETCH PROJECTS ERROR:", error);
+            console.error(error);
             message.error("Failed to load projects");
         } finally {
             setLoading(false);
         }
     };
     const handleProjectSelect = async (project) => {
-        const projectId = project?.id || project?._id;
+        const projectId = project?._id || project?.id;
 
         if (!projectId) {
             message.error("Project ID not found");
@@ -61,17 +61,39 @@ export default function SelectProject() {
         }
 
         try {
-            const response = await listProjects(projectId);
+            setLoading(true);
 
-            if (response?.status) {
+            const response = await getProjectById(projectId);
+
+            console.log("GET PROJECT RESPONSE:", response);
+
+            if (response?.status && response?.project) {
+                const selectedProject = response.project;
+
+                // Save selected project in Redux
+                dispatch(setSelectedProject(selectedProject));
+
+                // Save selected project for refresh
+                localStorage.setItem(
+                    "selectedProject",
+                    JSON.stringify(selectedProject)
+                );
+
                 message.success(
-                    response?.message || "Project selected successfully"
+                    "Project selected successfully"
                 );
 
                 navigate("/overview");
             }
         } catch (error) {
             console.error("GET PROJECT ERROR:", error);
+
+            message.error(
+                error?.response?.data?.message ||
+                "Failed to select project"
+            );
+        } finally {
+            setLoading(false);
         }
     };
     useEffect(() => {
@@ -191,7 +213,7 @@ export default function SelectProject() {
                                                 strong
                                                 style={{ fontSize: 20 }}
                                             >
-                                                <FolderOpenOutlined style={{  color:"#20A6CE",fontSize: 22  }} /> {project.name}
+                                                <FolderOpenOutlined style={{ color: "#20A6CE", fontSize: 22 }} /> {project.name}
                                             </Text>
 
                                             <div>

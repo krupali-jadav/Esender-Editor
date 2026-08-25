@@ -83,16 +83,10 @@ const Sessions = () => {
                         </Title>
                     </Col>
                 </Row>
-                <div
-                    style={{
-                        maxHeight: "450px",
-                        overflowY: "auto",
-                    }}
-                >
+                <div style={{ maxHeight: "450px", overflowY: "auto", }}>
                     {sessions?.map((item) => (
-                        <Card
-                            key={item._id}
-                            bodyStyle={{ padding: 16 }}
+                        <Card key={item._id}
+                            styles={{ body: { padding: 16 } }}
                             style={{ marginBottom: 12 }}
                         >
                             <Row justify="space-between" align="middle">
