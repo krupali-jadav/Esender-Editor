@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Breadcrumb, Typography, Tag, Tabs, ConfigProvider, Button, Flex } from 'antd'
+import { Typography, Tag, Tabs, ConfigProvider, Button, Flex } from 'antd'
 import ProjectDomain from './projectDomain'
 import ProjectTemplate from './projectTemplate'
 import ProjectCredential from './projectCredential'
@@ -7,7 +7,7 @@ import ProjectIntegration from './projectIntegration'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { t } from 'i18next'
-const { Title } = Typography
+const { Title,Text } = Typography
 
 
 const TAB_ITEMS = [
@@ -26,13 +26,10 @@ function Projects() {
 
     return (
         <div>
-            <div style={{ margin: 0,/*  background: '#fff'  */ }}>
+            <div style={{ margin: 0 }}>
                 <div style={{ padding: '24px 0 0 24px' }}>
                     {/* Breadcrumb */}
-                    <Breadcrumb
-                        items={[{ title: 'Projects' }, { title: 'Marketing Emails' }]}
-                        style={{ marginBottom: 10 }}
-                    />
+                    <Text type="secondary">Projects</Text>
 
                     <Flex wrap="wrap" justify="space-between" align="center" gap={12}>
                         <Flex

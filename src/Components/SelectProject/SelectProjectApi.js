@@ -9,20 +9,11 @@ export const listProjects = async () => {
             return response.data;
         }
 
-        message.error(
-            response.data?.message || "Failed to get project"
-        );
-
+        message.error(response.data?.message || "Failed to get project");
         return null;
     } catch (error) {
-        console.log("GET PROJECT ERROR:", error);
-
-        message.error(
-            error?.response?.data?.message ||
-            error?.message ||
-            "Failed to get project"
-        );
-
+        console.log(error);
+        message.error(error?.message || "Failed to get project");
         return null;
     }
 };
@@ -35,7 +26,8 @@ export const getProjectById = async (projectId) => {
 
         return response.data;
     } catch (error) {
-        console.error("GET PROJECT BY ID ERROR:", error);
+        console.error(error);
+        message.error(error?.message || "Failed to get project");
         throw error;
     }
 };

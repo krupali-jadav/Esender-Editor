@@ -20,7 +20,6 @@ import Package from "esender-email-editor";
 import AppPageHeader from "../Styles/AppHeader";
 import { useSelector } from "react-redux";
 import { createTemplate, getTemplateById, updateTemplate } from "./TemplateApi";
-
 const { Text } = Typography;
 
 function CreateTemplates() {
@@ -51,9 +50,7 @@ function CreateTemplates() {
             }
         } catch (error) {
             console.log(error);
-            message.error(error?.message ||
-                "Failed to load template"
-            );
+            message.error(error?.message || "Failed to load template");
         } finally {
             setEditorLoading(false);
         }
@@ -98,7 +95,6 @@ function CreateTemplates() {
     }, [templateData]);
 
     const handleSubmit = async (values) => {
-        console.log("FORM SUBMIT CALLED:", values);
         try {
             setLoading(true);
 
@@ -172,27 +168,10 @@ function CreateTemplates() {
                 </Button>
             </Flex>
 
-            <Space
-                direction="vertical"
-                size="large"
-                style={{ width: "100%" }}
-            >
+            <Space direction="vertical" size="large" style={{ width: "100%" }}>
                 {/* Template Details */}
-                <Form
-                    form={form}
-                    layout="vertical"
-                    onFinish={handleSubmit}
-                    onFinishFailed={(errorInfo) => {
-                        console.log("FORM VALIDATION FAILED:", errorInfo);
-                    }}
-                >
-                    <div
-                        style={{
-                            background: theme ? "#0F2233" : "#fff",
-                            borderRadius: 10,
-                            padding: 20,
-                        }}
-                    >
+                <Form form={form} layout="vertical" onFinish={handleSubmit}>
+                    <div style={{ background: theme ? "#0F2233" : "#fff", borderRadius: 10, padding: 20, }}>
                         <Row gutter={16} align="bottom">
                             <Col xs={24} md={11}>
                                 <Form.Item
@@ -201,8 +180,7 @@ function CreateTemplates() {
                                     rules={[
                                         {
                                             required: true,
-                                            message:
-                                                "Please enter template name",
+                                            message: "Please enter template name",
                                         },
                                     ]}
                                 >
@@ -217,8 +195,7 @@ function CreateTemplates() {
                                     rules={[
                                         {
                                             required: true,
-                                            message:
-                                                "Please enter subject",
+                                            message: "Please enter subject",
                                         },
                                     ]}
                                 >
@@ -241,14 +218,7 @@ function CreateTemplates() {
                         </Row>
 
                         <Form.Item
-                            label={
-                                <>
-                                    Plain text version{" "}
-                                    <Text type="secondary">
-                                        (Optional)
-                                    </Text>
-                                </>
-                            }
+                            label={<>Plain text version{" "}<Text type="secondary">(Optional)</Text></>}
                             name="text"
                             tooltip="Fallback text shown by clients that cannot render HTML."
                             style={{ marginBottom: 0 }}
@@ -262,14 +232,7 @@ function CreateTemplates() {
                 </Form>
 
                 {/* Email Editor */}
-                <div
-                    style={{
-                        background: theme ? "#0F2233" : "#fff",
-                        borderRadius: 10,
-                        minHeight: 600,
-                        overflow: "hidden",
-                    }}
-                >
+                <div style={{ background: theme ? "#0F2233" : "#fff", borderRadius: 10, minHeight: 600, overflow: "hidden", }}>
                     <Spin spinning={editorLoading}>
                         <Package
                             ref={editorRef}

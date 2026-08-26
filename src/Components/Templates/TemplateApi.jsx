@@ -12,7 +12,6 @@ export const createTemplate = async (payload) => {
     } catch (error) {
         console.log(error);
         message.error(error?.message || "Failed to create template");
-        throw error;
     }
 };
 
@@ -23,7 +22,7 @@ export const getAllTemplates = async (payload) => {
         return response.data;
     } catch (error) {
         console.log(error);
-        throw error;
+        message.error(error?.message || "Failed to get templates");
     }
 };
 
@@ -33,7 +32,7 @@ export const deleteTemplate = async (payload) => {
         return response.data;
     } catch (error) {
         console.log(error);
-        throw error;
+        message.error(error?.message || "Failed to delete template");
     }
 };
 
@@ -49,32 +48,28 @@ export const changeTemplateStatus = async (templateId, enable) => {
         return response.data;
     } catch (error) {
         console.log(error);
+        message.error(error?.message || "Failed to change template status");
     }
 };
 
 export const updateTemplate = async (payload) => {
     try {
-        const response = await axiosInstance.post(
-            "templates/save",
-            payload
-        );
+        const response = await axiosInstance.post("templates/save", payload);
 
         return response.data;
     } catch (error) {
-        console.log("UPDATE TEMPLATE ERROR:", error);
-        throw error;
+        console.log(error);
+        message.error(error?.message || "Failed to update template");
     }
 };
 
 export const getTemplateById = async (templateId) => {
     try {
-        const response = await axiosInstance.get(
-            `templates/${templateId}`
-        );
+        const response = await axiosInstance.get(`templates/${templateId}`);
 
         return response.data;
     } catch (error) {
-        console.log("GET TEMPLATE ERROR:", error);
-        throw error;
+        console.log(error);
+        message.error(error?.message || "Failed to get template");
     }
 };

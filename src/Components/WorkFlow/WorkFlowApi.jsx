@@ -9,20 +9,12 @@ export const createProject = async (payload) => {
             return response.data;
         }
 
-        message.error(
-            response.data?.message || "Failed to create project"
-        );
+        message.error(response.data?.message || "Failed to create project");
 
         return null;
     } catch (error) {
-        console.log("CREATE PROJECT ERROR:", error);
-
-        message.error(
-            error?.response?.data?.message ||
-            error?.message ||
-            "Failed to create project"
-        );
-
+        console.log(error);
+        message.error(error?.message || "Failed to create project");
         return null;
     }
 };
@@ -37,20 +29,11 @@ export const updateProjectDomains = async (projectId, payload) => {
             return response.data;
         }
 
-        message.error(
-            response.data?.message || "Failed to update domains"
-        );
-
+        message.error(response.data?.message || "Failed to update domains");
         return null;
     } catch (error) {
-        console.log("UPDATE DOMAIN ERROR:", error);
-
-        message.error(
-            error?.response?.data?.message ||
-            error?.message ||
-            "Failed to update domains"
-        );
-
+        console.log(error);
+        message.error(error?.message || "Failed to update domains");
         return null;
     }
 };
@@ -62,20 +45,11 @@ export const getProject = async (projectId) => {
             return response.data;
         }
 
-        message.error(
-            response.data?.message || "Failed to get project"
-        );
-
+        message.error(response.data?.message || "Failed to get project");
         return null;
     } catch (error) {
-        console.log("GET PROJECT ERROR:", error);
-
-        message.error(
-            error?.response?.data?.message ||
-            error?.message ||
-            "Failed to get project"
-        );
-
+        console.log(error);
+        message.error(error?.message || "Failed to get project");
         return null;
     }
 };
