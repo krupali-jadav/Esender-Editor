@@ -1,11 +1,12 @@
 import { Row, Col, Card, Badge, Progress, Typography, Space, Button, Flex, Spin, Empty, } from "antd";
-import { CreditCardOutlined, WarningOutlined, CheckCircleFilled, CloseCircleFilled, } from "@ant-design/icons";
+import { CreditCardOutlined, WarningOutlined, CheckCircleFilled, CloseCircleFilled, ProjectOutlined, FileTextOutlined, TeamOutlined, ThunderboltOutlined, DatabaseOutlined, RobotOutlined, } from "@ant-design/icons";
 import { PageContainer } from "@ant-design/pro-components";
 import { useSelector } from "react-redux";
 import AppPageHeader from "../Styles/AppHeader";
 import { t } from "i18next";
 import { useEffect, useState } from "react";
 import { getPlans } from "./PlanApi";
+import EmptyState from "../Styles/EmptyState";
 
 
 
@@ -168,16 +169,10 @@ export default function Billing() {
                             <Spin size="middle" />
                         </Flex>
                     ) : plans.length === 0 ? (
-                        <Empty
-                            description={
-                                <span
-                                    style={{
-                                        color: theme ? "#98A2B3" : "#667085",
-                                    }}
-                                >
-                                    {t("no.Plans.Available", { defaultValue: "No plans available" })}
-                                </span>
-                            }
+                        <EmptyState
+                            icon={<FileTextOutlined />}
+                            title={t('no.plans.found', { defaultValue: 'No Plans found' })}
+                            description={t('no.plans.description', { defaultValue: 'There are no plans available    .' })}
                         />
                     ) : (
                         <Row
@@ -277,7 +272,6 @@ export default function Billing() {
                                             <Card
                                                 bordered={false}
                                                 style={{
-                                                    height: 630,
                                                     borderRadius: "14px 14px 18px 18px",
                                                     background: theme
                                                         ? "#152A3C"
@@ -329,7 +323,80 @@ export default function Billing() {
                                                         margin: "18px auto 20px",
                                                     }}
                                                 />
+                                                <Row gutter={[8, 8]} style={{ marginBottom: 20 }}>
+                                                    {[
+                                                        {
+                                                            label: t("projects",{defaultValue: "Projects"}),
+                                                            value: plan.limits?.maxProjects ?? 0,
+                                                            icon: <ProjectOutlined />,
+                                                        },
+                                                        {
+                                                            label: t("templates",{defaultValue: "Templates"}),
+                                                            value: plan.limits?.maxTemplates ?? 0,
+                                                            icon: <FileTextOutlined />,
+                                                        },
+                                                        {
+                                                            label: t("editor.Users",{defaultValue: "Editor Users"}),
+                                                            value: plan.limits?.maxEditorUsers ?? 0,
+                                                            icon: <TeamOutlined />,
+                                                        },
+                                                        {
+                                                            label: t("monthly.Sessions",{defaultValue: "Monthly Sessions"}),
+                                                            value: plan.limits?.maxMonthlySessions?.toLocaleString() ?? 0,
+                                                            icon: <ThunderboltOutlined />,
+                                                        },
+                                                        {
+                                                            label: t("storage",{defaultValue: "Storage"}),
+                                                            value: `${(
+                                                                (plan.limits?.storageBytes ?? 0) /
+                                                                (1024 * 1024 * 1024)
+                                                            ).toFixed(0)} GB`,
+                                                            icon: <DatabaseOutlined />,
+                                                        },
+                                                        {
+                                                            label: t("ai.Credits",{defaultValue: "AI Credits"}),
+                                                            value: plan.limits?.maxMonthlyAiCredits ?? 0,
+                                                            icon: <RobotOutlined />,
+                                                        },
+                                                    ].map((limit) => (
+                                                        <Col span={8} key={limit.label}>
+                                                            <Card
+                                                                size="small"
+                                                                styles={{body: {padding: "8px 4px",},}}
+                                                                style={{
+                                                                    textAlign: "center",
+                                                                    background: theme? "rgba(255,255,255,0.025)": "#F8FAFC",
+                                                                    borderColor: theme? "rgba(255,255,255,0.10)": "#E4E7EC",
+                                                                }}
+                                                            >
+                                                                <Flex wrap vertical align="center" gap={2}>
+                                                                    <span
+                                                                        style={{
+                                                                            color: color.end,
+                                                                            fontSize: 16,
+                                                                        }}
+                                                                    >
+                                                                        {limit.icon}
+                                                                    </span>
 
+                                                                    <Text
+                                                                        strong
+                                                                        style={{fontSize: 14,color: theme ? "#FFFFFF" : "#1D2939",}}
+                                                                    >
+                                                                        {limit.value}
+                                                                    </Text>
+
+                                                                    <Text
+                                                                        type="secondary"
+                                                                        style={{ fontSize: 11 }}
+                                                                    >
+                                                                        {limit.label}
+                                                                    </Text>
+                                                                </Flex>
+                                                            </Card>
+                                                        </Col>
+                                                    ))}
+                                                </Row>
                                                 {/* FEATURES */}
                                                 <div
                                                     style={{
@@ -391,7 +458,7 @@ export default function Billing() {
                                                         block
                                                         style={{
                                                             height: 38,
-                                                            // marginBottom:18,
+                                                            marginBottom: 18,
                                                             border: "none",
                                                             borderRadius: 8,
                                                             background: `linear-gradient(90deg,${color.start},${color.end})`,

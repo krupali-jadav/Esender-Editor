@@ -1,14 +1,15 @@
 import { Layout, Typography, Card, Tag, Space, ConfigProvider, theme as antdTheme, Spin, Empty, message, Select, Row, Col, Avatar, Button, Divider, Flex, Badge, } from "antd";
 
-import { MoonOutlined, SunOutlined, RightOutlined, FolderOpenOutlined, CalendarOutlined, GlobalOutlined, PlusOutlined, } from "@ant-design/icons";
+import { MoonOutlined, SunOutlined, RightOutlined, FolderOpenOutlined, CalendarOutlined, GlobalOutlined, PlusOutlined, FileTextOutlined, } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { setPanel, setTheme,setSelectedProject } from "../Redux/Reducer/reducer.app";
+import { setPanel, setTheme, setSelectedProject } from "../Redux/Reducer/reducer.app";
 import { getProjectById, listProjects } from "./SelectProjectApi";
 import { useNavigate } from "react-router-dom";
 import { formatDate } from "../../util/commom.utils";
 import lang from "../../util/lang/lang.json";
 import { t } from "i18next";
+import EmptyState from "../Styles/EmptyState";
 
 const { Title, Text } = Typography;
 const { Content, Header } = Layout;
@@ -97,7 +98,7 @@ export default function SelectProject() {
                     JSON.stringify(selectedProject)
                 );
 
-                message.success(response?.message ||"Project selected successfully");
+                message.success(response?.message || "Project selected successfully");
 
                 navigate("/overview");
             }
@@ -208,7 +209,7 @@ export default function SelectProject() {
                     </Space>
                 </Header>
 
-                <Content style={{ padding: "35px 50px 60px", }}>
+                <Content style={{ padding: "0 50px 60px", }}>
 
                     <Row
                         justify="space-between"
@@ -224,7 +225,7 @@ export default function SelectProject() {
                                         icon={<FolderOpenOutlined />}
                                         style={{ background: "rgba(32,166,206,0.12)", color: PRIMARY_COLOR, }}
                                     />
-                                    <Title level={2} style={{ margin: 0, }}>Your Projects</Title>
+                                    <Title level={2} style={{ margin: 0, }}>{t("your.projects", { defaultValue: "Your Projects" })}</Title>
                                 </Space>
 
                                 <Text type="secondary" style={{ marginLeft: 52, }}>
@@ -251,23 +252,17 @@ export default function SelectProject() {
                         </Flex>
                     ) : projects.length === 0 ? (
                         <Card style={{ marginTop: 35, textAlign: "center", }}>
-                            <Empty
-                                image={
-                                    Empty.PRESENTED_IMAGE_SIMPLE
-                                }
-                                description={
-                                    <Space direction="vertical">
-                                        <Text strong>{t("no.Projects", { defaultValue: "No projects yet" })}</Text>
-                                        <Text type="secondary">{t("create.First.Project", { defaultValue: "Create your first project to get started." })}</Text>
-                                    </Space>
-                                }>
-                                <Button
-                                    type="primary"
-                                    icon={<PlusOutlined />}
-                                    onClick={() => navigate("/workflow")}>
-                                    {t("createProject", { defaultValue: "Create Project" })}
-                                </Button>
-                            </Empty>
+                            <EmptyState
+                                icon={<FileTextOutlined />}
+                                title={t('no.Projects', { defaultValue: 'No projects yet' })}
+                                description={t('create.First.Project', { defaultValue: 'Create your first project to get started.' })}
+                            />
+                            <Button
+                                type="primary"
+                                icon={<PlusOutlined />}
+                                onClick={() => navigate("/workflow")}>
+                                {t("createProject", { defaultValue: "Create Project" })}
+                            </Button>
                         </Card>
                     ) : (
                         <Row gutter={[20, 20,]}>

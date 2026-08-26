@@ -1,4 +1,4 @@
-import { Row, Col, Card, Input, Button, Select, Segmented, Tag, Typography, Space, Empty, Flex, Spin, Switch, message, Modal, Pagination, } from "antd";
+import { Row, Col, Card, Input, Button, Select, Segmented, Tag, Typography, Space, Flex, Spin, Switch, message, Modal, Pagination, } from "antd";
 import { SearchOutlined, PlusOutlined, FilterOutlined, ClockCircleOutlined, FolderOutlined, FileImageOutlined, DownOutlined, DeleteOutlined, EyeOutlined, EditOutlined } from "@ant-design/icons";
 import { PageContainer } from "@ant-design/pro-components";
 import AppPageHeader from "../Styles/AppHeader";
@@ -12,7 +12,6 @@ import { formatDate } from "../../util/commom.utils";
 import { useDebounce } from "../../util/useDebounce";
 
 const { Text } = Typography;
-
 const statusColors = {
     published: "success",
     draft: "warning",
@@ -72,11 +71,11 @@ export default function Templates() {
 
     const handleDeleteTemplate = (template) => {
         Modal.confirm({
-            title: "Delete Template",
-            content: (<>Are you sure you want to delete{" "} <strong> {template.name}</strong>?</>),
-            okText: "Delete",
+            title: t("delete.template", { defaultValue: "Delete Template" }),
+            content: (<>{t('sure.delete.template', { defaultValue: 'Are you sure you want to delete' })}{" "} <strong> {template.name}</strong> ?</>),
+            okText: t('delete', { defaultValue: 'Delete' }),
             okType: "danger",
-            cancelText: "Cancel",
+            cancelText: t('cancel', { defaultValue: 'Cancel' }),
 
             onOk: async () => {
                 try {
@@ -92,9 +91,10 @@ export default function Templates() {
                                 (item) => item._id !== template._id
                             )
                         );
-                        message.success("Template deleted successfully");
+                        setTotalTemplates((prev) => Math.max(prev - 1, 0));
+                        message.success(t("template.deleted.success", { defaultValue: "Template deleted successfully" }));
                     } else {
-                        message.error(data?.message || "Failed to delete template");
+                        message.error(data?.message || t("failed.delete.template", { defaultValue: "Failed to delete template" }));
                     }
                 } catch (error) {
                     console.error(error);
@@ -142,7 +142,9 @@ export default function Templates() {
                             title={t("templates.library", {
                                 defaultValue: "Template Library",
                             })}
-                            description="Manage and discover email templates across your workspace."
+                            description={t("templates.description", {
+                                defaultValue: "Manage and discover email templates across your workspace.",
+                            })}
                         />
                     </Col>
 
@@ -153,7 +155,7 @@ export default function Templates() {
                                 icon={<PlusOutlined />}
                                 onClick={() => navigate("/templates/create-template")}
                             >
-                                New Template
+                                {t('new.template', { defaultValue: 'New Template' })}
                             </Button>
                         </Flex>
                     </Col>
@@ -175,7 +177,7 @@ export default function Templates() {
                         {/* Filters */}
                         <Flex gap={16} justify="end" wrap="wrap">
                             <Space size={8}>
-                                <Text type="secondary">Project:</Text>
+                                <Text type="secondary">{t('project', { defaultValue: 'Project' })}:</Text>
 
                                 <Select
                                     defaultValue="all"
@@ -187,29 +189,33 @@ export default function Templates() {
                                         borderRadius: 8,
                                     }}
                                     options={[
-                                        { value: "all", label: "All Projects" },
-                                        { value: "marketing", label: "Marketing Hub" },
-                                        { value: "internal", label: "Internal Comms" },
-                                        { value: "transactional", label: "Transactional" },
+                                        { value: "all", label: t('all.projects', { defaultValue: 'All Projects' }) },
+                                        { value: "marketing", label: t('marketing.hub', { defaultValue: 'Marketing Hub' }) },
+                                        { value: "internal", label: t('internal.comms', { defaultValue: 'Internal Comms' }) },
+                                        { value: "transactional", label: t('transactional', { defaultValue: 'Transactional' }) },
                                     ]}
                                 />
                             </Space>
 
                             <Space size={4}>
                                 <FilterOutlined />
-                                <Text strong>FILTERS</Text>
+                                <Text strong>{t('filters', { defaultValue: 'FILTERS' })}</Text>
                             </Space>
 
                             <Space size={8}>
-                                <Text type="secondary">Status:</Text>
+                                <Text type="secondary">{t('status', { defaultValue: 'Status' })}:</Text>
                                 <Segmented
                                     defaultValue="All"
-                                    options={["All", "Published", "Draft"]}
+                                    options={[
+                                        t('all', { defaultValue: 'All' }),
+                                        t('published', { defaultValue: 'Published' }),
+                                        t('draft', { defaultValue: 'Draft' })
+                                    ]}
                                 />
                             </Space>
 
                             <Space size={8}>
-                                <Text type="secondary">Sort:</Text>
+                                <Text type="secondary">{t('sort', { defaultValue: 'Sort' })}:</Text>
                                 <Select
                                     value={sortBy}
                                     onChange={(value) => setSortBy(value)}
@@ -223,11 +229,11 @@ export default function Templates() {
                                     options={[
                                         {
                                             value: "created-at",
-                                            label: "Sort by Created At",
+                                            label: t('sort.created.at', { defaultValue: 'Sort by Created At' }),
                                         },
                                         {
                                             value: "name",
-                                            label: "Sort by Name",
+                                            label: t('sort.name', { defaultValue: 'Sort by Name' }),
                                         },
                                     ]}
                                 />
@@ -250,7 +256,8 @@ export default function Templates() {
                             >
                                 <Card
                                     hoverable
-                                    styles={{ body: { padding: 16 } }}                                                                  
+                                    styles={{ body: { padding: 16 } }}
+                                    style={{ background: theme ? "#0F2233" : "#e1e4e6", }}
                                     cover={
                                         <div
                                             style={{
@@ -358,21 +365,21 @@ export default function Templates() {
                                         </Tag>
                                     </Space>
 
-                                    <div style={{ marginTop: 8 }}>
+                                    <div style={{ marginTop: 5 }}>
                                         <Space style={{ width: "100%", justifyContent: "space-between" }}>
-                                            <Space size={4}>
-                                                <FolderOutlined style={{ color: "#8c8c8c" }} />
-                                                <Text type="secondary">
+                                            <Space size={6}>
+                                                <FolderOutlined style={{ color: "#20A6CE", fontSize: 17 }} />
+                                                <Text style={{ color: "#8c8e91", fontWeight: 600 }}>
                                                     {tpl.project}
                                                 </Text>
                                             </Space>
                                         </Space>
                                     </div>
 
-                                    <Row justify="space-between" align="middle" style={{ marginTop: 16 }}>
-                                        <Space size={4}>
-                                            <ClockCircleOutlined style={{ color: "#8c8c8c" }} />
-                                            <Text type="secondary">
+                                    <Row justify="space-between" align="middle" style={{ marginTop: 8 }}>
+                                        <Space size={6}>
+                                            <ClockCircleOutlined style={{ color: "#20A6CE" }} />
+                                            <Text style={{ color: "#8c8e91", fontWeight: 600 }}>
                                                 {formatDate(tpl.updatedAt)}
                                             </Text>
                                         </Space>
@@ -398,8 +405,8 @@ export default function Templates() {
                     ) : (
                         <Col span={24}>
                             <EmptyState
-                                title="No templates found"
-                                description="Create your first email template to get started."
+                                title={t('no.templates.found', { defaultValue: 'No templates found' })}
+                                description={t('create.first.template', { defaultValue: 'Create your first email template to get started.' })}
                                 action={
                                     <Button
                                         type="primary"
@@ -408,7 +415,7 @@ export default function Templates() {
                                             navigate("/templates/create-template")
                                         }
                                     >
-                                        Create Template
+                                        {t('create.template', { defaultValue: 'Create Template' })}
                                     </Button>
                                 }
                             />
@@ -418,7 +425,7 @@ export default function Templates() {
 
                 {!loading && templates.length > 0 && (
                     <Flex justify="space-between" align="center" style={{ marginTop: 16 }}>
-                        <strong> Total: {totalTemplates} templates </strong>
+                        <strong> {t('total.templates', { defaultValue: 'Total' })}: {totalTemplates} {t('templates', { defaultValue: 'templates' })} </strong>
                         <Pagination
                             current={currentPage}
                             pageSize={pageSize}

@@ -21,6 +21,7 @@ import {
 } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import { createProject } from "./WorkFlowApi";
+import { t } from "i18next";
 
 const { Title, Text, Paragraph, Link } = Typography;
 
@@ -68,16 +69,15 @@ export default function StepCreateProject({ onNext, onBack }) {
                     letterSpacing: 0.5,
                 }}
             >
-                STEP 2 OF 4
+                {t('step.2.of.4', { defaultValue: 'STEP 2 OF 4' })}
             </Text>
 
             <Title level={4} style={{ margin: "4px 0" }}>
-                Create First Project
+                {t('create.first.project', { defaultValue: 'Create First Project' })}
             </Title>
 
             <Paragraph type="secondary">
-                Let&apos;s set up your primary workspace. You can always
-                create more projects later.
+                {t('let.s.set.up.your.primary.workspace.you.can.always.create.more.projects.later', { defaultValue: "Let's set up your primary workspace. You can always create more projects later." })}
             </Paragraph>
 
             <Form
@@ -86,12 +86,12 @@ export default function StepCreateProject({ onNext, onBack }) {
                 onFinish={handleCreateProject}
             >
                 <Form.Item
-                    label="PROJECT NAME"
+                    label={t('project.name', { defaultValue: 'PROJECT NAME' })}
                     name="projectName"
                     rules={[
                         {
                             required: true,
-                            message: "Please enter project name",
+                            message: t('please.enter.project.name', { defaultValue: 'Please enter project name' }),
                         },
                     ]}
                 >
@@ -101,12 +101,12 @@ export default function StepCreateProject({ onNext, onBack }) {
                                 style={{ color: "#98A2B3" }}
                             />
                         }
-                        placeholder="e.g., Internal Tools, Marketing App"
+                        placeholder={t('e.g.internal.tools.marketing.app', { defaultValue: 'e.g., Internal Tools, Marketing App' })}
                     />
                 </Form.Item>
 
                 <Text strong style={{ fontSize: 12 }}>
-                    INITIAL ENVIRONMENT
+                    {t('initial.environment', { defaultValue: 'INITIAL ENVIRONMENT' })}
                 </Text>
 
                 <Row
@@ -121,8 +121,8 @@ export default function StepCreateProject({ onNext, onBack }) {
                             selected={env === "test"}
                             onClick={() => setEnv("test")}
                             icon={<FileTextOutlined />}
-                            title="Test"
-                            description="Recommended for new accounts. Keep experimental data separate from production."
+                            title={t('test', { defaultValue: 'Test' })}
+                            description={t('recommended.for.new.accounts', { defaultValue: 'Recommended for new accounts. Keep experimental data separate from production.' })}
                             recommended
                         />
                     </Col>
@@ -132,8 +132,8 @@ export default function StepCreateProject({ onNext, onBack }) {
                             selected={env === "live"}
                             onClick={() => setEnv("live")}
                             icon={<RocketOutlined />}
-                            title="Live"
-                            description="Ready to go. Data here will affect live users and active integrations immediately."
+                            title={t('live', { defaultValue: 'Live' })}
+                            description={t('ready.to.go', { defaultValue: 'Ready to go. Data here will affect live users and active integrations immediately.' })}
                         />
                     </Col>
 
@@ -158,11 +158,11 @@ export default function StepCreateProject({ onNext, onBack }) {
                                     minWidth: 40,
                                 }}
                             >
-                                POST
+                                {t('post', { defaultValue: 'POST' })}
                             </Text>
 
                             <Text code style={{ background: "transparent" }}>
-                                /api/projects
+                                {t('api.projects', { defaultValue: '/api/projects' })}
                             </Text>
                         </div>
 
@@ -187,12 +187,11 @@ export default function StepCreateProject({ onNext, onBack }) {
                                     minWidth: 40,
                                 }}
                             >
-                                RETURNS
+                                {t('returns', { defaultValue: 'RETURNS' })}
                             </Text>
 
                             <Text>
-                                project id, public project id, license key,
-                                signing secret
+                                {t('project.id', { defaultValue: 'project id' })}, {t('public.project.id', { defaultValue: 'public project id' })}, {t('license.key', { defaultValue: 'license key' })}, {t('signing.secret', { defaultValue: 'signing secret' })}
                             </Text>
                         </div>
                     </Col>
@@ -202,7 +201,7 @@ export default function StepCreateProject({ onNext, onBack }) {
 
                 <Row justify="space-between" align="middle">
                     <Link onClick={onBack}>
-                        Back
+                            {t('back', { defaultValue: 'Back' })}
                     </Link>
 
                     <Button
@@ -212,7 +211,7 @@ export default function StepCreateProject({ onNext, onBack }) {
                         icon={<ArrowRightOutlined />}
                         iconPosition="end"
                     >
-                        Next
+                            {t('next', { defaultValue: 'Next' })}
                     </Button>
                 </Row>
             </Form>
@@ -224,7 +223,7 @@ export default function StepCreateProject({ onNext, onBack }) {
                 }}
             >
                 <Text type="secondary">
-                    <LockOutlined /> Your data is secure and encrypted.
+                    <LockOutlined /> {t('your.data.is.secure.and.encrypted', { defaultValue: 'Your data is secure and encrypted.' })}
                 </Text>
             </div>
         </Card>
@@ -293,7 +292,7 @@ function EnvironmentCard({
                         borderRadius: 4,
                     }}
                 >
-                    Recommended
+                    {t('recommended', { defaultValue: 'Recommended' })}
                 </Text>
             )}
         </div>

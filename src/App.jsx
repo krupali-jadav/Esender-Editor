@@ -28,11 +28,11 @@ import { refreshProfile } from "./Components/Redux/action";
 import Settings from "./Components/Settings/Settings";
 import Order from "./Components/Order/Order";
 
-const ProtectedRoute = ({ component: Component, isAuthenticated,selectedProject }) => {
+const ProtectedRoute = ({ component: Component, isAuthenticated, selectedProject }) => {
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
-    if (!selectedProject) {
+  if (!selectedProject) {
     return <Navigate to="/select-project" replace />;
   }
   return (

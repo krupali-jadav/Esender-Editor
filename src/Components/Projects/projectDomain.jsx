@@ -40,9 +40,9 @@ const columns = [
         render: (text, record) => (
             <Space size={8}>
                 {record.type === 'Wildcard' ? (
-                    <CodeOutlined />
+                    <CodeOutlined style={{ fontSize: 17,display:"flex",alignItems:"center" }} />
                 ) : (
-                    <GlobalOutlined />
+                    <GlobalOutlined style={{ fontSize: 17,display:"flex",alignItems:"center" }} />
                 )}
                 <Text code>
                     {text}
@@ -111,7 +111,7 @@ function ProjectDomain() {
 
     return (
         <div style={{ padding: 24 }}>
-            <Row gutter={16}>
+            <Row gutter={[16,16]}>
                 {/* Left: Allowed Domains */}
                 <Col xs={24} lg={16}>
                     <Space direction="vertical" size="middle" style={{ width: "100%" }}>

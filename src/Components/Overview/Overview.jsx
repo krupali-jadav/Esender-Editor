@@ -4,6 +4,7 @@ import { PageContainer } from "@ant-design/pro-components";
 import AppPageHeader from "../Styles/AppHeader";
 import { t } from "i18next";
 import { useSelector } from "react-redux";
+import EmptyState from "../Styles/EmptyState";
 
 const { Title, Text, Link } = Typography;
 const setupChecklist = [
@@ -191,17 +192,10 @@ export default function Overview() {
                         }
                         style={{ height: "100%" }}
                     >
-                        <Empty
-                            image={<BarChartOutlined style={{ fontSize: 40 }} />}
-                            description={
-                                <>
-                                    <div>Usage history unavailable</div>
-                                    <Text type="secondary">
-                                        Connect your first project to see analytics
-                                    </Text>
-                                </>
-                            }
-                            style={{ padding: "48px 0" }}
+                        <EmptyState
+                            icon={<FileTextOutlined />}
+                            title={t('usage.history.unavailable', { defaultValue: 'Usage history unavailable' })}
+                            description={t('connect.first.project', { defaultValue: 'Connect your first project to see analytics' })}
                         />
                     </Card>
                 </Col>

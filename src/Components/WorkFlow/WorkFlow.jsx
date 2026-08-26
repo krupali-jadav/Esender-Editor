@@ -16,6 +16,7 @@ import { setTheme } from "../Redux/Reducer/reducer.app";
 import StepWorkspaceBasics from "./StepWorkspaceBasics";
 import StepCreateProject from "./StepCreateProject";
 import StepConnectDomain from "./StepConnectDomain";
+import { t } from "i18next";
 
 const { Content } = Layout;
 
@@ -41,13 +42,13 @@ export default function WorkFlow() {
 
     const stepItems = [
         {
-            title: "Workspace Basics",
+            title: t('workspace.basics', { defaultValue: 'Workspace Basics' }),
         },
         {
-            title: "Create Project",
+            title: t('create.project', { defaultValue: 'Create Project' }),
         },
         {
-            title: "Connect Domain",
+            title: t('connect.domain', { defaultValue: 'Connect Domain' }),
         },
     ];
 

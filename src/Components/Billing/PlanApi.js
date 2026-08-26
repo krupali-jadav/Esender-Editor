@@ -26,3 +26,28 @@ export const getPlans = async () => {
         return null;
     }
 };
+export const getSubscriptionPlans = async () => {
+    try {
+        const response = await axiosInstance.get("subscription  ");
+
+        if (response.data?.status) {
+            return response.data;
+        }
+
+        message.error(
+            response.data?.message || "Failed to fetch subscription plans"
+        );
+
+        return null;
+    } catch (error) {
+        console.error("GET SUBSCRIPTION PLANS ERROR:", error);
+
+        message.error(
+            error?.response?.data?.message ||
+            error?.message ||
+            "Failed to fetch subscription plans"
+        );
+
+        return null;
+    }
+};

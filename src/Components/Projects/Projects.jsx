@@ -1,10 +1,12 @@
 import { useState } from 'react'
-import { Breadcrumb, Typography, Tag, Tabs, ConfigProvider } from 'antd'
+import { Breadcrumb, Typography, Tag, Tabs, ConfigProvider, Button, Flex } from 'antd'
 import ProjectDomain from './projectDomain'
 import ProjectTemplate from './projectTemplate'
 import ProjectCredential from './projectCredential'
 import ProjectIntegration from './projectIntegration'
 import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { t } from 'i18next'
 const { Title } = Typography
 
 
@@ -18,10 +20,9 @@ const TAB_ITEMS = [
 ]
 
 function Projects() {
+    const navigate = useNavigate()
     const [activeTab, setActiveTab] = useState('domains');
-    const selectedProject = useSelector(
-        (state) => state?.app?.selectedProject
-    );
+    const selectedProject = useSelector((state) => state?.app?.selectedProject);
 
     return (
         <div>
@@ -33,24 +34,32 @@ function Projects() {
                         style={{ marginBottom: 10 }}
                     />
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 8, }}>
-                        <Title level={3} style={{ marginTop: 7 }}>
-                            {selectedProject?.name || "Project"}
-                        </Title>
+                    <Flex wrap="wrap" justify="space-between" align="center" gap={12}>
+                        <Flex
+                            wrap="wrap"
+                            align="center"
+                            gap={8}
+                            style={{ minWidth: 0, flex: 1 }}
+                        >
+                            <Title level={3} ellipsis style={{ margin: 0, minWidth: 0,}}>
+                                {selectedProject?.name || "Project"}
+                            </Title>
 
-                        <Tag color="green" bordered={false} >
-                            {selectedProject?.environment ? selectedProject.environment.toUpperCase() : "LIVE"}
-                        </Tag>
-                        <Tag bordered >
-                            {selectedProject?.publicProjectId || selectedProject?._id}
-                        </Tag>
-                    </div>
+                            <Tag color="green" bordered={false} >
+                                {selectedProject?.environment ? selectedProject.environment.toUpperCase() : "LIVE"}
+                            </Tag>
+                            <Tag bordered >
+                                {selectedProject?.publicProjectId || selectedProject?._id}
+                            </Tag>
+                        </Flex>
+                        <div>
+                            <Button type="primary" style={{ marginRight: 10 }} onClick={() => navigate('/select-project')}>
+                                {t('switch.project', { defaultValue: 'Switch Project' })}
+                            </Button>
+                        </div>
+                    </Flex>
 
-                    <ConfigProvider
-                        theme={{
-                            token: { colorPrimary: '#20A6CE', },
-                        }}
-                    >
+                    <ConfigProvider theme={{ token: { colorPrimary: '#20A6CE', }, }}>
                         <Tabs
                             activeKey={activeTab}
                             onChange={setActiveTab}

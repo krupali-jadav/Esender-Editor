@@ -1,31 +1,15 @@
-import {
-    Card,
-    Input,
-    Button,
-    Typography,
-    Space,
-    Divider,
-    Row,
-    Alert,
-    message,
-} from "antd";
+import { Card, Input, Button, Typography, Space, Divider, Row, Alert, message, } from "antd";
 
-import {
-    InfoCircleOutlined,
-    CopyOutlined,
-} from "@ant-design/icons";
+import { InfoCircleOutlined, CopyOutlined, } from "@ant-design/icons";
 
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { getProject, updateProjectDomains } from "./WorkFlowApi";
+import { t } from "i18next";
 
 const { Title, Text, Link } = Typography;
 
-export default function StepConnectDomain({
-    onBack,
-    onComplete,
-    projectId,
-}) {
+export default function StepConnectDomain({ onBack, onComplete, projectId, }) {
     const theme = useSelector((state) => state?.app?.theme);
 
     const [domain, setDomain] = useState("");
@@ -41,11 +25,7 @@ export default function StepConnectDomain({
             if (!projectId) return;
 
             try {
-                console.log("GET PROJECT USING ID:", projectId);
-
                 const data = await getProject(projectId);
-
-                console.log("GET PROJECT RESPONSE:", data);
 
                 if (data?.status) {
                     setPublicProjectId(
@@ -69,9 +49,10 @@ export default function StepConnectDomain({
 
         fetchProject();
     }, [projectId]);
+
     const handleComplete = async () => {
         if (!domain.trim()) {
-            message.warning("Please enter a domain");
+            message.warning(t('please.enter.domain', { defaultValue: 'Please enter a domain' }));
             return;
         }
 
@@ -85,10 +66,7 @@ export default function StepConnectDomain({
             const data = await updateProjectDomains(projectId, payload);
 
             if (data?.status) {
-                message.success(
-                    data?.message || "Domain connected successfully"
-                );
-
+                message.success(data?.message || t('domain.connected.successfully', { defaultValue: 'Domain connected successfully' }));
                 onComplete();
             }
         } catch (error) {
@@ -108,17 +86,17 @@ export default function StepConnectDomain({
                     letterSpacing: 0.5,
                 }}
             >
-                STEP 3 OF 4
+                {t('step.3.of.4', { defaultValue: 'STEP 3 OF 4' })}
             </Text>
 
             <Title level={4} style={{ margin: "4px 0" }}>
-                Connect your domain
+                {t('connect.your.domain', { defaultValue: 'Connect your domain' })}
             </Title>
 
             <Alert
                 type="warning"
                 showIcon
-                message="One-time credentials should be shown before this step."
+                message={t('one.time.credentials', { defaultValue: 'One-time credentials should be shown before this step.' })}
                 style={{ marginBottom: 20 }}
             />
 
@@ -135,7 +113,7 @@ export default function StepConnectDomain({
             >
                 <div>
                     <Text strong style={{ fontSize: 12, display: "block" }}>
-                        PUBLIC PROJECT ID
+                        {t('public.project.id', { defaultValue: 'PUBLIC PROJECT ID' })}
                     </Text>
 
                     <Text code style={{ background: "transparent" }}>
@@ -152,11 +130,11 @@ export default function StepConnectDomain({
             </div>
 
             <Text strong style={{ fontSize: 12 }}>
-                ALLOWED DOMAIN
+                {t('allowed.domain', { defaultValue: 'ALLOWED DOMAIN' })}
             </Text>
 
             <Input
-                placeholder="localhost:3000"
+                placeholder={t('localhost.3000', { defaultValue: 'localhost:3000' })}
                 value={domain}
                 onChange={(e) => setDomain(e.target.value)}
                 style={{
@@ -171,8 +149,8 @@ export default function StepConnectDomain({
                 icon={<InfoCircleOutlined />}
                 message={
                     <>
-                        Wildcards are supported. Use{" "}
-                        <Text code>*.example.com</Text> for subdomains.
+                        {t('wildcards.supported', { defaultValue: 'Wildcards are supported. Use' })}{" "}
+                        <Text code>*.example.com</Text> {t('for.subdomains', { defaultValue: 'for subdomains.' })}
                     </>
                 }
                 style={{ marginBottom: 20 }}
@@ -181,11 +159,11 @@ export default function StepConnectDomain({
             <Divider style={{ margin: "0 0 20px" }} />
 
             <Row justify="space-between" align="middle">
-                <Link onClick={onBack}>Back</Link>
+                <Link onClick={onBack}>{t('back', { defaultValue: 'Back' })}</Link>
 
                 <Space>
                     <Link onClick={onComplete}>
-                        Skip for now
+                        {t('skip.for.now', { defaultValue: 'Skip for now' })}
                     </Link>
 
                     <Button
@@ -194,7 +172,7 @@ export default function StepConnectDomain({
                         icon={<CopyOutlined />}
                         onClick={handleComplete}
                     >
-                        Complete Setup
+                        {t('complete.setup', { defaultValue: 'Complete Setup' })}
                     </Button>
                 </Space>
             </Row>

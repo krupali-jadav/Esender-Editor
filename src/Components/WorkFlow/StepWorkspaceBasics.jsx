@@ -19,6 +19,7 @@ import {
 } from "@ant-design/icons";
 import SelectTile from "./SelectTile";
 import { saveProfile } from "../Profile/ProfileApi";
+import { t } from "i18next";
 
 const { Title, Text, Link } = Typography;
 
@@ -31,26 +32,26 @@ export default function StepWorkspaceBasics({ onNext }) {
         {
             key: "transactional",
             icon: <FileTextOutlined style={{ color: "#20A6CE" }} />,
-            title: "Transactional",
-            desc: "Receipts, passwords, alerts.",
+            title: t('transactional', { defaultValue: 'Transactional' }),
+            desc: t('receipts.passwords.alerts', { defaultValue: 'Receipts, passwords, alerts.' }),
         },
         {
             key: "marketing",
             icon: <MailOutlined style={{ color: "#20A6CE" }} />,
-            title: "Marketing",
-            desc: "Newsletters, promos, drips.",
+            title: t('marketing', { defaultValue: 'Marketing' }),
+            desc: t('newsletters.promos.drips', { defaultValue: 'Newsletters, promos, drips.' }),
         },
         {
             key: "internal",
             icon: <ToolOutlined style={{ color: "#20A6CE" }} />,
-            title: "Internal Tool",
-            desc: "System notifications, reports.",
+            title: t('internal', { defaultValue: 'Internal Tool' }),
+            desc: t('system.notifications.reports', { defaultValue: 'System notifications, reports.' }),
         },
         {
             key: "other",
             icon: <MoreOutlined style={{ color: "#20A6CE" }} />,
-            title: "Other",
-            desc: "",
+            title: t('other', { defaultValue: 'Other' }),
+            desc: t('describe.your.use.case', { defaultValue: 'Describe your use case.' }),
         },
     ];
 
@@ -89,7 +90,7 @@ export default function StepWorkspaceBasics({ onNext }) {
         <>
             <div style={{ textAlign: "center", marginBottom: 24 }}>
                 <Text type="secondary">
-                    Let&apos;s set up your workspace.
+                    {t('let.s.set.up.your.workspace', { defaultValue: "Let's set up your workspace." })}
                 </Text>
             </div>
 
@@ -108,11 +109,11 @@ export default function StepWorkspaceBasics({ onNext }) {
                         letterSpacing: 0.5,
                     }}
                 >
-                    STEP 1 OF 4
+                    {t('step.1.of.4', { defaultValue: 'STEP 1 OF 4' })}
                 </Text>
 
                 <Title level={4} style={{ margin: "4px 0 16px" }}>
-                    Workspace Basics
+                    {t('workspace.basics', { defaultValue: 'Workspace Basics' })}
                 </Title>
 
                 <Divider style={{ margin: "0 0 20px" }} />
@@ -123,12 +124,12 @@ export default function StepWorkspaceBasics({ onNext }) {
                     onFinish={onSave}
                 >
                     <Form.Item
-                        label="Workspace / Company Name"
+                        label={t('workspace.company.name', { defaultValue: 'Workspace / Company Name' })}
                         name="name"
                         rules={[
                             {
                                 required: true,
-                                message: "Please enter workspace/company name",
+                                message: t('please.enter.workspace.company.name', { defaultValue: 'Please enter workspace/company name' }),
                             },
                         ]}
                     >
@@ -136,19 +137,19 @@ export default function StepWorkspaceBasics({ onNext }) {
                     </Form.Item>
 
                     <Form.Item
-                        label="Working Email Address (Optional)"
+                        label={t('working.email.address', { defaultValue: 'Working Email Address (Optional)' })}
                         name="email"
                         rules={[
                             {
                                 type: "email",
-                                message: "Please enter a valid email",
+                                message: t('please.enter.valid.email', { defaultValue: 'Please enter a valid email' }),
                             },
                         ]}
                     >
                         <Input placeholder="e.g. example@company.com" />
                     </Form.Item>
 
-                    <Form.Item label="Primary Intended Use">
+                    <Form.Item label={t('primary.intended.use', { defaultValue: 'Primary Intended Use' })}>
                         <Row gutter={[12, 12]}>
                             {useCases.map((item) => (
                                 <Col xs={24} sm={12} key={item.key}>
@@ -174,7 +175,7 @@ export default function StepWorkspaceBasics({ onNext }) {
                             icon={<ArrowRightOutlined />}
                             iconPosition="end"
                         >
-                            Next
+                            {t('next', { defaultValue: 'Next' })}
                         </Button>
                     </Row>
                 </Form>
@@ -187,7 +188,7 @@ export default function StepWorkspaceBasics({ onNext }) {
                 }}
             >
                 <Text type="secondary">
-                    Need help? <Link>Read the setup guide.</Link>
+                    {t('need.help', { defaultValue: 'Need help?' })} <Link>{t('read.the.setup.guide', { defaultValue: 'Read the setup guide.' })}</Link>
                 </Text>
             </div>
         </>

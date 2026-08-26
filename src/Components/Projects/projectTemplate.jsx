@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     Button,
     Card,
     Col,
-    Dropdown,
     Flex,
     Input,
     Modal,
@@ -28,6 +27,7 @@ import EmptyState from '../Styles/EmptyState';
 import { useDebounce } from '../../util/useDebounce';
 import { useSelector } from 'react-redux';
 import { formatDate } from '../../util/commom.utils';
+import { t } from 'i18next';
 const { Text } = Typography
 
 const statusColors = {
@@ -92,7 +92,7 @@ function ProjectTemplate() {
 
                 <Button style={{ background: '#20A6CE', color: '#fff', height: 40, borderRadius: 9 }} icon={<PlusOutlined />}
                     onClick={() => navigate("/templates/create-template")}>
-                    New Template
+                    {t('new.template', { defaultValue: 'New Template' })}
                 </Button>
             </Flex>
 
@@ -108,14 +108,15 @@ function ProjectTemplate() {
                     <Col span={24}>
                         <EmptyState
                             icon={<FileTextOutlined />}
-                            title="No templates found"
-                            description="There are no templates available for this project."
+                            title={t('no.templates.found', { defaultValue: 'No templates found' })}
+                            description={t('no.templates.description', { defaultValue: 'There are no templates available for this project.' })}
                         />
                     </Col>
                 ) : (
                     templates.map((template) => (
                         <Col key={template._id} xs={22} sm={12} md={8} lg={8} xl={6}>
                             <Card size="small" hoverable
+                                style={{ background: theme ? "#0F2233" : "#e1e4e6", }}
                                 cover={
                                     <div
                                         style={{
@@ -124,6 +125,7 @@ function ProjectTemplate() {
                                             background: "#dcdfe4",
                                             borderBottom: "1px solid #f0f0f0",
                                             overflow: "hidden",
+
                                         }}
                                         onMouseEnter={() => setHoveredTemplate(template._id)}
                                         onMouseLeave={() => setHoveredTemplate(null)}
@@ -189,21 +191,21 @@ function ProjectTemplate() {
                                 </Space>
 
 
-                                <div style={{ marginTop: 8 }}>
+                                <div style={{ marginTop: 5 }}>
                                     <Space style={{ width: "100%", justifyContent: "space-between" }}>
-                                        <Space size={4}>
-                                            <FolderOutlined style={{ color: "#8c8c8c" }} />
-                                            <Text type="secondary">
-                                                {template.project}
+                                        <Space size={6}>
+                                            <FolderOutlined style={{ color: "#20A6CE" ,fontSize: 17}} />
+                                            <Text style={{color: "#8c8e91", fontWeight: 600 }}>
+                                                {template.project}  Marketing
                                             </Text>
                                         </Space>
                                     </Space>
                                 </div>
 
-                                <Row justify="space-between" align="middle" style={{ marginTop: 16 }}>
-                                    <Space size={4}>
-                                        <ClockCircleOutlined style={{ color: "#8c8c8c" }} />
-                                        <Text type="secondary">
+                                <Row justify="space-between" align="middle" style={{ marginTop: 8 }}>
+                                    <Space size={6}>
+                                        <ClockCircleOutlined style={{ color: "#20A6CE" }} />
+                                         <Text style={{color: "#8c8e91", fontWeight: 600 }}>
                                             {formatDate(template.updatedAt)}
                                         </Text>
                                     </Space>
@@ -211,7 +213,7 @@ function ProjectTemplate() {
                                     <Row>
 
                                         <Tag variant="filled" style={{ background: theme ? "#0A1622" : "#F5F8FA", }} >
-                                            {template.HTML?.trim() ? "HTML" : "TEXT"}
+                                            {template.HTML?.trim() ? t('html', { defaultValue: 'HTML' }) : t('text', { defaultValue: 'TEXT' })}
                                         </Tag>
                                     </Row>
                                 </Row>
