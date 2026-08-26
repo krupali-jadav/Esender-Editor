@@ -66,11 +66,11 @@ const Profile = () => {
 
       if (data?.status) {
         message.success(data?.message || "Profile saved successfully");
-
         dispatch(refreshProfile());
       }
     } catch (error) {
       console.log(error);
+      message.error(error?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -85,22 +85,13 @@ const Profile = () => {
       />
       <Row justify="center">
         <Col xs={24}>
-          <Card
-            style={{ width: "100%", maxWidth: 1280, margin: "0 auto" }}
-          >
-            <Form
-              form={form}
-              layout="vertical"
-              autoComplete="off"
-              onFinish={onProfileSave}
-            >
+          <Card style={{ width: "100%", maxWidth: 1280, margin: "0 auto" }}>
+            <Form form={form} layout="vertical" autoComplete="off" onFinish={onProfileSave}>
               <Row gutter={[14, 0]}>
 
                 {/* image */}
                 <Col xs={24} sm={24} md={7} lg={5} xl={4}>
-                  <Form.Item
-                    name="logo"
-                  >
+                  <Form.Item name="logo">
                     <Flex justify="center" align="center">
                       <Upload
                         multiple={false}
@@ -151,10 +142,9 @@ const Profile = () => {
                     <Col md={12} sm={12} xl={12} xs={24}>
                       <Form.Item
                         label={t("phone", { defaultValue: "Phone" })}
-                        // name="phone"
+                      // name="phone"
                       >
                         <PhoneInput
-                          // key={`${phoneCountry}-${phone}`}
                           key={phone}
                           enableSearch
                           country={phoneCountry || "in"}
@@ -279,11 +269,7 @@ const Profile = () => {
               <br />
 
               <Flex justify="end">
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  loading={loading}
-                >
+                <Button type="primary" htmlType="submit" loading={loading}>
                   {t("save", { defaultValue: "Save" })}
                 </Button>
               </Flex>

@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import EmptyState from "../Styles/EmptyState";
 import { formatDate } from "../../util/commom.utils";
 import { useDebounce } from "../../util/useDebounce";
-
+import { staticModal } from "../../util/staticFn";
 const { Text } = Typography;
 
 const statusColors = {
@@ -34,6 +34,11 @@ export default function Templates() {
     const [totalTemplates, setTotalTemplates] = useState(0);
     const theme = useSelector((state) => state?.app?.theme);
     const debouncedSearch = useDebounce(search, 700);
+
+    const isEmptyEditorHtml = (html) =>
+        !html ||
+        html.trim() === "" ||
+        html.includes("Drag Content Block Here");
 
     const fetchTemplates = async () => {
         try {
@@ -60,7 +65,6 @@ export default function Templates() {
             }
         } catch (error) {
             console.log(error);
-            message.error(error?.response?.data?.message || error?.message || "Failed to load templates");
         } finally {
             setLoading(false);
         }
@@ -71,9 +75,9 @@ export default function Templates() {
     }, [debouncedSearch, sortBy, currentPage, pageSize]);
 
     const handleDeleteTemplate = (template) => {
-        Modal.confirm({
+        staticModal.confirm({
             title: "Delete Template",
-            content: (<>Are you sure you want to delete{" "} <strong> {template.name}</strong>?</>),
+            content: (<>Are you sure you want to delete{" "} <strong> "{template.name}"</strong>?</>),
             okText: "Delete",
             okType: "danger",
             cancelText: "Cancel",
@@ -92,13 +96,12 @@ export default function Templates() {
                                 (item) => item._id !== template._id
                             )
                         );
-                        message.success("Template deleted successfully");
+                        message.success(data?.message || "Template deleted successfully");
                     } else {
                         message.error(data?.message || "Failed to delete template");
                     }
                 } catch (error) {
                     console.error(error);
-                    message.error(error?.response?.data?.message || error?.message || "Failed to delete template");
                 } finally {
                     setLoading(false);
                 }
@@ -127,7 +130,7 @@ export default function Templates() {
             }
         } catch (error) {
             console.error(error);
-            message.error(error?.response?.data?.message || error?.message || "Failed to change template status");
+            message.error(error?.message || "Failed to change template status");
         } finally {
             setStatusLoading(null);
         }
@@ -139,9 +142,7 @@ export default function Templates() {
                 <Row gutter={[16, 16]} align="middle">
                     <Col xs={24} lg={14}>
                         <AppPageHeader
-                            title={t("templates.library", {
-                                defaultValue: "Template Library",
-                            })}
+                            title={t("templates.library", {defaultValue: "Template Library",})}
                             description="Manage and discover email templates across your workspace."
                         />
                     </Col>
@@ -250,20 +251,14 @@ export default function Templates() {
                             >
                                 <Card
                                     hoverable
-                                    styles={{ body: { padding: 16 } }}                                                                  
+                                    styles={{ body: { padding: 16 } }}
                                     cover={
                                         <div
-                                            style={{
-                                                position: "relative",
-                                                height: 200,
-                                                background: "#dcdfe4",
-                                                borderBottom: "1px solid #f0f0f0",
-                                                overflow: "hidden",
-                                            }}
+                                            style={{ position: "relative", height: 200, background: "#dcdfe4", borderBottom: "1px solid #f0f0f0", overflow: "hidden", }}
                                             onMouseEnter={() => setHoveredTemplate(tpl._id)}
                                             onMouseLeave={() => setHoveredTemplate(null)}
                                         >
-                                            {tpl.HTML?.trim() ? (
+                                            {!isEmptyEditorHtml(tpl.HTML) ? (
                                                 <iframe
                                                     title={`template-${tpl._id}`}
                                                     srcDoc={tpl.HTML}
@@ -285,23 +280,14 @@ export default function Templates() {
                                                         padding: 16,
                                                     }}
                                                 >
-                                                    <Text type="secondary">
-                                                        {tpl.text}
+                                                    <Text style={{ color: "#000" }}>
+                                                        {tpl.text.replace(/{{\s*[^}]+\s*}}/g, "{{name}}")}
                                                     </Text>
                                                 </Flex>
                                             ) : (
-                                                <Flex
-                                                    align="center"
-                                                    justify="center"
-                                                    style={{
-                                                        height: "100%",
-                                                    }}
-                                                >
+                                                <Flex align="center" justify="center" style={{ height: "100%", }}>
                                                     <FileImageOutlined
-                                                        style={{
-                                                            fontSize: 28,
-                                                            color: "#bfbfbf",
-                                                        }}
+                                                        style={{ fontSize: 28, color: "#bfbfbf", }}
                                                     />
                                                 </Flex>
                                             )}
@@ -309,11 +295,7 @@ export default function Templates() {
                                             {/* Delete button */}
                                             {hoveredTemplate === tpl._id && (
                                                 <Flex justify="center" align="center" gap={10}
-                                                    style={{
-                                                        position: "absolute",
-                                                        inset: 0,
-                                                        background: "rgba(0,0,0,0.4)",
-                                                    }}
+                                                    style={{position: "absolute",inset: 0,background: "rgba(0,0,0,0.4)",}}
                                                 >
                                                     <Button
                                                         shape="circle"
@@ -404,9 +386,7 @@ export default function Templates() {
                                     <Button
                                         type="primary"
                                         icon={<PlusOutlined />}
-                                        onClick={() =>
-                                            navigate("/templates/create-template")
-                                        }
+                                        onClick={() => navigate("/templates/create-template")}
                                     >
                                         Create Template
                                     </Button>
@@ -440,28 +420,22 @@ export default function Templates() {
                 centered
                 width={500}
                 title={previewTemplate?.name}
-                styles={{ body: { padding: 0, height: "55vh", }, }}
+                styles={{ body: { padding: 0, height: "55vh" } }}
             >
-                {previewTemplate?.HTML?.trim() ? (
+                {!isEmptyEditorHtml(previewTemplate?.HTML) ? (
                     <iframe
                         title={`preview-${previewTemplate._id}`}
                         srcDoc={previewTemplate.HTML}
                         style={{ width: "100%", height: "55vh", border: "none", background: "#fff", }}
                     />
                 ) : previewTemplate?.text?.trim() ? (
-                    <Flex
-                        align="center"
-                        justify="center"
-                        style={{ height: "75vh", padding: 24, }}
-                    >
-                        <Text>{previewTemplate.text}</Text>
+                    <Flex style={{ height: "55vh", padding: 24, background: "#fff", overflowY: "auto", border: "none", }}>
+                        <Text style={{ color: "#000", whiteSpace: "pre-wrap", }}>
+                            {previewTemplate.text.replace(/{{\s*[^}]+\s*}}/g, "{{name}}")}
+                        </Text>
                     </Flex>
                 ) : (
-                    <Flex
-                        align="center"
-                        justify="center"
-                        style={{ height: "75vh", }}
-                    >
+                    <Flex align="center" justify="center" style={{ height: "75vh" }}>
                         <FileImageOutlined style={{ fontSize: 48, color: "#bfbfbf", }} />
                     </Flex>
                 )}

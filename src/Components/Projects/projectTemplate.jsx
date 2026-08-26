@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react'
 import {
     Button,
     Card,
-    Col,
-    Dropdown,
     Flex,
     Input,
     Modal,
@@ -36,7 +34,6 @@ const statusColors = {
     archived: "default",
 };
 
-
 function ProjectTemplate() {
     const navigate = useNavigate();
     const [templates, setTemplates] = useState([]);
@@ -50,6 +47,11 @@ function ProjectTemplate() {
     );
     const theme = useSelector((state) => state?.app?.theme);
     const projectId = selectedProject?._id;
+
+    const isEmptyEditorHtml = (html) =>
+        !html ||
+        html.trim() === "" ||
+        html.includes("Drag Content Block Here");
 
     const fetchTemplates = async (projectId) => {
         if (!projectId) {
@@ -81,20 +83,22 @@ function ProjectTemplate() {
     return (
         <Flex vertical gap="middle" style={{ padding: 24 }}>
             {/* Top Actions */}
-            <Flex justify="space-between" align="center" gap="middle">
-                <Input
-                    placeholder="Search templates..."
-                    prefix={<SearchOutlined />}
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    style={{ width: 340 }}
-                />
+            <Card>
+                <Flex justify="space-between" align="center" gap="middle">
+                    <Input
+                        placeholder="Search templates..."
+                        prefix={<SearchOutlined />}
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        style={{ width: 340 }}
+                    />
 
-                <Button style={{ background: '#20A6CE', color: '#fff', height: 40, borderRadius: 9 }} icon={<PlusOutlined />}
-                    onClick={() => navigate("/templates/create-template")}>
-                    New Template
-                </Button>
-            </Flex>
+                    <Button style={{ background: '#20A6CE', color: '#fff', height: 40, borderRadius: 9 }} icon={<PlusOutlined />}
+                        onClick={() => navigate("/templates/create-template")}>
+                        New Template
+                    </Button>
+                </Flex>
+            </Card>
 
             {/* Template Cards */}
             <Row gutter={[16, 16]}>
@@ -129,7 +133,7 @@ function ProjectTemplate() {
                                         onMouseLeave={() => setHoveredTemplate(null)}
                                     >
                                         {/* Template HTML Preview */}
-                                        {template.HTML?.trim() ? (
+                                        {!isEmptyEditorHtml(template.HTML) ? (
                                             <iframe
                                                 title={`template-${template._id}`}
                                                 srcDoc={template.HTML}
@@ -144,7 +148,7 @@ function ProjectTemplate() {
                                             />
                                         ) : template.text?.trim() ? (
                                             <Flex align="center" justify="center" style={{ height: "100%", padding: 16, }}>
-                                                <Text type="secondary">
+                                                <Text style={{ color: "#000" }}>
                                                     {template.text}
                                                 </Text>
                                             </Flex>
@@ -154,14 +158,9 @@ function ProjectTemplate() {
                                             </Flex>
                                         )}
 
-                                        {/* Hover Eye */}
                                         {hoveredTemplate === template._id && (
                                             <Flex justify="center" align="center"
-                                                style={{
-                                                    position: "absolute",
-                                                    inset: 0,
-                                                    background: "rgba(0,0,0,0.4)",
-                                                }}
+                                                style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.4)" }}
                                             >
                                                 <Button
                                                     shape="circle"
@@ -209,7 +208,6 @@ function ProjectTemplate() {
                                     </Space>
 
                                     <Row>
-
                                         <Tag variant="filled" style={{ background: theme ? "#0A1622" : "#F5F8FA", }} >
                                             {template.HTML?.trim() ? "HTML" : "TEXT"}
                                         </Tag>
@@ -228,29 +226,27 @@ function ProjectTemplate() {
                 centered
                 width={500}
                 title={previewTemplate?.name}
-                styles={{ body: { padding: 0, height: "55vh", }, }}
+                styles={{ body: { padding: 0, height: "55vh" } }}
             >
-                {previewTemplate?.HTML?.trim() ? (
+                {!isEmptyEditorHtml(previewTemplate?.HTML?.trim()) ? (
                     <iframe
                         title={`preview-${previewTemplate._id}`}
                         srcDoc={previewTemplate.HTML}
-                        style={{
-                            width: "100%",
-                            height: "55vh",
-                            border: "none",
-                            background: "#fff",
-                        }}
+                        style={{ width: "100%", height: "55vh", border: "none", background: "#fff", }}
                     />
                 ) : previewTemplate?.text?.trim() ? (
-                    <Flex align="center" justify="center" style={{ height: "55vh", padding: 24, }}>
-                        <Text>{previewTemplate.text}</Text>
+                    <Flex style={{ height: "55vh", padding: 24, background: "#fff", overflowY: "auto", border: "none", }}>
+                        <Text style={{ color: "#000", whiteSpace: "pre-wrap", }}>
+                            {previewTemplate.text.replace(/{{\s*[^}]+\s*}}/g, "{{name}}")}
+                        </Text>
                     </Flex>
                 ) : (
-                    <Flex align="center" justify="center" style={{ height: "70vh", }}>
-                        <FileTextOutlined style={{ fontSize: 48, color: "#bfbfbf", }} />
+                    <Flex align="center" justify="center" style={{ height: "55vh" }}>
+                        <FileTextOutlined style={{ fontSize: 48, color: "#bfbfbf" }} />
                     </Flex>
                 )}
             </Modal>
+
         </Flex>
     )
 }

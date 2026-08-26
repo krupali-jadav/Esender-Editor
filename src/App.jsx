@@ -9,7 +9,9 @@ import {
 import Login from "./Components/Login";
 import ProLayouts from "./Components/Site/ProLayouts";
 import Overview from "./Components/Overview/Overview";
-import { ConfigProvider } from "antd";
+// import { ConfigProvider } from "antd";
+import { App as AntdApp, ConfigProvider } from "antd";
+import { StaticFnHolder } from "./util/StaticFnHolder";
 import { getThemeConfig } from "./Components/theme/themeConfig";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
@@ -28,11 +30,11 @@ import { refreshProfile } from "./Components/Redux/action";
 import Settings from "./Components/Settings/Settings";
 import Order from "./Components/Order/Order";
 
-const ProtectedRoute = ({ component: Component, isAuthenticated,selectedProject }) => {
+const ProtectedRoute = ({ component: Component, isAuthenticated, selectedProject }) => {
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
-    if (!selectedProject) {
+  if (!selectedProject) {
     return <Navigate to="/select-project" replace />;
   }
   return (
@@ -88,88 +90,90 @@ function App() {
       locale="en"
       theme={getThemeConfig(darkMode)}
     >
-      <BrowserRouter>
-        <Routes>
-          {/* Login */}
-          <Route
-            path="/login"
-            element={
-              isAuthenticated ? (
-                <Navigate to="/select-project" replace />
-              ) : (
-                <Login />
-              )
-            }
-          />
-          <Route
-            path="/select-project"
-            element={
-              isAuthenticated ? (
-                <SelectProject />
-              ) : (
-                <Navigate to="/login" replace />
-              )
-            }
-          />
-
-          <Route
-            path="/workflow"
-            element={
-              isAuthenticated ? (
-                <WorkFlow />
-              ) : (
-                <Navigate to="/login" replace />
-              )
-            }
-          />
-
-
-          {/* Application Routes */}
-          {routes.map((route) => (
+      <AntdApp>
+        <StaticFnHolder />
+        <BrowserRouter>
+          <Routes>
+            {/* Login */}
             <Route
-              key={route.path}
-              path={route.path}
+              path="/login"
               element={
-                <ProtectedRoute
-                  component={route.component}
-                  isAuthenticated={isAuthenticated}
-                  selectedProject={selectedProject}
+                isAuthenticated ? (
+                  <Navigate to="/select-project" replace />
+                ) : (
+                  <Login />
+                )
+              }
+            />
+            <Route
+              path="/select-project"
+              element={
+                isAuthenticated ? (
+                  <SelectProject />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
+            />
+
+            <Route
+              path="/workflow"
+              element={
+                isAuthenticated ? (
+                  <WorkFlow />
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
+            />
+
+
+            {/* Application Routes */}
+            {routes.map((route) => (
+              <Route
+                key={route.path}
+                path={route.path}
+                element={
+                  <ProtectedRoute
+                    component={route.component}
+                    isAuthenticated={isAuthenticated}
+                    selectedProject={selectedProject}
+                  />
+                }
+              />
+            ))}
+
+            {/* Default */}
+            <Route
+              path="/"
+              element={
+                <Navigate
+                  to={
+                    !isAuthenticated
+                      ? "/login"
+                      : selectedProject
+                        ? "/overview"
+                        : "/select-project"
+                  }
+                  replace
                 />
               }
             />
-          ))}
 
-          {/* Default */}
-          <Route
-            path="/"
-            element={
-              <Navigate
-                to={
-                  !isAuthenticated
-                    ? "/login"
-                    : selectedProject
-                      ? "/overview"
-                      : "/select-project"
-                }
-                replace
-              />
-            }
-          />
-
-          {/* Unknown routes */}
-          <Route
-            path="*"
-            element={
-              <Navigate
-                to={isAuthenticated ? "/overview" : "/login"}
-                replace
-              />
-            }
-          />
-        </Routes>
-      </BrowserRouter>
+            {/* Unknown routes */}
+            <Route
+              path="*"
+              element={
+                <Navigate
+                  to={isAuthenticated ? "/overview" : "/login"}
+                  replace
+                />
+              }
+            />
+          </Routes>
+        </BrowserRouter>
+      </AntdApp >
     </ConfigProvider>
-
   );
 }
 
