@@ -33,3 +33,25 @@ export const saveProfile = async (payload) => {
         return null;
     }
 };
+export const uploadImage = async (payload) => {
+    try {
+        const response = await axiosInstance.post(
+            "auth/upload-image",
+            payload,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            }
+        );
+
+        if (response.data?.status) {
+            return response.data;
+        } else {
+            message.error(response.data?.message);
+        }
+    } catch (error) {
+        console.log(error);
+        message.error(error?.message || "Failed to upload image");
+    }
+};

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
     Row,
     Col,
@@ -8,10 +8,10 @@ import {
     Button,
     Typography,
     Input,
-    Alert,
     Space,
     Dropdown,
     Flex,
+    Badge,
 } from 'antd'
 import {
     GlobalOutlined,
@@ -22,96 +22,145 @@ import {
 } from '@ant-design/icons'
 import { useSelector } from 'react-redux'
 import AddDomain from './AddDomain'
+import { getDomains, validateProjectDomain } from './ProjectsApi'
+import { t } from 'i18next'
 
 const { Title, Text, Paragraph } = Typography
 
-const DOMAIN_DATA = [
-    { key: '1', domain: 'app.acme.com', type: 'Exact' },
-    { key: '2', domain: '*.acme.com', type: 'Wildcard' },
-    { key: '3', domain: 'localhost:3000', type: 'Exact' },
-]
-
-const columns = [
-    {
-        title: 'Domain',
-        dataIndex: 'domain',
-        key: 'domain',
-        width: 200,
-        render: (text, record) => (
-            <Space size={8}>
-                {record.type === 'Wildcard' ? (
-                    <CodeOutlined style={{ fontSize: 17,display:"flex",alignItems:"center" }} />
-                ) : (
-                    <GlobalOutlined style={{ fontSize: 17,display:"flex",alignItems:"center" }} />
-                )}
-                <Text code>
-                    {text}
-                </Text>
-            </Space>
-        ),
-    },
-    {
-        title: 'Type',
-        dataIndex: 'type',
-        key: 'type',
-        width: 140,
-        render: (type) => (
-            <Tag color={type === 'Wildcard' ? 'cyan' : 'default'} bordered={false}>
-                {type}
-            </Tag>
-        ),
-    },
-    {
-        title: 'Type',
-        dataIndex: 'type',
-        key: 'type',
-        width: 140,
-        render: (type) => (
-            <Tag color={type === 'Wildcard' ? 'cyan' : 'default'} bordered={false}>
-                {type}
-            </Tag>
-        ),
-    },
-    {
-        title: 'Type',
-        dataIndex: 'type',
-        key: 'type',
-        width: 140,
-        render: (type) => (
-            <Tag color={type === 'Wildcard' ? 'cyan' : 'default'} bordered={false}>
-                {type}
-            </Tag>
-        ),
-    },
-    {
-        title: 'Actions',
-        key: 'actions',
-        width: 120,
-        align: 'center',
-        render: () => (
-            <Dropdown
-                menu={{
-                    items: [
-                        { key: 'edit', label: 'Edit' },
-                        { key: 'delete', label: 'Delete', danger: true },
-                    ],
-                }}
-                trigger={['click']}
-            >
-                <Button type="text" icon={<MoreOutlined />} />
-            </Dropdown>
-        ),
-    },
-]
-
 function ProjectDomain() {
     const [originUrl, setOriginUrl] = useState('')
+    const [verifyLoading, setVerifyLoading] = useState(false);
+    const [validationResult, setValidationResult] = useState(null);
     const [addDomainOpen, setAddDomainOpen] = useState(false)
+    const [domains, setDomains] = useState([]);
+    const [domainsLoading, setDomainsLoading] = useState(false);
     const theme = useSelector((state) => state?.app?.theme);
+    const selectedProject = useSelector((state) => state?.app?.selectedProject);
 
+
+    const fetchDomains = async () => {
+        if (!selectedProject?._id) return;
+
+        try {
+            setDomainsLoading(true);
+
+            const response = await getDomains(selectedProject._id);
+
+            if (response?.status) {
+                setDomains(response?.domains || []);
+            } else {
+                setDomains([]);
+            }
+        } catch (error) {
+            console.error("FETCH DOMAINS ERROR:", error);
+            setDomains([]);
+        } finally {
+            setDomainsLoading(false);
+        }
+    };
+    const handleVerifyOrigin = async () => {
+        if (!originUrl.trim()) {
+            return;
+        }
+
+        if (!selectedProject?._id) {
+            return;
+        }
+
+        try {
+            setVerifyLoading(true);
+
+            const payload = {
+                origin: originUrl.trim(),
+            };
+
+            const data = await validateProjectDomain(
+                selectedProject._id,
+                payload
+            );
+
+            if (data?.status) {
+                setValidationResult(data);
+            }
+        } catch (error) {
+            console.error("VERIFY ORIGIN ERROR:", error);
+        } finally {
+            setVerifyLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchDomains();
+    }, [selectedProject?._id]);
+    const columns = [
+        {
+            title: t('Domain', { defaultValue: 'Domain' }),
+            dataIndex: 'domain',
+            key: 'domain',
+            width: 200,
+            render: (text, record) => (
+                <Space size={8}>
+                    {record.type === 'Wildcard' ? (
+                        <CodeOutlined style={{ fontSize: 17, display: "flex", alignItems: "center" }} />
+                    ) : (
+                        <GlobalOutlined style={{ fontSize: 17, display: "flex", alignItems: "center" }} />
+                    )}
+                    <Text code>
+                        {text}
+                    </Text>
+                </Space>
+            ),
+        },
+        {
+            title: t('Type', { defaultValue: 'Type' }),
+            dataIndex: 'type',
+            key: 'type',
+            width: 140,
+            render: (type) => (
+                <Tag color={type === 'Wildcard' ? 'cyan' : 'default'} bordered={false}>
+                    {type}
+                </Tag>
+            ),
+        },
+        {
+            title: t("Status", { defaultValue: "Status" }),
+            dataIndex: "status",
+            key: "status",
+            width: 140,
+            render: (status) => (
+                <Badge
+                    status={
+                        status === "active"
+                            ? "success"
+                            : "warning"
+                    }
+                    text={status}
+                />
+            ),
+        },
+        {
+            title: t('actions', { defaultValue: 'Actions' }),
+            key: 'actions',
+            width: 120,
+            align: 'center',
+            render: () => (
+                <Dropdown
+                    menu={{
+                        items: [
+                            { key: 'edit', label: 'Edit' },
+                            { key: 'delete', label: 'Delete', danger: true },
+                        ],
+                    }}
+                    trigger={['click']}
+                >
+                    <Button type="text" icon={<MoreOutlined />} />
+                </Dropdown>
+            ),
+        },
+    ]
     return (
         <div style={{ padding: 24 }}>
-            <Row gutter={[16,16]}>
+            <Row gutter={[16, 16]}>
                 {/* Left: Allowed Domains */}
                 <Col xs={24} lg={16}>
                     <Space direction="vertical" size="middle" style={{ width: "100%" }}>
@@ -120,15 +169,14 @@ function ProjectDomain() {
                             title={
                                 <Flex vertical gap={4}>
                                     <Title level={5} style={{ margin: 0, whiteSpace: "normal", }}>
-                                        Allowed Domains
+                                        {t('allowed.domains', { defaultValue: 'Allowed Domains' })}
                                     </Title>
 
                                     <Text type="secondary" style={{ whiteSpace: "normal", }}>
-                                        Manage origins permitted to send requests. Accepts
-                                        patterns like{" "}
-                                        <Text code>app.example.com</Text>,{" "}
-                                        <Text code>*.example.com</Text>, and{" "}
-                                        <Text code>localhost</Text>.
+                                        {t('manage.origins.permitted.to.send.requests.accepts.patterns.like', { defaultValue: 'Manage origins permitted to send requests. Accepts patterns like' })}{" "}
+                                        <Text code>{t('app.example.com', { defaultValue: 'app.example.com' })}</Text>,{" "}
+                                        <Text code>{t('*.example.com', { defaultValue: '*.example.com' })}</Text>, and{" "}
+                                        <Text code>{t('localhost', { defaultValue: 'localhost' })}</Text>.
                                     </Text>
                                 </Flex>
                             }
@@ -139,7 +187,7 @@ function ProjectDomain() {
                                     onClick={() => setAddDomainOpen(true)}
                                     style={{ background: "#20A6CE", }}
                                 >
-                                    Add Domain
+                                    {t('update.domain', { defaultValue: 'Update Domain' })}
                                 </Button>
                             }
                         />
@@ -147,7 +195,8 @@ function ProjectDomain() {
                         <Card styles={{ body: { padding: 0, }, }}>
                             <Table
                                 columns={columns}
-                                dataSource={DOMAIN_DATA}
+                                dataSource={domains}
+                                loading={domainsLoading}
                                 pagination={false}
                                 size="middle"
                                 scroll={{ x: "max-content" }}
@@ -177,55 +226,84 @@ function ProjectDomain() {
                         title={
                             <Space color=''>
                                 <SafetyCertificateOutlined style={{ color: '#722ed1' }} />
-                                <span>Local Validation Only</span>
+                                <span>{t('local.validation.only', { defaultValue: 'Local Validation Only' })}</span>
                             </Space>
                         }
-                        style={{ height: 515 }}
+                        style={{ height: 450 }}
                     >
                         <Paragraph type="secondary">
-                            Enter a URL to verify if it matches your current domain rules.
+                            {t('enter.a.url.to.verify.if.it.matches.your.current.domain.rules', { defaultValue: 'Enter a URL to verify if it matches your current domain rules.' })}
                         </Paragraph>
-
-                        <Alert
-                            type="error"
-                            showIcon
-                            message="Real enforcement occurs during session creation."
-                            style={{ marginBottom: 16, fontSize: 12 }}
-                        />
 
                         <Space direction='vertical' size="middle" style={{ width: "100%" }}>
                             <Text strong>
-                                Origin URL
+                                {t('origin.url', { defaultValue: 'Origin URL' })}
                             </Text>
                             <Input
-                                placeholder="https://my-app.com"
+                                placeholder={t('https://my-app.com', { defaultValue: 'https://my-app.com' })}
                                 value={originUrl}
                                 onChange={(e) => setOriginUrl(e.target.value)}
                             />
 
-                            <Button type="default" block>
-                                Verify Origin
+                            <Button
+                                type="default"
+                                block
+                                loading={verifyLoading}
+                                onClick={handleVerifyOrigin}
+                            >
+                                {t('verify.origin', { defaultValue: 'Verify Origin' })}
                             </Button>
                         </Space>
                         <div
                             style={{
-                                backgroundColor: "#D3F5FFE1",
+                                backgroundColor: validationResult
+                                    ? validationResult.allowed
+                                        ? "#F6FFED"
+                                        : "#FFF2F0"
+                                    : "#D3F5FFE1",
                                 borderRadius: 6,
-                                padding: '10px 12px',
-                                textAlign: 'center',
-                                marginTop: "30%",
+                                padding: "10px 12px",
+                                textAlign: "center",
+                                marginTop: "20%",
                             }}
                         >
-                            <Text type="secondary" style={{ color: "#000" }}>
-                                Awaiting input...
-                            </Text>
+                            {!validationResult ? (
+                                <Text type="secondary">
+                                    {t('awaiting.input', { defaultValue: 'Awaiting input...' })}
+                                </Text>
+                            ) : validationResult.allowed ? (
+                                <Space direction="vertical" size={2}>
+                                    <Text type="success" strong>
+                                        {t('domain.allowed', { defaultValue: 'Domain Allowed' })}
+                                    </Text>
+
+                                    <Text type="secondary">
+                                        {t('matched.rule', { defaultValue: 'Matched rule:' })}{" "}
+                                        <Text code style={{ color: theme ? "#171A2B" : "#171A2B" }}>
+                                            {validationResult.matchedRule}
+                                        </Text>
+                                    </Text>
+                                </Space>
+                            ) : (
+                                <Space direction="vertical" size={2}>
+                                    <Text type="danger" strong>
+                                        {t('domain.not.allowed', { defaultValue: 'Domain Not Allowed' })}
+                                    </Text>
+
+                                    <Text type="secondary">
+                                        {t('no.matching.domain.rule.found', { defaultValue: 'No matching domain rule found.' })}
+                                    </Text>
+                                </Space>
+                            )}
                         </div>
                     </Card>
                 </Col>
             </Row>
             <AddDomain
                 open={addDomainOpen}
+                projectId={selectedProject?._id}
                 onClose={() => setAddDomainOpen(false)}
+                onSuccess={fetchDomains}
             />
         </div>
     )

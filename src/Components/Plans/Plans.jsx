@@ -1,20 +1,22 @@
-import { Row, Col, Card, Badge, Progress, Typography, Space, Button, Flex, Spin, Empty, } from "antd";
-import { CreditCardOutlined, WarningOutlined, CheckCircleFilled, CloseCircleFilled, ProjectOutlined, FileTextOutlined, TeamOutlined, ThunderboltOutlined, DatabaseOutlined, RobotOutlined, } from "@ant-design/icons";
+import { Row, Col, Card, Badge, Progress, Typography, Space, Button, Flex, Spin, Empty, Divider, Avatar, } from "antd";
+import { CreditCardOutlined, WarningOutlined, CheckCircleFilled, CloseCircleFilled, ProjectOutlined, FileTextOutlined, TeamOutlined, ThunderboltOutlined, DatabaseOutlined, RobotOutlined, CalendarOutlined, } from "@ant-design/icons";
 import { PageContainer } from "@ant-design/pro-components";
 import { useSelector } from "react-redux";
 import AppPageHeader from "../Styles/AppHeader";
 import { t } from "i18next";
 import { useEffect, useState } from "react";
-import { getPlans } from "./PlanApi";
+import { getPlans, getSubscriptionPlans } from "./PlanApi";
 import EmptyState from "../Styles/EmptyState";
 
 
 
-export default function Billing() {
+export default function Plans() {
     const { Title, Text, Paragraph } = Typography;
     const theme = useSelector((state) => state?.app?.theme);
     const [plans, setPlans] = useState([]);
     const [plansLoading, setPlansLoading] = useState(false);
+    const [subscription, setSubscription] = useState(null);
+    const [subscriptionLoading, setSubscriptionLoading] = useState(false);
 
     const fetchPlans = async () => {
         try {
@@ -33,95 +35,203 @@ export default function Billing() {
             setPlansLoading(false);
         }
     };
+    const fetchSubscription = async () => {
+        try {
+            setSubscriptionLoading(true);
+
+            const response = await getSubscriptionPlans();
+
+            if (response?.status) {
+                setSubscription(response?.subscription || response);
+            } else {
+                setSubscription(null);
+            }
+        } catch (error) {
+            console.error("FETCH SUBSCRIPTION ERROR:", error);
+            setSubscription(null);
+        } finally {
+            setSubscriptionLoading(false);
+        }
+    };
     useEffect(() => {
         fetchPlans();
+        fetchSubscription();
     }, []);
-
+    const currentPlanSlug = subscription?.planSlug;
+    const currentPlanName = subscription?.planName;
     return (
+
         <PageContainer title={false}>
             <AppPageHeader
-                title={t("billing.title", { defaultValue: "Billing" })}
-                description={t("billing.description", { defaultValue: "Manage your subscription, payment methods, and view your billing history." })}
+                title={t("plans", { defaultValue: "Plans" })}
+                description={t("plans.description", { defaultValue: "Manage your subscription, payment methods, and view your plans history." })}
             />
             <Space direction="vertical" size={16} style={{ width: "100%" }}>
-                {/* Current Subscription + Usage Quotas */}
+                {/* Current Subscription */}
                 <Row gutter={[16, 16]}>
-                    <Col xs={24} lg={8}>
-                        <Card style={{ height: "100%" }}>
-                            <Space
-                                style={{ width: "100%", justifyContent: "space-between" }}
-                                align="start"
+                    <Col xs={24}>
+                        <Card
+                            loading={subscriptionLoading}
+                            styles={{ body: { padding: 24 }, }}>
+                            {/* Header */}
+                            <Flex
+                                justify="space-between"
+                                align="center"
+                                wrap="wrap"
+                                gap={12}
                             >
-                                <Title level={5} >
-                                    {t("current.Subscription", { defaultValue: "Current Subscription" })}
-                                </Title>
-                                <Badge status="success" text="Active" />
-                            </Space>
+                                <Space size={12}>
+                                    <Avatar
+                                        shape="square"
+                                        size={42}
+                                        icon={<CreditCardOutlined />}
+                                        style={{
+                                            background: "rgba(32, 166, 206, 0.12)",
+                                            color: "#20A6CE",
+                                        }}
+                                    />
 
-                            <Space direction="vertical" style={{ width: "100%" }} size={15}>
-                                <Row justify="space-between" >
-                                    <Text type="secondary">{t("plan", { defaultValue: "Plan" })}</Text>
-                                    <Text strong>{t("pro.Plan", { defaultValue: "Pro Plan" })}</Text>
-                                </Row>
-                                <Row justify="space-between" >
-                                    <Text type="secondary">{t("renewalDate", { defaultValue: "Renewal Date" })}</Text>
-                                    <Text strong>{t("renewal.Date", { defaultValue: "Oct 24, 2024" })}</Text>
-                                </Row>
-                                <Row justify="space-between" align="top">
-                                    <Text type="secondary">{t("paymentMethod", { defaultValue: "Payment Method" })}</Text>
-                                    <Space size={4}>
-                                        <CreditCardOutlined />
-                                        <Text strong>{t("payment.method", { defaultValue: "Visa ending in 4242" })}</Text>
-                                    </Space>
-                                </Row>
-                                <Button block >{t("manage.Billing", { defaultValue: "Manage Billing" })}</Button>
-                            </Space>
-                        </Card>
-                    </Col>
-
-                    <Col xs={24} lg={16}>
-                        <Card title={t("billing.usageQuotas", { defaultValue: "Usage Quotas" })} style={{ height: "100%" }}>
-                            <Row gutter={32}>
-                                <Col span={12}>
-                                    <Text type="secondary">{t("billing.totalWorkspaceUsers", { defaultValue: "Total Workspace Users" })}</Text>
-                                    <Row justify="space-between" align="bottom">
-                                        <Title level={3} style={{ margin: "4px 0" }}>
-                                            12 <Text type="secondary" >/ 20</Text>
+                                    <div>
+                                        <Title level={5} style={{ margin: 0, }}>
+                                            {t("current.Subscription", { defaultValue: "Current Subscription", })}
                                         </Title>
-                                    </Row>
-                                    <Row justify="space-between" align="middle">
-                                        <Progress
-                                            percent={60}
-                                            showInfo={false}
-                                            style={{ width: "85%" }}
-                                        />
-                                        <Text type="secondary">{t("billing.percentage", { defaultValue: "60%" })}</Text>
-                                    </Row>
+
+                                        <Text type="secondary">
+                                            {t("your.current.billing.plan", { defaultValue: "Your current billing plan" })}
+                                        </Text>
+                                    </div>
+                                </Space>
+
+                                <Badge
+                                    status={
+                                        subscription?.status === "active"
+                                            ? "success"
+                                            : "warning"
+                                    }
+                                    text={
+                                        subscription?.status || "No Subscription"
+                                    }
+                                />
+                            </Flex>
+
+                            <Divider style={{ margin: "22px 0" }} />
+
+                            {/* Subscription Details */}
+                            <Row gutter={[16, 16]}>
+                                <Col xs={24} md={8}>
+                                    <Card
+                                        size="small"
+                                        style={{
+                                            height: "100%",
+                                            background: "rgba(32, 166, 206, 0.04)",
+                                        }}
+                                    >
+                                        <Space
+                                            direction="vertical"
+                                            size={4}
+                                        >
+                                            <Text type="secondary">
+                                                {t("plan", {
+                                                    defaultValue: "Plan",
+                                                })}
+                                            </Text>
+
+                                            <Text
+                                                strong
+                                                style={{
+                                                    fontSize: 18,
+                                                }}
+                                            >
+                                                {subscription?.planName || "-"}
+                                            </Text>
+                                        </Space>
+                                    </Card>
                                 </Col>
 
-                                <Col span={12}>
-                                    <Text type="secondary">{t("billing.totalProjectCount", { defaultValue: "Total Project Count" })}</Text>
-                                    <Row justify="space-between" align="bottom">
-                                        <Title level={3} style={{ margin: "4px 0" }}>
-                                            45 <Text type="secondary" >/ 50</Text>
-                                        </Title>
-                                    </Row>
-                                    <Row justify="space-between" align="middle">
-                                        <Progress
-                                            percent={90}
-                                            showInfo={false}
-                                            strokeColor="#cf1322"
-                                            style={{ width: "85%" }}
-                                        />
-                                        <Text type="secondary" >
-                                            {t("billing.percentage", { defaultValue: "90%" })}
-                                        </Text>
-                                    </Row>
-                                    <Text type="danger" style={{ fontSize: 12 }}>
-                                        <WarningOutlined /> {t("approaching.Limit", { defaultValue: "Approaching limit" })}
-                                    </Text>
+                                <Col xs={24} md={8}>
+                                    <Card
+                                        size="small"
+                                        style={{
+                                            height: "100%",
+                                        }}
+                                    >
+                                        <Space
+                                            direction="vertical"
+                                            size={4}
+                                        >
+                                            <Space size={6}>
+                                                <CalendarOutlined
+                                                    style={{
+                                                        color: "#20A6CE",
+                                                    }}
+                                                />
+
+                                                <Text type="secondary">
+                                                    {t("renewalDate", {
+                                                        defaultValue:
+                                                            "Renewal Date",
+                                                    })}
+                                                </Text>
+                                            </Space>
+
+                                            <Text strong>
+                                                {subscription?.renewalDate
+                                                    ? new Date(
+                                                        subscription.renewalDate
+                                                    ).toLocaleDateString()
+                                                    : "N/A"}
+                                            </Text>
+                                        </Space>
+                                    </Card>
+                                </Col>
+
+                                <Col xs={24} md={8}>
+                                    <Card
+                                        size="small"
+                                        style={{ height: "100%", }}>
+                                        <Space direction="vertical" size={4}>
+                                            <Space size={6}>
+                                                <CreditCardOutlined style={{ color: "#20A6CE", }}/>
+
+                                                <Text type="secondary">
+                                                    {t("paymentMethod", {defaultValue:"Payment Method",})}
+                                                </Text>
+                                            </Space>
+
+                                            <Text strong>
+                                                {subscription?.paymentMethod ||"Not available"}
+                                            </Text>
+                                        </Space>
+                                    </Card>
                                 </Col>
                             </Row>
+
+                            <Divider style={{ margin: "22px 0 18px" }} />
+
+                            {/* Footer */}
+                            <Flex
+                                justify="space-between"
+                                align="center"
+                                wrap="wrap"
+                                gap={12}
+                            >
+                                <Space direction="vertical" size={0}>
+                                    <Text strong>
+                                        {t("need.To.Update.Subscription", {defaultValue:"Need to update your subscription?"})}
+                                    </Text>
+
+                                    <Text type="secondary">
+                                        {t("manage.Plan.Payment", {defaultValue:"Manage your plan and payment details."})}
+                                    </Text>
+                                </Space>
+
+                                <Button
+                                    type="primary"
+                                    icon={<CreditCardOutlined />}
+                                >
+                                    {t("manage.Billing", {defaultValue: "Manage Billing",})}
+                                </Button>
+                            </Flex>
                         </Card>
                     </Col>
                 </Row>
@@ -180,8 +290,7 @@ export default function Billing() {
                             justify="center"
                         >
                             {plans.map((plan, index) => {
-                                const isFree = plan.price === 0;
-
+                                const isCurrentPlan = plan.slug === currentPlanSlug || plan.name?.toLowerCase() === currentPlanName?.toLowerCase();
                                 const planColors = [
                                     {
                                         start: "#22C1DC",
@@ -326,27 +435,27 @@ export default function Billing() {
                                                 <Row gutter={[8, 8]} style={{ marginBottom: 20 }}>
                                                     {[
                                                         {
-                                                            label: t("projects",{defaultValue: "Projects"}),
+                                                            label: t("projects", { defaultValue: "Projects" }),
                                                             value: plan.limits?.maxProjects ?? 0,
                                                             icon: <ProjectOutlined />,
                                                         },
                                                         {
-                                                            label: t("templates",{defaultValue: "Templates"}),
+                                                            label: t("templates", { defaultValue: "Templates" }),
                                                             value: plan.limits?.maxTemplates ?? 0,
                                                             icon: <FileTextOutlined />,
                                                         },
                                                         {
-                                                            label: t("editor.Users",{defaultValue: "Editor Users"}),
+                                                            label: t("editor.Users", { defaultValue: "Editor Users" }),
                                                             value: plan.limits?.maxEditorUsers ?? 0,
                                                             icon: <TeamOutlined />,
                                                         },
                                                         {
-                                                            label: t("monthly.Sessions",{defaultValue: "Monthly Sessions"}),
+                                                            label: t("monthly.Sessions", { defaultValue: "Monthly Sessions" }),
                                                             value: plan.limits?.maxMonthlySessions?.toLocaleString() ?? 0,
                                                             icon: <ThunderboltOutlined />,
                                                         },
                                                         {
-                                                            label: t("storage",{defaultValue: "Storage"}),
+                                                            label: t("storage", { defaultValue: "Storage" }),
                                                             value: `${(
                                                                 (plan.limits?.storageBytes ?? 0) /
                                                                 (1024 * 1024 * 1024)
@@ -354,7 +463,7 @@ export default function Billing() {
                                                             icon: <DatabaseOutlined />,
                                                         },
                                                         {
-                                                            label: t("ai.Credits",{defaultValue: "AI Credits"}),
+                                                            label: t("ai.Credits", { defaultValue: "AI Credits" }),
                                                             value: plan.limits?.maxMonthlyAiCredits ?? 0,
                                                             icon: <RobotOutlined />,
                                                         },
@@ -362,11 +471,11 @@ export default function Billing() {
                                                         <Col span={8} key={limit.label}>
                                                             <Card
                                                                 size="small"
-                                                                styles={{body: {padding: "8px 4px",},}}
+                                                                styles={{ body: { padding: "8px 4px", }, }}
                                                                 style={{
                                                                     textAlign: "center",
-                                                                    background: theme? "rgba(255,255,255,0.025)": "#F8FAFC",
-                                                                    borderColor: theme? "rgba(255,255,255,0.10)": "#E4E7EC",
+                                                                    background: theme ? "rgba(255,255,255,0.025)" : "#F8FAFC",
+                                                                    borderColor: theme ? "rgba(255,255,255,0.10)" : "#E4E7EC",
                                                                 }}
                                                             >
                                                                 <Flex wrap vertical align="center" gap={2}>
@@ -381,7 +490,7 @@ export default function Billing() {
 
                                                                     <Text
                                                                         strong
-                                                                        style={{fontSize: 14,color: theme ? "#FFFFFF" : "#1D2939",}}
+                                                                        style={{ fontSize: 14, color: theme ? "#FFFFFF" : "#1D2939", }}
                                                                     >
                                                                         {limit.value}
                                                                     </Text>
@@ -456,12 +565,15 @@ export default function Billing() {
                                                     <Button
                                                         type="primary"
                                                         block
+                                                        disabled={isCurrentPlan}
                                                         style={{
                                                             height: 38,
                                                             marginBottom: 18,
                                                             border: "none",
                                                             borderRadius: 8,
-                                                            background: `linear-gradient(90deg,${color.start},${color.end})`,
+                                                            background: isCurrentPlan
+                                                                ? undefined
+                                                                : `linear-gradient(90deg,${color.start},${color.end})`,
                                                             fontSize: 12,
                                                             fontWeight: 600,
                                                             boxShadow: theme
@@ -469,7 +581,7 @@ export default function Billing() {
                                                                 : "0 5px 12px rgba(0,0,0,0.12)",
                                                         }}
                                                     >
-                                                        {isFree
+                                                        {isCurrentPlan
                                                             ? "CURRENT PLAN"
                                                             : `CHOOSE ${plan.name.toUpperCase()}`}
                                                     </Button>

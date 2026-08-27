@@ -80,8 +80,8 @@ const ProLayouts = ({ children }) => {
                 icon: <BarChartOutlined />,
             },
             {
-                path: "/billing",
-                name: t("billing", { defaultValue: "Billing" }),
+                path: "/plans",
+                name: t("plans", { defaultValue: "Plans" }),
                 icon: <FaRegMoneyBill1 />,
             },
             {

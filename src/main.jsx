@@ -1,4 +1,3 @@
-import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import './Components/Styles/globlas.css'
@@ -11,7 +10,7 @@ import { I18nextProvider } from 'react-i18next'
 import { store, persistor } from './Components/Redux/store.js'
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  // <StrictMode>
     <Provider store={store}>
       <I18nextProvider i18n={i18n}>
         <PersistGate
@@ -22,5 +21,5 @@ createRoot(document.getElementById('root')).render(
         </PersistGate>
       </I18nextProvider>
     </Provider>
-  </StrictMode>,
+  // </StrictMode>,
 )

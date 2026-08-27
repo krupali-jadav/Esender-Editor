@@ -4,65 +4,90 @@ import { Card, Table, Tag, Typography } from "antd"
 import { t } from "i18next";
 import { useSelector } from "react-redux";
 import AppPageHeader from "../Styles/AppHeader";
+import { useEffect, useState } from "react";
+import { getInvoices } from "../Plans/PlanApi";
 
 const { Text, Link } = Typography;
-const invoices = [
-    {
-        key: "1",
-        id: "INV-2823-09",
-        date: "Sep 24, 2023",
-        amount: "$49.00",
-        status: "Paid",
-    },
-    {
-        key: "2",
-        id: "INV-2823-08",
-        date: "Aug 24, 2023",
-        amount: "$49.00",
-        status: "Paid",
-    },
-];
-
-const invoiceColumns = [
-    {
-        title: t("invoice.id", { defaultValue: "Invoice ID" }),
-        dataIndex: "id",
-        key: "id",
-        render: (id) => <Text underline strong>{id}</Text>,
-    },
-    { title: t("invoice.date", { defaultValue: "Date" }), dataIndex: "date", key: "date" },
-    { title: t("invoice.amount", { defaultValue: "Amount" }), dataIndex: "amount", key: "amount" },
-    {
-        title: t("invoice.status", { defaultValue: "Status" }),
-        dataIndex: "status",
-        key: "status",
-        render: (status) => <Tag color="success">{status}</Tag>,
-    },
-    {
-        title: t("invoice.action", { defaultValue: "Action" }),
-        key: "action",
-        align: "right",
-        render: () => (
-            <Link>
-                <FilePdfOutlined /> View PDF
-            </Link>
-        ),
-    },
-];
 function Order() {
     const theme = useSelector((state) => state?.app?.theme);
+    const [invoices, setInvoices] = useState([]);
+    const [loading, setLoading] = useState(false);
+
+    const fetchInvoices = async () => {
+        try {
+            setLoading(true);
+
+            const response = await getInvoices(0, 20);
+
+            if (response?.status) {
+                setInvoices(
+                    (response.invoices || []).map((invoice, index) => ({
+                        ...invoice,
+                        key: invoice._id || index,
+                    }))
+                );
+            } else {
+                setInvoices([]);
+            }
+        } catch (error) {
+            console.log(error);
+            setInvoices([]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchInvoices();
+    }, []);
+    const invoiceColumns = [
+        {
+            title: t("invoice.id", { defaultValue: "Invoice ID" }),
+            dataIndex: "id",
+            key: "id",
+            render: (id) => <Text underline strong>{id}</Text>,
+        },
+        {
+            title: t("invoice.date", { defaultValue: "Date" }),
+            dataIndex: "date",
+            key: "date"
+        },
+        {
+            title: t("invoice.amount", { defaultValue: "Amount" }),
+            dataIndex: "amount",
+            key: "amount"
+        },
+        {
+            title: t("invoice.status", { defaultValue: "Status" }),
+            dataIndex: "status",
+            key: "status",
+            render: (status) => <Tag color="success">{status}</Tag>,
+        },
+        {
+            title: t("invoice.action", { defaultValue: "Action" }),
+            key: "action",
+            align: "right",
+            render: () => (
+                <Link>
+                    <FilePdfOutlined /> View PDF
+                </Link>
+            ),
+        },
+    ];
     return (
         <PageContainer title={false}>
             <AppPageHeader
-            title={t("orders", { defaultValue: "Orders" })}
-            description={t("orders.description", { defaultValue: "View and manage your order history, invoices, and payment details." })}
+                title={t("orders", { defaultValue: "Orders" })}
+                description={t("orders.description", { defaultValue: "View and manage your order history, invoices, and payment details." })}
             />
             <Card title={t("billing.invoiceHistory", { defaultValue: "Invoice History" })}
                 styles={{ body: { padding: 0 } }}
             >
+
                 <Table
                     columns={invoiceColumns}
                     dataSource={invoices}
+                    loading={loading}
                     pagination={false}
                     scroll={{ x: "max-content" }}
                     components={{

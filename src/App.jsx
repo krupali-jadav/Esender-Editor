@@ -21,7 +21,6 @@ import Profile from "./Components/Profile/Profile";
 import Projects from "./Components/Projects/Projects";
 import Usage from "./Components/Usage/Usage";
 import Developers from "./Components/Developers/Developers";
-import Billing from "./Components/Billing/Billing";
 import WorkFlow from "./Components/WorkFlow/WorkFlow";
 import CreateTemplates from "./Components/Templates/CreateTemplate";
 import Sessions from "./Components/Session/Session";
@@ -29,6 +28,7 @@ import SelectProject from "./Components/SelectProject/SelectProject";
 import { refreshProfile } from "./Components/Redux/action";
 import Settings from "./Components/Settings/Settings";
 import Order from "./Components/Order/Order";
+import Plans from "./Components/Plans/Plans";
 
 const ProtectedRoute = ({ component: Component, isAuthenticated, selectedProject }) => {
   if (!isAuthenticated) {
@@ -81,7 +81,7 @@ function App() {
     { path: "/orders", component: Order },
     { path: "/usage", component: Usage },
     { path: "/developers", component: Developers },
-    { path: "/billing", component: Billing },
+    { path: "/Plans", component: Plans },
     { path: "/settings", component: Settings },
   ];
 

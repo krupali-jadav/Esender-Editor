@@ -1,48 +1,77 @@
-import React from 'react'
-import {
-    Alert,
-    Button,
-    Card,
-    Flex,
-    Popconfirm,
-    Space,
-    Tag,
-    Typography,
-    message,
-} from 'antd'
-
-import {
-    SafetyCertificateOutlined,
-    CopyOutlined,
-    ReloadOutlined,
-} from '@ant-design/icons'
+import { Alert, Button, Card, Flex, Popconfirm, Space, Tag, Typography, message, } from 'antd'
+import { SafetyCertificateOutlined, CopyOutlined, ReloadOutlined, } from '@ant-design/icons'
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { getCredentials, rotateLicense } from './ProjectsApi';
+import { t } from 'i18next';
 
 const { Text, Title } = Typography
 
-function projectCredential() {
-    const [messageApi, contextHolder] = message.useMessage()
+function ProjectCredential() {
+    const [credentials, setCredentials] = useState(null);
+    const [credentialsLoading, setCredentialsLoading] = useState(false);
+    const selectedProject = useSelector((state) => state?.app?.selectedProject);
 
     const handleCopy = async (value, label) => {
         try {
             await navigator.clipboard.writeText(value)
-            messageApi.success(`${label} copied`)
+            message.success(`${label} copied`)
         } catch (error) {
-            messageApi.error(`Unable to copy ${label}`)
+            console.error(error)
+            message.error(`Unable to copy ${label}`)
         }
-    }
-
-    const handleRotateLicense = () => {
-        console.log('Rotate License')
     }
 
     const handleRotateSecret = () => {
         console.log('Rotate Signing Secret')
     }
 
+    const fetchCredentials = async () => {
+        if (!selectedProject?._id) return;
+
+        try {
+            setCredentialsLoading(true);
+
+            const response = await getCredentials(selectedProject._id);
+
+            if (response?.status) {
+                setCredentials(response?.credentials);
+            } else {
+                setCredentials();
+            }
+        } catch (error) {
+            console.error("FETCH CREDENTIALS ERROR:", error);
+            setCredentials(null);
+        } finally {
+            setCredentialsLoading(false);
+        }
+    };
+    useEffect(() => {
+        fetchCredentials();
+    }, [selectedProject?._id]);
+    const handleRotateLicense = async () => {
+        if (!selectedProject?._id) return;
+
+        try {
+            const response = await rotateLicense(selectedProject._id);
+
+            if (response?.status) {
+                setCredentials((prev) => ({
+                    ...prev,
+                    ...response.credentials,
+                }));
+
+                message.success(response.message);
+            }
+        } catch (error) {
+            console.log(error);
+            message.error("Failed to rotate license");
+        }
+    };
+
     return (
         <>
             <div style={{ padding: 24, width: '100%' }}>
-                {contextHolder}
                 <Space direction="vertical" size="large" style={{ width: '100%', }}>
 
                     <Alert
@@ -52,78 +81,50 @@ function projectCredential() {
                         message="One-Time Reveal Policy"
                         description={
                             <Text type="secondary">
-                                For your security, secret keys are only displayed once upon creation or rotation. If lost, you must rotate the key to generate a new one. We do not store plain-text keys.
+                                {t("one.time.reveal.policy", {
+                                    defaultValue:
+                                        "For your security, secret keys are only displayed once upon creation or rotation. If lost, you must rotate the key to generate a new one. We do not store plain-text keys.",
+                                })}
                             </Text>
                         }
                     />
 
                     <Card
+                        loading={credentialsLoading}
                         title={
                             <Space direction="vertical" size={0} style={{ padding: "15px 0" }}>
-                                <Title level={5}>API Keys</Title>
+                                <Title level={5}>{t("api.keys", { defaultValue: "API Keys" })}</Title>
                                 <Text type="secondary">
-                                    Manage your project's API keys for authentication.
+                                    {t("manage.api.keys", { defaultValue: "Manage your project's API keys for authentication." })}
                                 </Text>
                             </Space>
                         }
                     >
                         <Space direction="vertical" size="middle" style={{ width: '100%', }}>
-                            <Card size="small">
-                                <Flex justify="space-between" align="center" gap="middle">
-                                    <Space direction="vertical" size={0}>
-                                        <Text type="secondary">
-                                            Public Project ID
-                                        </Text>
-
+                            <Card size="small" loading={credentialsLoading}>
+                                <Text type="secondary">{t("public.project.id", { defaultValue: "Public Project ID:" })}{" "}
+                                    <Flex justify="space-between" align="center" style={{ width: "100%" }}>
                                         <Text code>
-                                            prj_live_8823
+                                            {credentials?.publicProjectId || "N/A"}
                                         </Text>
-                                    </Space>
-
-                                    <Button
-                                        icon={<CopyOutlined />}
-                                        onClick={() =>
-                                            handleCopy(
-                                                'prj_live_8823',
-                                                'Public Project ID'
-                                            )
-                                        }
-                                    >
-                                        Copy
-                                    </Button>
-                                </Flex>
+                                        <Text copyable={{ text: credentials?.publicProjectId || "", }} />
+                                    </Flex>
+                                </Text>
                             </Card>
 
                             {/* License Key */}
-                            <Card size="small">
-                                <Flex justify="space-between" align="center" gap="middle">
-                                    <Space direction="vertical" size={0}>
-                                        <Text type="secondary">
-                                            License Key
-                                        </Text>
-
-                                        <Text code>
-                                            bb_live_••••••••••••••••••••••••abcd
-                                        </Text>
-                                    </Space>
-
-                                    <Space>
+                            <Card size="small" loading={credentialsLoading} >
+                                <Text type="secondary">{t("license.key", { defaultValue: "License Key:" })}{" "}</Text>
+                                <Flex justify="space-between" align="center" style={{ width: "100%" }}>
+                                    <Text code>
+                                        {credentials?.licenseKeyPrefix || "N/A"}
+                                    </Text>
+                                    <Flex gap="middle" align="center">
                                         <Button icon={<ReloadOutlined />} onClick={handleRotateLicense}>
-                                            Rotate License
+                                            {t("rotate.license", { defaultValue: "Rotate License" })}
                                         </Button>
-
-                                        <Button
-                                            icon={<CopyOutlined />}
-                                            onClick={() =>
-                                                handleCopy(
-                                                    'bb_live_••••••••••••••••••••••••abcd',
-                                                    'License Key'
-                                                )
-                                            }
-                                        >
-                                            Copy
-                                        </Button>
-                                    </Space>
+                                        <Text copyable={{ text: credentials?.licenseKeyPrefix || "", }} />
+                                    </Flex>
                                 </Flex>
                             </Card>
                         </Space>
@@ -133,10 +134,13 @@ function projectCredential() {
                     <Card
                         title={
                             <Space direction="vertical" size={0} style={{ padding: "15px 0" }}>
-                                <Title level={5}>Signing Secrets</Title>
+                                <Title level={5}>{t("signing.secrets", { defaultValue: "Signing Secrets" })}</Title>
 
                                 <Text type="secondary">
-                                    Used to cryptographically verify webhook payloads sent to your endpoints.
+                                    {t("used.to.verify.webhook.payloads", {
+                                        defaultValue:
+                                            "Used to cryptographically verify webhook payloads sent to your endpoints.",
+                                    })}
                                 </Text>
                             </Space>
                         }
@@ -148,11 +152,11 @@ function projectCredential() {
                                     <Space direction="vertical" size={0}>
                                         <Space size="small">
                                             <Text type="secondary">
-                                                Primary Secret
+                                                {t("primary.secret", { defaultValue: "Primary Secret" })}
                                             </Text>
 
                                             <Tag color="blue">
-                                                v2
+                                                {credentials?.signingSecretVersion || "N/A"}
                                             </Tag>
                                         </Space>
 
@@ -177,15 +181,18 @@ function projectCredential() {
                             <Alert type="error" title="Rotate Signing Secret"
                                 description={
                                     <Text>
-                                        Rotating will immediately invalidate the current secret. Warning: any webhooks sent with the old signature will fail verification until your backend is updated.
+                                        {t("rotating.will.instantiate.current.secret.warning.any.webhooks.sent.with.old.signature.will.fail.verification.until.your.backend.is.updated", {
+                                            defaultValue:
+                                                "Rotating will immediately invalidate the current secret. Warning: any webhooks sent with the old signature will fail verification until your backend is updated.",
+                                        })}
                                     </Text>
                                 }
                                 action={
                                     <Popconfirm
-                                        title="Rotate Signing Secret?"
-                                        description="The current signing secret will be invalidated immediately."
-                                        okText="Rotate"
-                                        cancelText="Cancel"
+                                        title={t("rotate.signing.secret", { defaultValue: "Rotate Signing Secret?" })}
+                                        description={t("current.signing.secret.will.be.invalidated.immediately", { defaultValue: "The current signing secret will be invalidated immediately." })}
+                                        okText={t("rotate", { defaultValue: "Rotate" })}
+                                        cancelText={t("cancel", { defaultValue: "Cancel" })}
                                         okButtonProps={{
                                             danger: true,
                                         }}
@@ -196,7 +203,7 @@ function projectCredential() {
                                             type="primary"
                                             icon={<ReloadOutlined />}
                                         >
-                                            Confirm & Rotate Secret
+                                            {t("confirm.and.rotate.secret", { defaultValue: "Confirm & Rotate Secret" })}
                                         </Button>
                                     </Popconfirm>
                                 }
@@ -208,4 +215,4 @@ function projectCredential() {
         </>
     )
 }
-export default projectCredential
+export default ProjectCredential

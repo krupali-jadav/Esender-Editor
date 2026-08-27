@@ -66,7 +66,7 @@ export default function StepConnectDomain({ onBack, onComplete, projectId, }) {
             const data = await updateProjectDomains(projectId, payload);
 
             if (data?.status) {
-                message.success(data?.message || t('domain.connected.successfully', { defaultValue: 'Domain connected successfully' }));
+                message.success(data?.message);
                 onComplete();
             }
         } catch (error) {
