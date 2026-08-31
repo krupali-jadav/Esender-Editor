@@ -9,19 +9,12 @@ export const getPlans = async () => {
             return response.data;
         }
 
-        message.error(
-            response.data?.message || "Failed to fetch plans"
-        );
+        message.error(response.data?.message || "Failed to fetch plans");
 
         return null;
     } catch (error) {
-        console.error("GET PLANS ERROR:", error);
-
-        message.error(
-            error?.response?.data?.message ||
-            error?.message ||
-            "Failed to fetch plans"
-        );
+        console.error(error);
+        message.error(error?.message || "Failed to fetch plans");
 
         return null;
     }
@@ -38,11 +31,8 @@ export const getSubscriptionPlans = async () => {
 
         return null;
     } catch (error) {
-        console.error("GET SUBSCRIPTION PLANS ERROR:", error);
-
-        message.error(error?.response?.data?.message );
-
-        return null;
+        console.error(error);
+        message.error(error?.response?.data?.message);
     }
 };
 export const getInvoices = async (page = 0, limit = 20) => {
@@ -56,8 +46,6 @@ export const getInvoices = async (page = 0, limit = 20) => {
         message.error(response.data?.message || "Failed to fetch invoices");
     } catch (error) {
         console.log(error);
-        message.error(
-            error?.response?.data?.message || "Failed to fetch invoices"
-        );
+        message.error(error?.response?.data?.message || "Failed to fetch invoices");
     }
 };

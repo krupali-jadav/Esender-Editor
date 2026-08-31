@@ -149,7 +149,7 @@ export default function Overview() {
             dataIndex: "publicProjectId",
             key: "publicProjectId",
             render: (id) => (
-                <Text code copyable>
+                <Text code copyable={{ text: id }}>
                     {id}
                 </Text>
             ),
@@ -170,12 +170,10 @@ export default function Overview() {
             ),
         },
         {
-            title: t("createdAt", { defaultValue: "createdAt" }),
+            title: t("createdAt", { defaultValue: "Created At" }),
             dataIndex: "createdAt",
             key: "createdAt",
-            render: (date) => (
-                <Text>{formatDate(date)}</Text>
-            ),
+            render: (date) => (<Text>{formatDate(date)}</Text>),
         },
     ];
 
@@ -221,10 +219,7 @@ export default function Overview() {
                             </Text>
 
                             <CreditCardOutlined
-                                style={{
-                                    color: "#20A6CE",
-                                    fontSize: 20,
-                                }}
+                                style={{ color: "#20A6CE", fontSize: 20, }}
                             />
                         </Space>
 
@@ -251,9 +246,7 @@ export default function Overview() {
                         </Space>
 
                         <Title level={3} style={{ margin: "8px 0" }}>
-                            {stats
-                                ? `${stats.projectsUsed} / ${stats.projectsLimit}`
-                                : "-"}
+                            {stats ? `${stats.projectsUsed} / ${stats.projectsLimit}` : "-"}
                         </Title>
 
                         <Progress
@@ -276,9 +269,7 @@ export default function Overview() {
                         </Space>
 
                         <Title level={3} style={{ margin: "8px 0" }}>
-                            {stats
-                                ? `${stats.monthlyEditorUsersUsed} / ${stats.monthlyEditorUsersLimit}`
-                                : "-"}
+                            {stats ? `${stats.monthlyEditorUsersUsed} / ${stats.monthlyEditorUsersLimit}` : "-"}
                         </Title>
 
                         <Progress
@@ -301,9 +292,7 @@ export default function Overview() {
                         </Space>
 
                         <Title level={3} style={{ margin: "8px 0" }}>
-                            {stats
-                                ? `${stats.monthlySessionsUsed} / ${stats.monthlySessionsLimit}`
-                                : "-"}
+                            {stats ? `${stats.monthlySessionsUsed} / ${stats.monthlySessionsLimit}` : "-"}
                         </Title>
 
                         <Progress

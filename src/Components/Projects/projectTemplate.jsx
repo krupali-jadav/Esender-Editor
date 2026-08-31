@@ -178,44 +178,44 @@ function ProjectTemplate() {
                                     </div>
                                 }
                             >
-                                <Space style={{ width: "100%", justifyContent: "space-between", }} align="start">
-                                    <Space>
-                                        <Text strong ellipsis style={{ maxWidth: 130 }}>
-                                            {template.name}
-                                        </Text>
+                                <Space direction="vertical" style={{ width: "100%" }} size="small">
+                                    <Space style={{ width: "100%", justifyContent: "space-between", }} align="start">
+                                        <Space>
+                                            <Text strong ellipsis>
+                                                {template.name}
+                                            </Text>
+                                        </Space>
+
+                                        <Tag color={statusColors[template.status]}>
+                                            {template.status}
+                                        </Tag>
                                     </Space>
 
-                                    <Tag color={statusColors[template.status]}>
-                                        {template.status}
-                                    </Tag>
-                                </Space>
 
-
-                                <div style={{ marginTop: 5 }}>
-                                    <Space style={{ width: "100%", justifyContent: "space-between" }}>
+                                    <div>
                                         <Space size={6}>
                                             <FolderOutlined style={{ color: "#20A6CE", fontSize: 17 }} />
                                             <Text style={{ color: "#8c8e91", fontWeight: 600 }}>
-                                                {template.project}  Marketing
+                                                {template.project}
                                             </Text>
                                         </Space>
-                                    </Space>
-                                </div>
+                                    </div>
 
-                                <Row justify="space-between" align="middle" style={{ marginTop: 8 }}>
-                                    <Space size={6}>
-                                        <ClockCircleOutlined style={{ color: "#20A6CE" }} />
-                                        <Text style={{ color: "#8c8e91", fontWeight: 600 }}>
-                                            {formatDate(template.updatedAt)}
-                                        </Text>
-                                    </Space>
+                                    <Row justify="space-between" align="middle">
+                                        <Space size={6}>
+                                            <ClockCircleOutlined style={{ color: "#20A6CE" }} />
+                                            <Text style={{ color: "#8c8e91", fontWeight: 600 }}>
+                                                {formatDate(template.updatedAt)}
+                                            </Text>
+                                        </Space>
 
-                                    <Row>
-                                        <Tag variant="filled" style={{ background: theme ? "#0A1622" : "#F5F8FA", }} >
-                                            {template.HTML?.trim() ? t('html', { defaultValue: 'HTML' }) : t('text', { defaultValue: 'TEXT' })}
-                                        </Tag>
+                                        <Row>
+                                            <Tag variant="filled" style={{ background: theme ? "#0A1622" : "#F5F8FA", }} >
+                                                {template.HTML?.trim() ? t('html', { defaultValue: 'HTML' }) : t('text', { defaultValue: 'TEXT' })}
+                                            </Tag>
+                                        </Row>
                                     </Row>
-                                </Row>
+                                </Space>
                             </Card>
                         </Col>
                     ))

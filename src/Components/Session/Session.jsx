@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Row, Spin, Typography, notification, Flex, Space, Card } from "antd";
+import { Button, Col, Row, Spin, Typography, notification, Flex, Space, Card, message } from "antd";
 import { staticModal } from "../../util/staticFn";
 import { WindowsOutlined, MobileOutlined, LogoutOutlined, InfoCircleOutlined, } from "@ant-design/icons";
 import { PageContainer } from "@ant-design/pro-components";
@@ -15,9 +15,7 @@ const Sessions = () => {
     const [loadingButton, setButtonLoading] = useState({});
     const [loading, setLoading] = useState(false);
 
-
     const sessionDevices = async () => {
-        console.log("Calling session API...");
         setLoading(true);
         try {
             const data = await sessionAll({ status: "all" });
@@ -25,8 +23,8 @@ const Sessions = () => {
                 setSessionData(data.sessions);
             }
         } catch (error) {
-            notification.error({ message: "Error", description: "Failed to fetch session data." });
-            console.error("Error fetching session devices:", error);
+            message.error(error?.message || "Failed to get sessions");
+            console.error(error);
         } finally {
             setLoading(false);
         }
@@ -34,6 +32,7 @@ const Sessions = () => {
     useEffect(() => {
         sessionDevices();
     }, []);
+
     const handleSessionLogout = (id) => {
         staticModal.confirm({
             title: t("confirm.logout"),
@@ -46,18 +45,12 @@ const Sessions = () => {
                 try {
                     const data = await sessionLogout({ session_id: id });
                     if (data?.status) {
-                        notification.success({
-                            message: t("success"),
-                            description: t("session.successfully"),
-                        });
+                        message.success(data?.message || "Session logged out successfully");
                         await sessionDevices();
                     }
                 } catch (error) {
-                    notification.error({
-                        message: t("error"),
-                        description: t("failed.log.out.session."),
-                    });
-                    console.error("Error logging out session devices:", error);
+                    message.error(error?.message || "Failed to log out session");
+                    console.error(error);
                 } finally {
                     setButtonLoading((prev) => ({ ...prev, [id]: false }));
                 }
@@ -94,7 +87,6 @@ const Sessions = () => {
                                     <Text strong>
                                         {item?.info?.os || "Unknown OS"}
                                     </Text>
-
                                     <br />
 
                                     <Text type="secondary">
@@ -103,9 +95,7 @@ const Sessions = () => {
                                     <br />
                                     <Text type="secondary">
                                         {t("last.active")}{" "}
-                                        {item?.createdAt
-                                            ? formatDate(item.createdAt)
-                                            : "N/A"}
+                                        {item?.createdAt ? formatDate(item.createdAt) : "N/A"}
                                     </Text>
                                 </Col>
                                 <Col>
@@ -138,11 +128,7 @@ const Sessions = () => {
                 description="Review and sign out of devices logged into your account."
             />
             {loading ? (
-                <Flex
-                    justify="center"
-                    align="center"
-                    style={{ height: "50vh" }}
-                >
+                <Flex justify="center" align="center" style={{ height: "50vh" }}>
                     <Spin spinning={loading} />
                 </Flex>
             ) : (

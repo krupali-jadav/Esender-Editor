@@ -96,7 +96,7 @@ export default function Templates() {
                                 (item) => item._id !== template._id
                             )
                         );
-                        message.success(data?.message );
+                        message.success(data?.message);
                     } else {
                         message.error(data?.message);
                     }
@@ -165,7 +165,7 @@ export default function Templates() {
                 </Row>
 
                 {/* Filters bar */}
-                <Card size="small" styles={{ body: { padding: "12px 16px" } }}>
+                <Card size="small">
                     <Flex gap={24} justify="space-between" align="center" wrap="wrap" >
                         {/* Search */}
                         <Input
@@ -259,7 +259,6 @@ export default function Templates() {
                             >
                                 <Card
                                     hoverable
-                                    styles={{ body: { padding: 16 } }}
                                     style={{ background: theme ? "#0F2233" : "#e1e4e6", }}
                                     cover={
                                         <div
@@ -287,6 +286,7 @@ export default function Templates() {
                                                     style={{
                                                         height: "100%",
                                                         padding: 16,
+                                                        background: "#fff",
                                                     }}
                                                 >
                                                     <Text style={{ color: "#000" }}>
@@ -304,7 +304,7 @@ export default function Templates() {
                                             {/* Delete button */}
                                             {hoveredTemplate === tpl._id && (
                                                 <Flex justify="center" align="center" gap={10}
-                                                    style={{position: "absolute",inset: 0,background: "rgba(0,0,0,0.4)",}}
+                                                    style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.4)", }}
                                                 >
                                                     <Button
                                                         shape="circle"
@@ -337,19 +337,19 @@ export default function Templates() {
                                         </div>
                                     }
                                 >
-                                    <Space style={{ width: "100%", justifyContent: "space-between", }} align="start">
-                                        <Space>
-                                            <Text strong ellipsis style={{ maxWidth: 130 }}>
-                                                {tpl.name}
-                                            </Text>
+                                    <Space direction="vertical" style={{ width: "100%" }} >
+                                        <Space style={{ width: "100%", justifyContent: "space-between", }} align="start">
+                                            <Space>
+                                                <Text strong ellipsis style={{ maxWidth: 130 }}>
+                                                    {tpl.name}
+                                                </Text>
+                                            </Space>
+
+                                            <Tag color={statusColors[tpl.status]}>
+                                                {tpl.status}
+                                            </Tag>
                                         </Space>
 
-                                        <Tag color={statusColors[tpl.status]}>
-                                            {tpl.status}
-                                        </Tag>
-                                    </Space>
-
-                                    <div style={{ marginTop: 5 }}>
                                         <Space style={{ width: "100%", justifyContent: "space-between" }}>
                                             <Space size={6}>
                                                 <FolderOutlined style={{ color: "#20A6CE", fontSize: 17 }} />
@@ -358,31 +358,31 @@ export default function Templates() {
                                                 </Text>
                                             </Space>
                                         </Space>
-                                    </div>
 
-                                    <Row justify="space-between" align="middle" style={{ marginTop: 8 }}>
-                                        <Space size={6}>
-                                            <ClockCircleOutlined style={{ color: "#20A6CE" }} />
-                                            <Text style={{ color: "#8c8e91", fontWeight: 600 }}>
-                                                {formatDate(tpl.updatedAt)}
-                                            </Text>
-                                        </Space>
+                                        <Row justify="space-between" align="middle">
+                                            <Space size={6}>
+                                                <ClockCircleOutlined style={{ color: "#20A6CE" }} />
+                                                <Text style={{ color: "#8c8e91", fontWeight: 600 }}>
+                                                    {formatDate(tpl.updatedAt)}
+                                                </Text>
+                                            </Space>
 
-                                        <Row>
-                                            <Switch
-                                                size="small"
-                                                checked={tpl.enable}
-                                                loading={statusLoading === tpl._id}
-                                                onChange={(checked) =>
-                                                    handleChangeStatus(tpl, checked)
-                                                }
-                                                style={{ marginRight: 4, transform: "scale(0.85)", }}
-                                            />
-                                            <Tag variant="filled" style={{ background: theme ? "#0A1622" : "#F5F8FA", }} >
-                                                {tpl.HTML?.trim() ? "HTML" : "TEXT"}
-                                            </Tag>
+                                            <Row>
+                                                <Switch
+                                                    size="small"
+                                                    checked={tpl.enable}
+                                                    loading={statusLoading === tpl._id}
+                                                    onChange={(checked) =>
+                                                        handleChangeStatus(tpl, checked)
+                                                    }
+                                                    style={{ marginRight: 4, transform: "scale(0.85)", }}
+                                                />
+                                                <Tag variant="filled" style={{ background: theme ? "#0A1622" : "#F5F8FA", }} >
+                                                    {tpl.HTML?.trim() ? "HTML" : "TEXT"}
+                                                </Tag>
+                                            </Row>
                                         </Row>
-                                    </Row>
+                                    </Space>
                                 </Card>
                             </Col>
                         ))
@@ -406,7 +406,7 @@ export default function Templates() {
                 </Row>
 
                 {!loading && templates.length > 0 && (
-                    <Flex justify="space-between" align="center" style={{ marginTop: 16 }}>
+                    <Flex justify="space-between" align="center">
                         <strong> {t('total.templates', { defaultValue: 'Total' })}: {totalTemplates} {t('templates', { defaultValue: 'templates' })} </strong>
                         <Pagination
                             current={currentPage}

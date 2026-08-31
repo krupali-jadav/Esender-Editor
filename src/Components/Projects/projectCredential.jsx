@@ -92,7 +92,7 @@ function ProjectCredential() {
                     <Card
                         loading={credentialsLoading}
                         title={
-                            <Space direction="vertical" size={0} style={{ padding: "15px 0" }}>
+                            <Space direction="vertical" size={0}>
                                 <Title level={5}>{t("api.keys", { defaultValue: "API Keys" })}</Title>
                                 <Text type="secondary">
                                     {t("manage.api.keys", { defaultValue: "Manage your project's API keys for authentication." })}
@@ -103,7 +103,7 @@ function ProjectCredential() {
                         <Space direction="vertical" size="middle" style={{ width: '100%', }}>
                             <Card size="small" loading={credentialsLoading}>
                                 <Text type="secondary">{t("public.project.id", { defaultValue: "Public Project ID:" })}{" "}
-                                    <Flex justify="space-between" align="center" style={{ width: "100%" }}>
+                                    <Flex justify="space-between" align="center">
                                         <Text code>
                                             {credentials?.publicProjectId || "N/A"}
                                         </Text>
@@ -115,7 +115,7 @@ function ProjectCredential() {
                             {/* License Key */}
                             <Card size="small" loading={credentialsLoading} >
                                 <Text type="secondary">{t("license.key", { defaultValue: "License Key:" })}{" "}</Text>
-                                <Flex justify="space-between" align="center" style={{ width: "100%" }}>
+                                <Flex justify="space-between" align="center">
                                     <Text code>
                                         {credentials?.licenseKeyPrefix || "N/A"}
                                     </Text>
@@ -133,7 +133,7 @@ function ProjectCredential() {
                     {/* Signing Secrets */}
                     <Card
                         title={
-                            <Space direction="vertical" size={0} style={{ padding: "15px 0" }}>
+                            <Space direction="vertical" size={0}>
                                 <Title level={5}>{t("signing.secrets", { defaultValue: "Signing Secrets" })}</Title>
 
                                 <Text type="secondary">
