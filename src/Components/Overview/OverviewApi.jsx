@@ -13,7 +13,7 @@ export const getDashboardOverview = async (range = 30) => {
             message.error(response.data?.message);
         }
     } catch (error) {
-        console.log("DASHBOARD OVERVIEW ERROR:", error);
+        console.log(error);
         message.error(error?.response?.data?.message)
     }
 };

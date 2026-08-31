@@ -1,5 +1,4 @@
 import { Layout, Typography, Card, Tag, Space, ConfigProvider, theme as antdTheme, Spin, Empty, message, Select, Row, Col, Avatar, Button, Divider, Flex, Badge, } from "antd";
-
 import { MoonOutlined, SunOutlined, RightOutlined, FolderOpenOutlined, CalendarOutlined, GlobalOutlined, PlusOutlined, FileTextOutlined, } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
@@ -10,30 +9,23 @@ import { formatDate } from "../../util/commom.utils";
 import lang from "../../util/lang/lang.json";
 import { t } from "i18next";
 import EmptyState from "../Styles/EmptyState";
-
 const { Title, Text } = Typography;
 const { Content, Header } = Layout;
-
 const PRIMARY_COLOR = "#20A6CE";
 
 export default function SelectProject() {
     const theme = useSelector((state) => state?.app?.theme);
     const panel = useSelector((state) => state?.app?.panel);
     const language = useSelector((state) => state.app.language);
-
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
     const isDark = !!theme;
-
     const [projects, setProjects] = useState([]);
     const [loading, setLoading] = useState(false);
 
     const toggleTheme = () => {
         const newTheme = !theme;
-
         dispatch(setTheme(newTheme));
-
         const currentPanel = panel || {};
 
         dispatch(
@@ -83,9 +75,6 @@ export default function SelectProject() {
             setLoading(true);
 
             const response = await getProjectById(projectId);
-
-            console.log("GET PROJECT RESPONSE:", response);
-
             if (response?.status && response?.project) {
                 const selectedProject = response.project;
 
@@ -93,22 +82,14 @@ export default function SelectProject() {
                 dispatch(setSelectedProject(selectedProject));
 
                 // Save selected project for refresh
-                localStorage.setItem(
-                    "selectedProject",
-                    JSON.stringify(selectedProject)
-                );
-
+                localStorage.setItem("selectedProject", JSON.stringify(selectedProject));
                 message.success(response?.message || "Project selected successfully");
-
                 navigate("/overview");
             }
         } catch (error) {
             console.error("GET PROJECT ERROR:", error);
 
-            message.error(
-                error?.response?.data?.message ||
-                "Failed to select project"
-            );
+            message.error(error?.message || "Failed to select project");
         } finally {
             setLoading(false);
         }
@@ -128,38 +109,24 @@ export default function SelectProject() {
                 token: {
                     colorPrimary: PRIMARY_COLOR,
                     borderRadius: 12,
-
                     colorBgLayout: isDark
                         ? "#08151F"
                         : "#F6F9FB",
-
                     colorBgContainer: isDark
                         ? "#102634"
                         : "#FFFFFF",
                 },
 
                 components: {
-                    Card: {
-                        borderRadiusLG: 16,
-                    },
-
-                    Button: {
-                        borderRadius: 8,
-                    },
-
-                    Select: {
-                        borderRadius: 8,
-                    },
+                    Card: { borderRadiusLG: 16, },
+                    Button: { borderRadius: 8, },
+                    Select: { borderRadius: 8, },
                 },
             }}
         >
-            <Layout
-                style={{
-                    minHeight: "100vh",
-                }}
-            >
-                {/* HEADER */}
+            <Layout style={{ minHeight: "100vh", }}>
 
+                {/* HEADER */}
                 <Header
                     style={{
                         background: "transparent",
@@ -176,13 +143,7 @@ export default function SelectProject() {
                             type="text"
                             shape="circle"
                             size="large"
-                            icon={
-                                isDark ? (
-                                    <MoonOutlined />
-                                ) : (
-                                    <SunOutlined />
-                                )
-                            }
+                            icon={isDark ? (<MoonOutlined />) : (<SunOutlined />)}
                             onClick={toggleTheme}
                         />
 
@@ -190,20 +151,14 @@ export default function SelectProject() {
                             value={language ?? "en"}
                             showSearch
                             variant="filled"
-                            style={{
-                                width: 130,
-                            }}
+                            style={{ width: 130, }}
                             popupMatchSelectWidth={200}
                             options={lang?.map((item) => ({
                                 value: item.key,
                                 label: item.name,
                             }))}
                             filterOption={(input, option) =>
-                                option?.label
-                                    ?.toLowerCase()
-                                    .includes(
-                                        input.toLowerCase()
-                                    )
+                                option?.label?.toLowerCase().includes(input.toLowerCase())
                             }
                         />
                     </Space>
@@ -211,11 +166,7 @@ export default function SelectProject() {
 
                 <Content style={{ padding: "0 50px 60px", }}>
 
-                    <Row
-                        justify="space-between"
-                        align="middle"
-                        gutter={[20, 20]}
-                    >
+                    <Row justify="space-between" align="middle" gutter={[20, 20]}>
                         <Col>
                             <Space direction="vertical" size={4}>
                                 <Space size={10}>

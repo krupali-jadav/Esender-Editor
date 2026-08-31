@@ -150,7 +150,7 @@ export default function Overview() {
             dataIndex: "publicProjectId",
             key: "publicProjectId",
             render: (id) => (
-                <Text code copyable>
+                <Text code copyable={{ text: id }}>
                     {id}
                 </Text>
             ),
@@ -171,12 +171,10 @@ export default function Overview() {
             ),
         },
         {
-            title: t("createdAt", { defaultValue: "createdAt" }),
+            title: t("createdAt", { defaultValue: "Created At" }),
             dataIndex: "createdAt",
             key: "createdAt",
-            render: (date) => (
-                <Text>{formatDate(date)}</Text>
-            ),
+            render: (date) => (<Text>{formatDate(date)}</Text>),
         },
     ];
 
@@ -262,6 +260,7 @@ export default function Overview() {
                                 percent={projectPercent}
                                 showInfo={false}
                                 strokeColor="#1677ff"
+
                             />
                         </Card>
                     </Col>
@@ -283,10 +282,88 @@ export default function Overview() {
                                     : "-"}
                             </Title>
 
-                            <Progress
-                                percent={editorUsersPercent}
-                                showInfo={false}
-                                strokeColor="#20A6CE"
+
+                            <FolderOpenOutlined style={{ color: "#1677ff", fontSize: 20, }} />
+                        </Space>
+
+                        <Title level={3} style={{ margin: "8px 0" }}>
+                            {stats ? `${stats.projectsUsed} / ${stats.projectsLimit}` : "-"}
+                        </Title>
+
+                        <Progress
+                            percent={projectPercent}
+                            showInfo={false}
+                            strokeColor="#1677ff"
+                        />
+                    </Card>
+                </Col>
+
+                {/* Monthly Editor Users */}
+                <Col xs={24} sm={12} lg={6}>
+                    <Card loading={loading}>
+                        <Space style={{ width: "100%", justifyContent: "space-between", }} align="start">
+                            <Text type="secondary">
+                                {t("monthly.Editor.Users", { defaultValue: "MONTHLY EDITOR USERS" })}
+                            </Text>
+
+                            <TeamOutlined style={{ color: "#20A6CE", fontSize: 20, }} />
+                        </Space>
+
+                        <Title level={3} style={{ margin: "8px 0" }}>
+                            {stats ? `${stats.monthlyEditorUsersUsed} / ${stats.monthlyEditorUsersLimit}` : "-"}
+                        </Title>
+
+                        <Progress
+                            percent={editorUsersPercent}
+                            showInfo={false}
+                            strokeColor="#20A6CE"
+                        />
+                    </Card>
+                </Col>
+
+                {/* Monthly Sessions */}
+                <Col xs={24} sm={12} lg={6}>
+                    <Card loading={loading}>
+                        <Space style={{ width: "100%", justifyContent: "space-between", }} align="start">
+                            <Text type="secondary">
+                                {t("monthly.Sessions", { defaultValue: "MONTHLY SESSIONS" })}
+                            </Text>
+
+                            <ThunderboltOutlined style={{ color: "#52c41a", fontSize: 20, }} />
+                        </Space>
+
+                        <Title level={3} style={{ margin: "8px 0" }}>
+                            {stats ? `${stats.monthlySessionsUsed} / ${stats.monthlySessionsLimit}` : "-"}
+                        </Title>
+
+                        <Progress
+                            percent={sessionsPercent}
+                            showInfo={false}
+                            strokeColor="#52c41a"
+                        />
+                    </Card>
+                </Col>
+            </Row>
+
+            {/* Usage Trend + Quick Actions */}
+            <Row
+                gutter={[16, 16]}
+                style={{ marginBottom: 16 }}
+            >
+                <Col xs={24} lg={16}>
+                    <Card
+                        title={t("session.Trend", { defaultValue: "Session Trend" })}
+                        extra={
+                            <Select
+                                value={String(range)}
+                                onChange={(value) => setRange(Number(value))}
+                                loading={loading}
+                                suffixIcon={<DownOutlined />}
+                                options={[
+                                    { value: "7", label: t("last.7.Days", { defaultValue: "Last 7 Days" }) },
+                                    { value: "30", label: t("last.30.Days", { defaultValue: "Last 30 Days" }) },
+                                    { value: "90", label: t("last.90.Days", { defaultValue: "Last 90 Days" }) },
+                                ]}
                             />
                         </Card>
                     </Col>

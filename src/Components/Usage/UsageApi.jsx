@@ -4,10 +4,7 @@ import axiosInstance from "../../util/axiosInstance";
 export const getUsageTrend = async (projectId, range = 30) => {
     try {
         const response = await axiosInstance.get("usage/trend", {
-            params: {
-                projectId,
-                range,
-            },
+            params: { projectId, range, },
         });
 
         if (response.data?.status) {
@@ -17,7 +14,7 @@ export const getUsageTrend = async (projectId, range = 30) => {
         message.error(response.data?.message);
     } catch (error) {
         console.log(error);
-        message.error(error?.response?.data?.message);
+        message.error(error?.message);
     }
 };
 export const getUsageAlerts = async (projectId) => {
@@ -31,7 +28,7 @@ export const getUsageAlerts = async (projectId) => {
         }
     } catch (error) {
         console.log(error);
-        message.error(error?.response?.data?.message );
+        message.error(error?.message);
     }
 };
 export const getUsageSummary = async (projectId, range = 30) => {
@@ -45,6 +42,6 @@ export const getUsageSummary = async (projectId, range = 30) => {
         }
     } catch (error) {
         console.log(error);
-        message.error(error?.response?.data?.message);
+        message.error(error?.message);
     }
 };

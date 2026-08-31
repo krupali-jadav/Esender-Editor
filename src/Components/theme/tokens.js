@@ -41,7 +41,7 @@ export const darkTokens = {
   colorBgLayout: "#0A1622",
   colorBgContainer: "#0F2233",
   colorBgElevated: "#152A3C",
-  colorBgSpotlight: "#F4F5F8",
+  colorBgSpotlight: "#152A3C",
 
   colorText: "#F4F5F8",
   colorTextSecondary: "#AAB1C1",

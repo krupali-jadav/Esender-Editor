@@ -102,9 +102,9 @@ function ProjectDomain() {
             render: (text, record) => (
                 <Space size={8}>
                     {record.type === 'Wildcard' ? (
-                        <CodeOutlined style={{ fontSize: 17, display: "flex", alignItems: "center" }} />
+                        <CodeOutlined />
                     ) : (
-                        <GlobalOutlined style={{ fontSize: 17, display: "flex", alignItems: "center" }} />
+                        <GlobalOutlined />
                     )}
                     <Text code>
                         {text}
@@ -182,7 +182,7 @@ function ProjectDomain() {
 
                             title={
                                 <Flex vertical gap={4}>
-                                    <Title level={5} style={{ margin: 0, whiteSpace: "normal", }}>
+                                    <Title level={5}>
                                         {t('allowed.domains', { defaultValue: 'Allowed Domains' })}
                                     </Title>
 

@@ -10,6 +10,7 @@ import {
     Avatar,
     Flex,
     Spin,
+    Badge,
 } from "antd";
 import {
     TeamOutlined,
@@ -29,6 +30,7 @@ import { useEffect, useState } from "react";
 import { getUsageAlerts, getUsageSummary, getUsageTrend } from "./UsageApi";
 import { useNavigate } from "react-router-dom";
 import { t } from "i18next";
+import { formatDate } from "../../util/commom.utils";
 
 const { Title, Text, Link } = Typography;
 
@@ -60,12 +62,29 @@ export default function Usage() {
             title: t('id', { defaultValue: 'ID' }),
             dataIndex: "id",
             key: "id",
-            render: (id) => <Text code>{id}</Text>,
+            render: (id) => <Text code copyable>{id}</Text>,
         },
         {
-            title: t('last.modified', { defaultValue: 'Last Modified' }),
-            dataIndex: "modified",
-            key: "modified",
+            title: t('project_name', { defaultValue: 'Project Name' }),
+            dataIndex: "projectName",
+            key: "projectName",
+        },
+        {
+            title: t("status", { defaultValue: "Status" }),
+            dataIndex: "status",
+            key: "status",
+            render: (status) => (
+                <Badge
+                    status={status === "draft" ? "warning" : "success"}
+                    text={status}
+                />
+            ),
+        },
+        {
+            title: t('updatedAt', { defaultValue: 'Updated At' }),
+            dataIndex: "updatedAt",
+            key: "updatedAt",
+            render: (date) => (<Text>{formatDate(date)}</Text>),
         },
 
     ];
@@ -428,6 +447,8 @@ export default function Usage() {
                                     key: template._id || template.id || index,
                                     name: template.name || template.title || "-",
                                     id: template._id || template.id || "-",
+                                    status: template.status || "-",
+                                    projectName: template.projectName || "-",
                                     modified:
                                         template.updatedAt ||
                                         template.modifiedAt ||

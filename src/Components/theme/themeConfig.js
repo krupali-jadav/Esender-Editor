@@ -33,6 +33,9 @@ export const getThemeConfig = (darkMode) => {
       wireframe: false,
     },
     components: {
+      Typography: {
+        codeBg: darkMode ? "#FFFFFF" : "#F5F5F5",
+      },
       Button: {
         borderRadius: t.borderRadius,
         controlHeight: t.controlHeight,
