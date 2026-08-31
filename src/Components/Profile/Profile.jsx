@@ -118,7 +118,7 @@ const Profile = () => {
       <Col xs={24}>
       <Card
         style={{ width: "100%", maxWidth: 1280, margin: "0 auto" }}
-        bodyStyle={{ padding: 28 }}
+        styles={{ body: { padding: 28 } }}
       >
         <Form
           form={form}

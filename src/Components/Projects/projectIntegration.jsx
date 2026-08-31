@@ -54,7 +54,7 @@ const backendSteps = [
         title: "Generate Token",
         description: (
             <>
-                <Paragraph type="secondary" style={{ marginBottom: 8 }}>
+                <Paragraph type="secondary" >
                     Sign requests using your one-time secret.
                 </Paragraph>
                 <Text code style={{ whiteSpace: "pre-wrap", display: "block", width: 400 }}>

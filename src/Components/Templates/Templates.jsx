@@ -11,6 +11,7 @@ import EmptyState from "../Styles/EmptyState";
 import { formatDate } from "../../util/commom.utils";
 import { useDebounce } from "../../util/useDebounce";
 import { staticModal } from "../../util/staticFn";
+import DeleteModal from "../Styles/DeleteModel";
 const { Text } = Typography;
 const statusColors = {
     published: "success",
@@ -33,6 +34,9 @@ export default function Templates() {
     const [totalTemplates, setTotalTemplates] = useState(0);
     const theme = useSelector((state) => state?.app?.theme);
     const debouncedSearch = useDebounce(search, 700);
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [deleteTemplateRecord, setDeleteTemplateRecord] = useState(null);
+    const [deleteLoading, setDeleteLoading] = useState(false);
 
     const isEmptyEditorHtml = (html) =>
         !html ||
@@ -74,39 +78,45 @@ export default function Templates() {
     }, [debouncedSearch, sortBy, currentPage, pageSize]);
 
     const handleDeleteTemplate = (template) => {
-        staticModal.confirm({
-            title: t("delete.template", { defaultValue: "Delete Template" }),
-            content: (<>{t('sure.delete.template', { defaultValue: 'Are you sure you want to delete' })}{" "} <strong> {template.name}</strong> ?</>),
-            okText: t('delete', { defaultValue: 'Delete' }),
+        setDeleteTemplateRecord(template);
+        setDeleteModalOpen(true);
+    };
+    const handleConfirmDelete = async () => {
+        if (!deleteTemplateRecord) return;
 
-            okType: "danger",
-            cancelText: t('cancel', { defaultValue: 'Cancel' }),
+        try {
+            setDeleteLoading(true);
 
-            onOk: async () => {
-                try {
-                    setLoading(true);
+            const data = await deleteTemplate({
+                id: deleteTemplateRecord._id,
+            });
 
-                    const payload = {
-                        id: template._id,
-                    };
-                    const data = await deleteTemplate(payload);
-                    if (data?.status) {
-                        setTemplates((prev) =>
-                            prev.filter(
-                                (item) => item._id !== template._id
-                            )
-                        );
-                        message.success(data?.message );
-                    } else {
-                        message.error(data?.message);
-                    }
-                } catch (error) {
-                    console.error(error);
-                } finally {
-                    setLoading(false);
-                }
-            },
-        });
+            if (data?.status) {
+                setTemplates((prev) =>
+                    prev.filter(
+                        (item) => item._id !== deleteTemplateRecord._id
+                    )
+                );
+
+                message.success(
+                    data?.message || "Template deleted successfully"
+                );
+
+                setDeleteModalOpen(false);
+                setDeleteTemplateRecord(null);
+            } else {
+                message.error(
+                    data?.message || "Failed to delete template"
+                );
+            }
+        } catch (error) {
+            console.error(error);
+            message.error(
+                error?.message || "Failed to delete template"
+            );
+        } finally {
+            setDeleteLoading(false);
+        }
     };
 
     const handleChangeStatus = async (template, enable) => {
@@ -304,7 +314,7 @@ export default function Templates() {
                                             {/* Delete button */}
                                             {hoveredTemplate === tpl._id && (
                                                 <Flex justify="center" align="center" gap={10}
-                                                    style={{position: "absolute",inset: 0,background: "rgba(0,0,0,0.4)",}}
+                                                    style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.4)", }}
                                                 >
                                                     <Button
                                                         shape="circle"
@@ -449,7 +459,21 @@ export default function Templates() {
                     </Flex>
                 )}
             </Modal>
-
+            <DeleteModal
+                open={deleteModalOpen}
+                record={deleteTemplateRecord}
+                selectedRowKeys={[]}
+                loading={deleteLoading}
+                itemName="Template"
+                itemNamePlural="Templates"
+                onCancel={() => {
+                    if (!deleteLoading) {
+                        setDeleteModalOpen(false);
+                        setDeleteTemplateRecord(null);
+                    }
+                }}
+                onConfirm={handleConfirmDelete}
+            />
         </PageContainer>
     );
 }

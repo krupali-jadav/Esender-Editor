@@ -11,7 +11,7 @@ export const getDomains = async (projectId) => {
         message.error(response.data?.message);
     } catch (error) {
         console.log(error);
-        message.error(error?.response?.data?.message );
+        message.error(error?.response?.data?.message);
     }
 };
 export const getCredentials = async (projectId) => {
@@ -25,12 +25,26 @@ export const getCredentials = async (projectId) => {
         message.error(response.data?.message);
     } catch (error) {
         console.log(error);
-        message.error(error?.response?.data?.message );
+        message.error(error?.response?.data?.message);
     }
 };
 export const rotateLicense = async (projectId) => {
     try {
         const response = await axiosInstance.post(`projects/${projectId}/rotate-license`);
+
+        if (response.data?.status) {
+            return response.data;
+        } else {
+            message.error(response.data?.message);
+        }
+    } catch (error) {
+        console.log(error);
+        message.error(error?.response?.data?.message || "Failed to rotate license");
+    }
+};
+export const rotateSecrets = async (projectId) => {
+    try {
+        const response = await axiosInstance.post(`projects/${projectId}/rotate-secret`);
 
         if (response.data?.status) {
             return response.data;

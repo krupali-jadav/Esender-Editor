@@ -237,113 +237,115 @@ export default function SelectProject() {
 
                     {!loading &&
                         projects.length > 0 && (
-                            <Flex align="center" gap={8} style={{ marginTop: 35, marginBottom: 16, }}>
+                            <Flex align="center" gap={8} style={{ marginTop: 35, }}>
                                 <Text strong>{t("allProjects", { defaultValue: "All Projects" })}</Text>
                                 <Badge count={projects.length} color={PRIMARY_COLOR} />
                             </Flex>
                         )}
 
-                    {loading ? (
-                        <Flex justify="center" align="center" style={{ minHeight: 350, }}>
-                            <Space direction="vertical" align="center">
-                                <Spin size="middle" />
-                                <Text type="secondary">{t("loadingProjects", { defaultValue: "Loading projects..." })}</Text>
-                            </Space>
-                        </Flex>
-                    ) : projects.length === 0 ? (
-                        <Card style={{ marginTop: 35, textAlign: "center", }}>
-                            <EmptyState
-                                icon={<FileTextOutlined />}
-                                title={t('no.Projects', { defaultValue: 'No projects yet' })}
-                                description={t('create.First.Project', { defaultValue: 'Create your first project to get started.' })}
-                            />
-                            <Button
-                                type="primary"
-                                icon={<PlusOutlined />}
-                                onClick={() => navigate("/workflow")}>
-                                {t("createProject", { defaultValue: "Create Project" })}
-                            </Button>
-                        </Card>
-                    ) : (
-                        <Row gutter={[20, 20,]}>
-                            {projects.map((project) => {
-                                const projectId = project?.id || project?._id;
+                    <Space style={{ marginTop: 20, }} direction="vertical" size={12}>
+                        {loading ? (
+                            <Flex justify="center" align="center" style={{ minHeight: 350, }}>
+                                <Space direction="vertical" align="center">
+                                    <Spin size="middle" />
+                                    <Text type="secondary">{t("loadingProjects", { defaultValue: "Loading projects..." })}</Text>
+                                </Space>
+                            </Flex>
+                        ) : projects.length === 0 ? (
+                            <Card style={{ marginTop: 35, textAlign: "center", }}>
+                                <EmptyState
+                                    icon={<FileTextOutlined />}
+                                    title={t('no.Projects', { defaultValue: 'No projects yet' })}
+                                    description={t('create.First.Project', { defaultValue: 'Create your first project to get started.' })}
+                                />
+                                <Button
+                                    type="primary"
+                                    icon={<PlusOutlined />}
+                                    onClick={() => navigate("/workflow")}>
+                                    {t("createProject", { defaultValue: "Create Project" })}
+                                </Button>
+                            </Card>
+                        ) : (
+                            <Row gutter={[20, 20,]}>
+                                {projects.map((project) => {
+                                    const projectId = project?.id || project?._id;
 
-                                return (
-                                    <Col key={projectId} xs={24} sm={12} lg={8} xl={6}>
-                                        <Card hoverable
-                                            onClick={() => handleProjectSelect(project)}
-                                            styles={{ body: { padding: 0, }, }}>
+                                    return (
+                                        <Col key={projectId} xs={24} sm={12} lg={8} xl={6}>
+                                            <Card hoverable
+                                                onClick={() => handleProjectSelect(project)}
+                                                styles={{ body: { padding: 0, }, }}>
 
-                                            <div style={{ padding: 20, }}>
-                                                <Flex justify="space-between" align="start">
-                                                    <Avatar shape="square" size={50}
-                                                        icon={<FolderOpenOutlined />}
-                                                        style={{ background: "rgba(32,166,206,0.12)", color: PRIMARY_COLOR, }}
-                                                    />
+                                                <div style={{ padding: 20, }}>
+                                                    <Flex justify="space-between" align="start">
+                                                        <Avatar shape="square" size={50}
+                                                            icon={<FolderOpenOutlined />}
+                                                            style={{ background: "rgba(32,166,206,0.12)", color: PRIMARY_COLOR, }}
+                                                        />
 
-                                                    <Tag color="cyan" bordered={false}>
-                                                        {((project?.environment || "DEFAULT").toUpperCase())}
-                                                    </Tag>
-                                                </Flex>
+                                                        <Tag color="cyan" bordered={false}>
+                                                            {((project?.environment || "DEFAULT").toUpperCase())}
+                                                        </Tag>
+                                                    </Flex>
 
-                                                <Space direction="vertical" size={2} style={{ marginTop: 18, width: "100%", }}>
-                                                    <Text strong ellipsis style={{ fontSize: 18, }}>
-                                                        {project?.name}
+                                                    <Space direction="vertical" size={2} style={{ marginTop: 18, width: "100%", }}>
+                                                        <Text strong ellipsis style={{ fontSize: 18, }}>
+                                                            {project?.name}
+                                                        </Text>
+
+                                                        <Text type="secondary" style={{ fontSize: 13, }}>{t("email.marketing.project", { defaultValue: "Email marketing project" })}</Text>
+                                                    </Space>
+                                                </div>
+
+                                                <Divider style={{ margin: 0, }} />
+
+                                                <div style={{ padding: "16px 20px", }}>
+                                                    <Space direction="vertical" size={14} style={{ width: "100%", }}>
+                                                        <Flex justify="space-between" align="center">
+                                                            <Space size={8}>
+                                                                <CalendarOutlined style={{ color: PRIMARY_COLOR, }} />
+                                                                <Text type="secondary">{t("created", { defaultValue: "Created" })}</Text>
+                                                            </Space>
+
+                                                            <Text style={{ fontSize: 12, }}>{formatDate(project?.createdAt)}</Text>
+                                                        </Flex>
+
+                                                        <Flex justify="space-between" align="center">
+                                                            <Space size={8}>
+                                                                <GlobalOutlined style={{ color: PRIMARY_COLOR, }} />
+                                                                <Text type="secondary">{t("environment", { defaultValue: "Environment" })}</Text>
+                                                            </Space>
+
+                                                            <Text strong>{project?.environment || "Default"}</Text>
+                                                        </Flex>
+                                                    </Space>
+                                                </div>
+
+                                                <Divider style={{ margin: 0, }} />
+
+                                                <Flex justify="space-between" align="center" style={{ padding: "12px 20px", }}>
+                                                    <Text type="secondary" style={{ fontSize: 12, }}>
+                                                        {t("open_workspace", { defaultValue: "Open workspace" })}
                                                     </Text>
 
-                                                    <Text type="secondary" style={{ fontSize: 13, }}>{t("email.marketing.project", { defaultValue: "Email marketing project" })}</Text>
-                                                </Space>
-                                            </div>
-
-                                            <Divider style={{ margin: 0, }} />
-
-                                            <div style={{ padding: "16px 20px", }}>
-                                                <Space direction="vertical" size={14} style={{ width: "100%", }}>
-                                                    <Flex justify="space-between" align="center">
-                                                        <Space size={8}>
-                                                            <CalendarOutlined style={{ color: PRIMARY_COLOR, }} />
-                                                            <Text type="secondary">{t("created", { defaultValue: "Created" })}</Text>
-                                                        </Space>
-
-                                                        <Text style={{ fontSize: 12, }}>{formatDate(project?.createdAt)}</Text>
-                                                    </Flex>
-
-                                                    <Flex justify="space-between" align="center">
-                                                        <Space size={8}>
-                                                            <GlobalOutlined style={{ color: PRIMARY_COLOR, }} />
-                                                            <Text type="secondary">{t("environment", { defaultValue: "Environment" })}</Text>
-                                                        </Space>
-
-                                                        <Text strong>{project?.environment || "Default"}</Text>
-                                                    </Flex>
-                                                </Space>
-                                            </div>
-
-                                            <Divider style={{ margin: 0, }} />
-
-                                            <Flex justify="space-between" align="center" style={{ padding: "12px 20px", }}>
-                                                <Text type="secondary" style={{ fontSize: 12, }}>
-                                                    {t("open_workspace", { defaultValue: "Open workspace" })}
-                                                </Text>
-
-                                                <Button
-                                                    type="text"
-                                                    shape="circle"
-                                                    icon={<RightOutlined />}
-                                                    style={{ color: PRIMARY_COLOR, }}
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        handleProjectSelect(project);
-                                                    }}
-                                                />
-                                            </Flex>
-                                        </Card>
-                                    </Col>
-                                );
-                            })}
-                        </Row>
-                    )}
+                                                    <Button
+                                                        type="text"
+                                                        shape="circle"
+                                                        icon={<RightOutlined />}
+                                                        style={{ color: PRIMARY_COLOR, }}
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleProjectSelect(project);
+                                                        }}
+                                                    />
+                                                </Flex>
+                                            </Card>
+                                        </Col>
+                                    );
+                                })}
+                            </Row>
+                        )}
+                    </Space>
                 </Content>
             </Layout>
         </ConfigProvider>

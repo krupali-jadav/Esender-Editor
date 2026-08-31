@@ -9,6 +9,7 @@ import {
     Col,
     message,
     Form,
+    Space,
 } from "antd";
 import {
     FileTextOutlined,
@@ -87,8 +88,8 @@ export default function StepWorkspaceBasics({ onNext }) {
     };
 
     return (
-        <>
-            <div style={{ textAlign: "center", marginBottom: 24 }}>
+        <Space direction="vertical" size="large" style={{ width: "100%" }}>
+            <div style={{ textAlign: "center",}}>
                 <Text type="secondary">
                     {t('let.s.set.up.your.workspace', { defaultValue: "Let's set up your workspace." })}
                 </Text>
@@ -106,7 +107,7 @@ export default function StepWorkspaceBasics({ onNext }) {
                     style={{
                         color: "#20A6CE",
                         fontSize: 12,
-                        letterSpacing: 0.5,
+                        letterSpacing: 0.5, 
                     }}
                 >
                     {t('step.1.of.4', { defaultValue: 'STEP 1 OF 4' })}
@@ -184,13 +185,12 @@ export default function StepWorkspaceBasics({ onNext }) {
             <div
                 style={{
                     textAlign: "center",
-                    marginTop: 16,
                 }}
             >
                 <Text type="secondary">
                     {t('need.help', { defaultValue: 'Need help?' })} <Link>{t('read.the.setup.guide', { defaultValue: 'Read the setup guide.' })}</Link>
                 </Text>
             </div>
-        </>
+        </Space>
     );
 }

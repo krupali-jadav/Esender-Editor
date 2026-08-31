@@ -44,7 +44,7 @@ export default function StepCreateProject({ onNext, onBack }) {
 
             if (data?.status) {
                 message.success(data.message);
-                onNext(data?.project?.id);
+                onNext(data?.project);
             }
         } catch (error) {
             console.log("CREATE PROJECT ERROR:", error);
@@ -80,152 +80,150 @@ export default function StepCreateProject({ onNext, onBack }) {
                 {t('let.s.set.up.your.primary.workspace.you.can.always.create.more.projects.later', { defaultValue: "Let's set up your primary workspace. You can always create more projects later." })}
             </Paragraph>
 
-            <Form
-                form={form}
-                layout="vertical"
-                onFinish={handleCreateProject}
-            >
-                <Form.Item
-                    label={t('project.name', { defaultValue: 'PROJECT NAME' })}
-                    name="projectName"
-                    rules={[
-                        {
-                            required: true,
-                            message: t('please.enter.project.name', { defaultValue: 'Please enter project name' }),
-                        },
-                    ]}
+            <Space direction="vertical" size="large" style={{ width: "100%" }}>
+                <Form
+                    form={form}
+                    layout="vertical"
+                    onFinish={handleCreateProject}
                 >
-                    <Input
-                        prefix={
-                            <FolderOutlined
-                                style={{ color: "#98A2B3" }}
-                            />
-                        }
-                        placeholder={t('e.g.internal.tools.marketing.app', { defaultValue: 'e.g., Internal Tools, Marketing App' })}
-                    />
-                </Form.Item>
+                    <Form.Item
+                        label={t('project.name', { defaultValue: 'PROJECT NAME' })}
+                        name="projectName"
+                        rules={[
+                            {
+                                required: true,
+                                message: t('please.enter.project.name', { defaultValue: 'Please enter project name' }),
+                            },
+                        ]}
+                    >
+                        <Input
+                            prefix={
+                                <FolderOutlined
+                                    style={{ color: "#98A2B3" }}
+                                />
+                            }
+                            placeholder={t('e.g.internal.tools.marketing.app', { defaultValue: 'e.g., Internal Tools, Marketing App' })}
+                        />
+                    </Form.Item>
 
-                <Text strong style={{ fontSize: 12 }}>
-                    {t('initial.environment', { defaultValue: 'INITIAL ENVIRONMENT' })}
-                </Text>
+                    <Space direction="vertical" size="small" style={{ width: "100%" }}>
+                        <Text strong style={{ fontSize: 12 }}>
+                            {t('initial.environment', { defaultValue: 'INITIAL ENVIRONMENT' })}
+                        </Text>
 
-                <Row
-                    gutter={[16, 16]}
+                        <Row
+                            gutter={[16, 16]}>
+                            <Col xs={24} sm={12}>
+                                <EnvironmentCard
+                                    selected={env === "test"}
+                                    onClick={() => setEnv("test")}
+                                    icon={<FileTextOutlined />}
+                                    title={t('test', { defaultValue: 'Test' })}
+                                    description={t('recommended.for.new.accounts', { defaultValue: 'Recommended for new accounts. Keep experimental data separate from production.' })}
+                                    recommended
+                                />
+                            </Col>
+
+                            <Col xs={24} sm={12}>
+                                <EnvironmentCard
+                                    selected={env === "live"}
+                                    onClick={() => setEnv("live")}
+                                    icon={<RocketOutlined />}
+                                    title={t('live', { defaultValue: 'Live' })}
+                                    description={t('ready.to.go', { defaultValue: 'Ready to go. Data here will affect live users and active integrations immediately.' })}
+                                />
+                            </Col>
+
+                            <Col xs={24}>
+                                <Space direction="vertical" size="small" style={{ width: "100%" }}>
+                                    <div
+                                        style={{
+                                            background: theme
+                                                ? "#142b42"
+                                                : "#F5F7FA",
+                                            borderRadius: 8,
+                                            padding: "10px 16px",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: 24,
+                                        }}
+                                    >
+                                        <Text strong
+                                            style={{
+                                                color: "#20A6CE",
+                                                fontSize: 12,
+                                                minWidth: 40,
+                                            }}
+                                        >
+                                            {t('post', { defaultValue: 'POST' })}
+                                        </Text>
+
+                                        <Text code style={{ background: "transparent" }}>
+                                            {t('api.projects', { defaultValue: '/api/projects' })}
+                                        </Text>
+                                    </div>
+
+                                    <div
+                                        style={{
+                                            background: theme
+                                                ? "#142b42"
+                                                : "#F5F7FA",
+                                            borderRadius: 8,
+                                            padding: "10px 16px",
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: 24,
+                                        }}
+                                    >
+                                        <Text
+                                            strong
+                                            style={{
+                                                color: "#20A6CE",
+                                                fontSize: 12,
+                                                minWidth: 40,
+                                            }}
+                                        >
+                                            {t('returns', { defaultValue: 'RETURNS' })}
+                                        </Text>
+
+                                        <Text>
+                                            {t('project.id', { defaultValue: 'project id' })}, {t('public.project.id', { defaultValue: 'public project id' })}, {t('license.key', { defaultValue: 'license key' })}, {t('signing.secret', { defaultValue: 'signing secret' })}
+                                        </Text>
+                                    </div>
+                                </Space>
+                            </Col>
+                        </Row>
+                    </Space>
+
+                    <Divider style={{ margin: "20px 0 20px" }} />
+
+                    <Row justify="space-between" align="middle">
+                        <Link onClick={onBack}>
+                            {t('back', { defaultValue: 'Back' })}
+                        </Link>
+
+                        <Button
+                            type="primary"
+                            htmlType="submit"
+                            loading={loading}
+                            icon={<ArrowRightOutlined />}
+                            iconPosition="end"
+                        >
+                            {t('next', { defaultValue: 'Next' })}
+                        </Button>
+                    </Row>
+                </Form>
+
+                <div
                     style={{
-                        marginTop: 8,
-                        marginBottom: 24,
+                        textAlign: "center",
                     }}
                 >
-                    <Col xs={24} sm={12}>
-                        <EnvironmentCard
-                            selected={env === "test"}
-                            onClick={() => setEnv("test")}
-                            icon={<FileTextOutlined />}
-                            title={t('test', { defaultValue: 'Test' })}
-                            description={t('recommended.for.new.accounts', { defaultValue: 'Recommended for new accounts. Keep experimental data separate from production.' })}
-                            recommended
-                        />
-                    </Col>
-
-                    <Col xs={24} sm={12}>
-                        <EnvironmentCard
-                            selected={env === "live"}
-                            onClick={() => setEnv("live")}
-                            icon={<RocketOutlined />}
-                            title={t('live', { defaultValue: 'Live' })}
-                            description={t('ready.to.go', { defaultValue: 'Ready to go. Data here will affect live users and active integrations immediately.' })}
-                        />
-                    </Col>
-
-                    <Col xs={24}>
-                        <div
-                            style={{
-                                background: theme
-                                    ? "#142b42"
-                                    : "#F5F7FA",
-                                borderRadius: 8,
-                                padding: "10px 16px",
-                                marginBottom: 12,
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 24,
-                            }}
-                        >
-                            <Text strong
-                                style={{
-                                    color: "#20A6CE",
-                                    fontSize: 12,
-                                    minWidth: 40,
-                                }}
-                            >
-                                {t('post', { defaultValue: 'POST' })}
-                            </Text>
-
-                            <Text code style={{ background: "transparent" }}>
-                                {t('api.projects', { defaultValue: '/api/projects' })}
-                            </Text>
-                        </div>
-
-                        <div
-                            style={{
-                                background: theme
-                                    ? "#142b42"
-                                    : "#F5F7FA",
-                                borderRadius: 8,
-                                padding: "10px 16px",
-                                marginBottom: 24,
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 24,
-                            }}
-                        >
-                            <Text
-                                strong
-                                style={{
-                                    color: "#20A6CE",
-                                    fontSize: 12,
-                                    minWidth: 40,
-                                }}
-                            >
-                                {t('returns', { defaultValue: 'RETURNS' })}
-                            </Text>
-
-                            <Text>
-                                {t('project.id', { defaultValue: 'project id' })}, {t('public.project.id', { defaultValue: 'public project id' })}, {t('license.key', { defaultValue: 'license key' })}, {t('signing.secret', { defaultValue: 'signing secret' })}
-                            </Text>
-                        </div>
-                    </Col>
-                </Row>
-
-                <Divider style={{ margin: "0 0 20px" }} />
-
-                <Row justify="space-between" align="middle">
-                    <Link onClick={onBack}>
-                            {t('back', { defaultValue: 'Back' })}
-                    </Link>
-
-                    <Button
-                        type="primary"
-                        htmlType="submit"
-                        loading={loading}
-                        icon={<ArrowRightOutlined />}
-                        iconPosition="end"
-                    >
-                            {t('next', { defaultValue: 'Next' })}
-                    </Button>
-                </Row>
-            </Form>
-
-            <div
-                style={{
-                    textAlign: "center",
-                    marginTop: 16,
-                }}
-            >
-                <Text type="secondary">
-                    <LockOutlined /> {t('your.data.is.secure.and.encrypted', { defaultValue: 'Your data is secure and encrypted.' })}
-                </Text>
-            </div>
+                    <Text type="secondary">
+                        <LockOutlined /> {t('your.data.is.secure.and.encrypted', { defaultValue: 'Your data is secure and encrypted.' })}
+                    </Text>
+                </div>
+            </Space>
         </Card>
     );
 }
@@ -246,7 +244,6 @@ function EnvironmentCard({
             style={{
                 width: "100%",
                 minHeight: 150,
-                boxSizing: "border-box",
                 border: theme
                     ? `1px solid ${selected ? "#142b42" : "#2b313b"}`
                     : `1px solid ${selected ? "#20A6CE" : "#E7E9F0"}`,

@@ -1,18 +1,24 @@
-import { App, Button, Form, Input, Modal, message } from "antd";
+import { Button, Form, Input, Modal, message } from "antd";
 import { useEffect, useState } from "react";
 import { t } from "i18next";
 import { updateProjectDomains } from "../WorkFlow/WorkFlowApi";
 import AppPageHeader from "../Styles/AppHeader";
 
-function AddDomain({ open, onClose, projectId, onSuccess }) {
+function AddDomain({ open, onClose, projectId, onSuccess, editingDomain }) {
     const [loading, setLoading] = useState(false);
     const [form] = Form.useForm();
 
     useEffect(() => {
         if (open) {
-            form.resetFields();
+            if (editingDomain) {
+                form.setFieldsValue({
+                    name: editingDomain.domain,
+                });
+            } else {
+                form.resetFields();
+            }
         }
-    }, [open, form]);
+    }, [open, editingDomain, form]);
 
     const handleUpdate = async () => {
         try {
@@ -20,36 +26,60 @@ function AddDomain({ open, onClose, projectId, onSuccess }) {
             const domain = values.name?.trim();
 
             if (!domain) {
-                message.warning(t("please.enter.domain", { defaultValue: "Please enter a domain", })
+                message.warning(
+                    t("please.enter.domain", {
+                        defaultValue: "Please enter a domain",
+                    })
                 );
                 return;
             }
 
+            if (!projectId) return;
+
             setLoading(true);
 
-            const payload = {
-                allowedDomains: [domain],
-            };
+            let data;
 
-            const data = await updateProjectDomains(
-                projectId,
-                payload
-            );
+            if (editingDomain) {
+                // EDIT / UPDATE DOMAIN
+                const payload = {
+                    allowedDomains: [domain],
+                };
+
+                data = await updateProjectDomains(
+                    projectId,
+                    payload
+                );
+            } else {
+                // ADD DOMAIN
+                const payload = {
+                    domain: domain,
+                };
+
+                data = await addProjectDomain(
+                    projectId,
+                    payload
+                );
+            }
 
             if (data?.status) {
-                message.success(data?.message);
+                message.success(
+                    data?.message ||
+                    (editingDomain
+                        ? "Domain updated successfully"
+                        : "Domain added successfully")
+                );
 
                 form.resetFields();
                 onClose();
                 onSuccess?.();
             }
         } catch (error) {
-            console.error("DOMAIN UPDATE ERROR:", error);
+            console.error("DOMAIN ERROR:", error);
         } finally {
             setLoading(false);
         }
     };
-
     return (
         <Modal
             open={open}
@@ -67,12 +97,18 @@ function AddDomain({ open, onClose, projectId, onSuccess }) {
                     loading={loading}
                     onClick={handleUpdate}
                 >
-                    {t("update", { defaultValue: "Update", })}
+                    {editingDomain
+                        ? t("update.domain", { defaultValue: "Update Domain" })
+                        : t("add.domain", { defaultValue: "Add Domain" })}
                 </Button>,
             ]}
         >
             <AppPageHeader
-                title={t("update.domain", { defaultValue: "Update Domain", })}
+                title={
+                    editingDomain
+                        ? t("update.domain", { defaultValue: "Update Domain" })
+                        : t("add.domain", { defaultValue: "Add Domain" })
+                }
             />
             <Form
                 form={form}

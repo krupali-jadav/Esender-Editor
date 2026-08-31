@@ -72,10 +72,10 @@ const Settings = () => {
         description="Manage your account, billing, support, and integration details."
       />
 
-      <Card bodyStyle={{ padding: screens.md ? "16px 8px" : 16 }}>
+      <Card styles={{body: {padding: screens.md ? "16px 8px" : 16,},}}>
         <Tabs
           tabPosition={screens.md ? "left" : "top"}
-          activeKey={activeTab}
+        activeKey={activeTab}
           items={tabItems}
           onChange={setActiveTab}
           style={{ minHeight: 420 }}

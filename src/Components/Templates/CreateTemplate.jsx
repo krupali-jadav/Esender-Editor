@@ -221,7 +221,6 @@ function CreateTemplates() {
                             label={<>Plain text version{" "}<Text type="secondary">(Optional)</Text></>}
                             name="text"
                             tooltip="Fallback text shown by clients that cannot render HTML."
-                            style={{ marginBottom: 0 }}
                         >
                             <Input.TextArea
                                 rows={3}

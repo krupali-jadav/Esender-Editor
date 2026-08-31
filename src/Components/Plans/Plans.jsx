@@ -239,7 +239,6 @@ export default function Plans() {
                 {/* Available Plans */}
                 <Card
                     style={{
-                        marginBottom: 60,
                         background: "transparent",
                         border: "none",
                         boxShadow: "none",
@@ -379,7 +378,7 @@ export default function Plans() {
 
                                             {/* MAIN CARD */}
                                             <Card
-                                                bordered={false}
+                                                 variant="borderless"
                                                 style={{
                                                     borderRadius: "14px 14px 18px 18px",
                                                     background: theme

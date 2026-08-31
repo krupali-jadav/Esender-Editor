@@ -31,7 +31,8 @@ function ProjectDomain() {
     const [originUrl, setOriginUrl] = useState('')
     const [verifyLoading, setVerifyLoading] = useState(false);
     const [validationResult, setValidationResult] = useState(null);
-    const [addDomainOpen, setAddDomainOpen] = useState(false)
+    const [addDomainOpen, setAddDomainOpen] = useState(false);
+    const [editingDomain, setEditingDomain] = useState(null);
     const [domains, setDomains] = useState([]);
     const [domainsLoading, setDomainsLoading] = useState(false);
     const theme = useSelector((state) => state?.app?.theme);
@@ -143,15 +144,28 @@ function ProjectDomain() {
             key: 'actions',
             width: 120,
             align: 'center',
-            render: () => (
+            render: (_, record) => (
                 <Dropdown
                     menu={{
                         items: [
-                            { key: 'edit', label: 'Edit' },
-                            { key: 'delete', label: 'Delete', danger: true },
+                            {
+                                key: "edit",
+                                label: "Edit",
+                            },
+                            {
+                                key: "delete",
+                                label: "Delete",
+                                danger: true,
+                            },
                         ],
+                        onClick: ({ key }) => {
+                            if (key === "edit") {
+                                setEditingDomain(record);
+                                setAddDomainOpen(true);
+                            }
+                        },
                     }}
-                    trigger={['click']}
+                    trigger={["click"]}
                 >
                     <Button type="text" icon={<MoreOutlined />} />
                 </Dropdown>
@@ -184,16 +198,20 @@ function ProjectDomain() {
                                 <Button
                                     type="primary"
                                     icon={<PlusOutlined />}
-                                    onClick={() => setAddDomainOpen(true)}
+                                    onClick={() => {
+                                        setEditingDomain(null);
+                                        setAddDomainOpen(true);
+                                    }}
                                     style={{ background: "#20A6CE", }}
                                 >
-                                    {t('update.domain', { defaultValue: 'Update Domain' })}
+                                    {t('Add.Domain', { defaultValue: 'Add Domain' })}
                                 </Button>
                             }
                         />
 
                         <Card styles={{ body: { padding: 0, }, }}>
                             <Table
+                                rowKey="domain"
                                 columns={columns}
                                 dataSource={domains}
                                 loading={domainsLoading}
@@ -302,7 +320,11 @@ function ProjectDomain() {
             <AddDomain
                 open={addDomainOpen}
                 projectId={selectedProject?._id}
-                onClose={() => setAddDomainOpen(false)}
+                editingDomain={editingDomain}
+                onClose={() => {
+                    setAddDomainOpen(false);
+                    setEditingDomain(null);
+                }}
                 onSuccess={fetchDomains}
             />
         </div>

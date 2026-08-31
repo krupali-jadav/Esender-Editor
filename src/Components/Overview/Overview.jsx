@@ -24,6 +24,7 @@ import {
     CodeOutlined,
     CustomerServiceOutlined,
     DownOutlined,
+    ArrowRightOutlined,
 } from "@ant-design/icons";
 
 import { PageContainer } from "@ant-design/pro-components";
@@ -210,259 +211,261 @@ export default function Overview() {
                 />
             </Flex>
 
-            {/* Stat Cards */}
-            <Row gutter={16} style={{ marginBottom: 16 }}>
-                {/* Subscription */}
-                <Col xs={24} sm={12} lg={6}>
-                    <Card loading={loading}>
-                        <Space style={{ width: "100%", justifyContent: "space-between", }} align="start">
-                            <Text type="secondary">
-                                {t("subscription", { defaultValue: "SUBSCRIPTION" })}
-                            </Text>
+            <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+                {/* Stat Cards */}
+                <Row gutter={[16, 16]} >
+                    {/* Subscription */}
+                    <Col xs={24} sm={12} lg={6}>
+                        <Card loading={loading}>
+                            <Space style={{ width: "100%", justifyContent: "space-between", }} align="start">
+                                <Text type="secondary">
+                                    {t("subscription", { defaultValue: "SUBSCRIPTION" })}
+                                </Text>
 
-                            <CreditCardOutlined
-                                style={{
-                                    color: "#20A6CE",
-                                    fontSize: 20,
-                                }}
+                                <CreditCardOutlined
+                                    style={{
+                                        color: "#20A6CE",
+                                        fontSize: 20,
+                                    }}
+                                />
+                            </Space>
+
+                            <Title level={3} style={{ margin: "8px 0" }}>
+                                {subscription?.planName || "-"}
+                            </Title>
+
+                            <Tag color="cyan">
+                                {subscription?.status || "-"}
+                            </Tag>
+                        </Card>
+                    </Col>
+
+                    {/* Projects */}
+                    <Col xs={24} sm={12} lg={6}>
+                        <Card loading={loading}>
+                            <Space
+                                style={{ width: "100%", justifyContent: "space-between", }} align="start">
+                                <Text type="secondary">
+                                    {t("projects", { defaultValue: "PROJECTS" })}
+                                </Text>
+
+                                <FolderOpenOutlined style={{ color: "#1677ff", fontSize: 20, }} />
+                            </Space>
+
+                            <Title level={3} style={{ margin: "8px 0" }}>
+                                {stats
+                                    ? `${stats.projectsUsed} / ${stats.projectsLimit}`
+                                    : "-"}
+                            </Title>
+
+                            <Progress
+                                percent={projectPercent}
+                                showInfo={false}
+                                strokeColor="#1677ff"
                             />
-                        </Space>
+                        </Card>
+                    </Col>
 
-                        <Title level={3} style={{ margin: "8px 0" }}>
-                            {subscription?.planName || "-"}
-                        </Title>
+                    {/* Monthly Editor Users */}
+                    <Col xs={24} sm={12} lg={6}>
+                        <Card loading={loading}>
+                            <Space style={{ width: "100%", justifyContent: "space-between", }} align="start">
+                                <Text type="secondary">
+                                    {t("monthly.Editor.Users", { defaultValue: "MONTHLY EDITOR USERS" })}
+                                </Text>
 
-                        <Tag color="cyan">
-                            {subscription?.status || "-"}
-                        </Tag>
-                    </Card>
-                </Col>
+                                <TeamOutlined style={{ color: "#20A6CE", fontSize: 20, }} />
+                            </Space>
 
-                {/* Projects */}
-                <Col xs={24} sm={12} lg={6}>
-                    <Card loading={loading}>
-                        <Space
-                            style={{ width: "100%", justifyContent: "space-between", }} align="start">
-                            <Text type="secondary">
-                                {t("projects", { defaultValue: "PROJECTS" })}
-                            </Text>
+                            <Title level={3} style={{ margin: "8px 0" }}>
+                                {stats
+                                    ? `${stats.monthlyEditorUsersUsed} / ${stats.monthlyEditorUsersLimit}`
+                                    : "-"}
+                            </Title>
 
-                            <FolderOpenOutlined style={{ color: "#1677ff", fontSize: 20, }} />
-                        </Space>
-
-                        <Title level={3} style={{ margin: "8px 0" }}>
-                            {stats
-                                ? `${stats.projectsUsed} / ${stats.projectsLimit}`
-                                : "-"}
-                        </Title>
-
-                        <Progress
-                            percent={projectPercent}
-                            showInfo={false}
-                            strokeColor="#1677ff"
-                        />
-                    </Card>
-                </Col>
-
-                {/* Monthly Editor Users */}
-                <Col xs={24} sm={12} lg={6}>
-                    <Card loading={loading}>
-                        <Space style={{ width: "100%", justifyContent: "space-between", }} align="start">
-                            <Text type="secondary">
-                                {t("monthly.Editor.Users", { defaultValue: "MONTHLY EDITOR USERS" })}
-                            </Text>
-
-                            <TeamOutlined style={{ color: "#20A6CE", fontSize: 20, }} />
-                        </Space>
-
-                        <Title level={3} style={{ margin: "8px 0" }}>
-                            {stats
-                                ? `${stats.monthlyEditorUsersUsed} / ${stats.monthlyEditorUsersLimit}`
-                                : "-"}
-                        </Title>
-
-                        <Progress
-                            percent={editorUsersPercent}
-                            showInfo={false}
-                            strokeColor="#20A6CE"
-                        />
-                    </Card>
-                </Col>
-
-                {/* Monthly Sessions */}
-                <Col xs={24} sm={12} lg={6}>
-                    <Card loading={loading}>
-                        <Space style={{ width: "100%", justifyContent: "space-between", }} align="start">
-                            <Text type="secondary">
-                                {t("monthly.Sessions", { defaultValue: "MONTHLY SESSIONS" })}
-                            </Text>
-
-                            <ThunderboltOutlined style={{ color: "#52c41a", fontSize: 20, }} />
-                        </Space>
-
-                        <Title level={3} style={{ margin: "8px 0" }}>
-                            {stats
-                                ? `${stats.monthlySessionsUsed} / ${stats.monthlySessionsLimit}`
-                                : "-"}
-                        </Title>
-
-                        <Progress
-                            percent={sessionsPercent}
-                            showInfo={false}
-                            strokeColor="#52c41a"
-                        />
-                    </Card>
-                </Col>
-            </Row>
-
-            {/* Usage Trend + Quick Actions */}
-            <Row
-                gutter={[16, 16]}
-                style={{ marginBottom: 16 }}
-            >
-                <Col xs={24} lg={16}>
-                    <Card
-                        title={t("session.Trend", { defaultValue: "Session Trend" })}
-                        extra={
-                            <Select
-                                value={String(range)}
-                                onChange={(value) => setRange(Number(value))}
-                                loading={loading}
-                                suffixIcon={<DownOutlined />}
-                                options={[
-                                    { value: "7", label: t("last.7.Days", { defaultValue: "Last 7 Days" }) },
-                                    { value: "30", label: t("last.30.Days", { defaultValue: "Last 30 Days" }) },
-                                    { value: "90", label: t("last.90.Days", { defaultValue: "Last 90 Days" }) },
-                                ]}
+                            <Progress
+                                percent={editorUsersPercent}
+                                showInfo={false}
+                                strokeColor="#20A6CE"
                             />
-                        }
-                        style={{ height: "100%" }}
-                    >
-                        <div>
-                            <Column
-                                key={`${theme ? "dark" : "light"}-${range}`}
-                                data={overview.usageTrend.map((item) => ({
-                                    day: new Date(item.date).toLocaleDateString("en-US", {
-                                        month: "short",
-                                        day: "numeric",
-                                    }),
-                                    sessions: item.sessions || 0,
-                                }))}
-                                xField="day"
-                                yField="sessions"
-                                height={230}
-                                style={{
-                                    maxWidth: 50,
-                                    fill: "#adc6ff",
-                                    radiusTopLeft: 4,
-                                    radiusTopRight: 4,
-                                }}
-                                theme={{
-                                    type: theme ? "dark" : "light",
-                                    axis: {
-                                        x: {
-                                            labelFill: theme ? "#a6b4c3" : "#8c8c8c",
-                                            labelFontSize: 12,
-                                            tickStroke: theme ? "#243746" : "#d9d9d9",
-                                            lineStroke: theme ? "#243746" : "#d9d9d9",
+                        </Card>
+                    </Col>
+
+                    {/* Monthly Sessions */}
+                    <Col xs={24} sm={12} lg={6}>
+                        <Card loading={loading}>
+                            <Space style={{ width: "100%", justifyContent: "space-between", }} align="start">
+                                <Text type="secondary">
+                                    {t("monthly.Sessions", { defaultValue: "MONTHLY SESSIONS" })}
+                                </Text>
+
+                                <ThunderboltOutlined style={{ color: "#52c41a", fontSize: 20, }} />
+                            </Space>
+
+                            <Title level={3} style={{ margin: "8px 0" }}>
+                                {stats
+                                    ? `${stats.monthlySessionsUsed} / ${stats.monthlySessionsLimit}`
+                                    : "-"}
+                            </Title>
+
+                            <Progress
+                                percent={sessionsPercent}
+                                showInfo={false}
+                                strokeColor="#52c41a"
+                            />
+                        </Card>
+                    </Col>
+                </Row>
+
+                {/* Usage Trend + Quick Actions */}
+                <Row
+                    gutter={[16, 16]}
+                >
+                    <Col xs={24} lg={16}>
+                        <Card
+                            title={t("session.Trend", { defaultValue: "Session Trend" })}
+                            extra={
+                                <Select
+                                    value={String(range)}
+                                    onChange={(value) => setRange(Number(value))}
+                                    loading={loading}
+                                    suffixIcon={<DownOutlined />}
+                                    options={[
+                                        { value: "7", label: t("last.7.Days", { defaultValue: "Last 7 Days" }) },
+                                        { value: "30", label: t("last.30.Days", { defaultValue: "Last 30 Days" }) },
+                                        { value: "90", label: t("last.90.Days", { defaultValue: "Last 90 Days" }) },
+                                    ]}
+                                />
+                            }
+                            style={{ height: "100%" }}
+                        >
+                            <div>
+                                <Column
+                                    key={`${theme ? "dark" : "light"}-${range}`}
+                                    data={overview.usageTrend.map((item) => ({
+                                        day: new Date(item.date).toLocaleDateString("en-US", {
+                                            month: "short",
+                                            day: "numeric",
+                                        }),
+                                        sessions: item.sessions || 0,
+                                    }))}
+                                    xField="day"
+                                    yField="sessions"
+                                    height={230}
+                                    style={{
+                                        maxWidth: 50,
+                                        fill: "#adc6ff",
+                                        radiusTopLeft: 4,
+                                        radiusTopRight: 4,
+                                    }}
+                                    theme={{
+                                        type: theme ? "dark" : "light",
+                                        axis: {
+                                            x: {
+                                                labelFill: theme ? "#a6b4c3" : "#8c8c8c",
+                                                labelFontSize: 12,
+                                                tickStroke: theme ? "#243746" : "#d9d9d9",
+                                                lineStroke: theme ? "#243746" : "#d9d9d9",
+                                            },
                                         },
-                                    },
-                                }}
-                                axis={{
-                                    x: {
-                                        line: false,
-                                        tickLine: false,
-                                    },
-                                    y: {
-                                        label: false,
-                                        grid: {
-                                            line: {
-                                                style: {
-                                                    stroke: theme ? "#243746" : "#f0f0f0",
+                                    }}
+                                    axis={{
+                                        x: {
+                                            line: false,
+                                            tickLine: false,
+                                        },
+                                        y: {
+                                            label: false,
+                                            grid: {
+                                                line: {
+                                                    style: {
+                                                        stroke: theme ? "#243746" : "#f0f0f0",
+                                                    },
                                                 },
                                             },
                                         },
+                                    }}
+                                    tooltip={{
+                                        items: [
+                                            {
+                                                channel: "y",
+                                                name: t("sessions", { defaultValue: "Sessions" }),
+                                            },
+                                        ],
+                                    }}
+                                />
+
+                            </div>
+                        </Card>
+                    </Col>
+                    <Col xs={24} lg={8}>
+                        <Card title={t("quick.Actions", { defaultValue: "Quick Actions" })} style={{ height: "100%" }}>
+                            <List
+                                dataSource={quickActions}
+                                renderItem={(item) => (
+                                    <List.Item style={{ padding: "8px 0", }}>
+                                        <Button
+                                            type="text"
+                                            icon={item.icon}
+                                            block
+                                            style={{
+                                                textAlign: "left",
+                                            }}
+                                        >
+                                            {item.title}
+                                        </Button>
+                                    </List.Item>
+                                )}
+                            />
+                        </Card>
+                    </Col>
+                </Row>
+
+
+                {/* Recent Projects*/}
+                <Row gutter={[16, 16]}>
+                    <Col xs={24} lg={24}>
+                        <Card
+                            title={t("recent.Projects", { defaultValue: "Recent Projects" })}
+                            extra={<Link onClick={() => navigate("/select-project")}>
+                                {t("view.All", { defaultValue: "View All" })} <ArrowRightOutlined />
+                            </Link>}
+                            loading={loading}
+                            styles={{ body: { padding: 0, }, }}
+                        >
+                            <Table
+                                columns={projectColumns}
+                                dataSource={overview.recentProjects.map(
+                                    (project) => ({
+                                        ...project,
+                                        key: project._id,
+                                    })
+                                )}
+                                pagination={false}
+                                locale={{
+                                    emptyText: t("no.Recent.Projects", { defaultValue: "No recent projects" }),
+                                }}
+                                scroll={{ x: "max-content" }}
+                                components={{
+                                    header: {
+                                        cell: (props) => (
+                                            <th
+                                                {...props}
+                                                style={{
+                                                    ...props.style,
+                                                    background: theme
+                                                        ? "#0e1c29"
+                                                        : "#f0f0f0",
+                                                }}
+                                            />
+                                        ),
                                     },
                                 }}
-                                tooltip={{
-                                    items: [
-                                        {
-                                            channel: "y",
-                                            name: t("sessions", { defaultValue: "Sessions" }),
-                                        },
-                                    ],
-                                }}
                             />
-
-                        </div>
-                    </Card>
-                </Col>
-                <Col xs={24} lg={8}>
-                    <Card title={t("quick.Actions", { defaultValue: "Quick Actions" })} style={{ height: "100%" }}>
-                        <List
-                            dataSource={quickActions}
-                            renderItem={(item) => (
-                                <List.Item style={{ padding: "8px 0", }}>
-                                    <Button
-                                        type="text"
-                                        icon={item.icon}
-                                        block
-                                        style={{
-                                            textAlign: "left",
-                                        }}
-                                    >
-                                        {item.title}
-                                    </Button>
-                                </List.Item>
-                            )}
-                        />
-                    </Card>
-                </Col>
-            </Row>
-
-            {/* Recent Projects*/}
-            <Row gutter={[16, 16]}>
-                <Col xs={24} lg={24}>
-                    <Card
-                        title={t("recent.Projects", { defaultValue: "Recent Projects" })}
-                        extra={<Link onClick={() => navigate("/select-project")}>
-                            {t("view.All", { defaultValue: "View All" })}
-                        </Link>}
-                        loading={loading}
-                        styles={{ body: { padding: 0, }, }}
-                    >
-                        <Table
-                            columns={projectColumns}
-                            dataSource={overview.recentProjects.map(
-                                (project) => ({
-                                    ...project,
-                                    key: project._id,
-                                })
-                            )}
-                            pagination={false}
-                            locale={{
-                                emptyText: t("no.Recent.Projects", { defaultValue: "No recent projects" }),
-                            }}
-                            scroll={{ x: "max-content" }}
-                            components={{
-                                header: {
-                                    cell: (props) => (
-                                        <th
-                                            {...props}
-                                            style={{
-                                                ...props.style,
-                                                background: theme
-                                                    ? "#0e1c29"
-                                                    : "#f0f0f0",
-                                            }}
-                                        />
-                                    ),
-                                },
-                            }}
-                        />
-                    </Card>
-                </Col>
-            </Row>
+                        </Card>
+                    </Col>
+                </Row>
+            </Space>
         </PageContainer>
     );
 }

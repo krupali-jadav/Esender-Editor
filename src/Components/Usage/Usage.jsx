@@ -19,6 +19,7 @@ import {
     WarningOutlined,
     DownOutlined,
     MailOutlined,
+    ArrowRightOutlined,
 } from "@ant-design/icons";
 import { Column } from "@ant-design/plots";
 import { PageContainer } from "@ant-design/pro-components";
@@ -416,7 +417,7 @@ export default function Usage() {
                     <Card
                         title={t("recentlyUpdatedTemplates", { defaultValue: "Recently Updated Templates" })}
                         extra={<Link onClick={() => navigate("/templates")}>
-                            {t('view.all', { defaultValue: 'View All' })} →
+                            {t('view.all', { defaultValue: 'View All' })} <ArrowRightOutlined />
                         </Link>}
                         styles={{ body: { padding: 0 } }}
                     >

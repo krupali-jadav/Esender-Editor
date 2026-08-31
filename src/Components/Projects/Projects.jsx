@@ -7,6 +7,8 @@ import ProjectIntegration from './projectIntegration'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { t } from 'i18next'
+import ProjectOverview from './ProjectOverview'
+import ProjectUsage from './ProjectUsage'
 const { Title,Text } = Typography
 
 
@@ -15,13 +17,13 @@ const TAB_ITEMS = [
     { key: 'templates', label: 'Templates' },
     { key: 'domains', label: 'Domains' },
     { key: 'credentials', label: 'Credentials' },
-    { key: 'usage', label: 'Usage' },
+    // { key: 'usage', label: 'Usage' },
     { key: 'integration', label: 'Integration' },
 ]
 
 function Projects() {
     const navigate = useNavigate()
-    const [activeTab, setActiveTab] = useState('domains');
+    const [activeTab, setActiveTab] = useState('overview');
     const selectedProject = useSelector((state) => state?.app?.selectedProject);
 
     return (
@@ -53,6 +55,9 @@ function Projects() {
                             <Button type="primary" style={{ marginRight: 10 }} onClick={() => navigate('/select-project')}>
                                 {t('switch.project', { defaultValue: 'Switch Project' })}
                             </Button>
+                            <Button type="primary" style={{ marginRight: 10 }} onClick={() => navigate('/workflow')}>
+                                {t('create.new.project', { defaultValue: 'Create New Project' })}
+                            </Button>
                         </div>
                     </Flex>
 
@@ -66,10 +71,12 @@ function Projects() {
                 </div>
             </div>
             <div>
+                {activeTab === 'overview' && <ProjectOverview setActiveTab={setActiveTab} />}
                 {activeTab === 'domains' && <ProjectDomain />}
                 {activeTab === 'templates' && (<ProjectTemplate />)}
                 {activeTab === 'credentials' && (<ProjectCredential />)}
                 {activeTab === 'integration' && (<ProjectIntegration />)}
+                {/* {activeTab === 'usage' && (<ProjectUsage />)} */}
             </div>
         </div>
     )

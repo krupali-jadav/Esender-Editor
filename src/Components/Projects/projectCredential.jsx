@@ -1,8 +1,8 @@
 import { Alert, Button, Card, Flex, Popconfirm, Space, Tag, Typography, message, } from 'antd'
-import { SafetyCertificateOutlined, CopyOutlined, ReloadOutlined, } from '@ant-design/icons'
+import { SafetyCertificateOutlined, ReloadOutlined, } from '@ant-design/icons'
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { getCredentials, rotateLicense } from './ProjectsApi';
+import { getCredentials, rotateLicense, rotateSecrets } from './ProjectsApi';
 import { t } from 'i18next';
 
 const { Text, Title } = Typography
@@ -11,20 +11,6 @@ function ProjectCredential() {
     const [credentials, setCredentials] = useState(null);
     const [credentialsLoading, setCredentialsLoading] = useState(false);
     const selectedProject = useSelector((state) => state?.app?.selectedProject);
-
-    const handleCopy = async (value, label) => {
-        try {
-            await navigator.clipboard.writeText(value)
-            message.success(`${label} copied`)
-        } catch (error) {
-            console.error(error)
-            message.error(`Unable to copy ${label}`)
-        }
-    }
-
-    const handleRotateSecret = () => {
-        console.log('Rotate Signing Secret')
-    }
 
     const fetchCredentials = async () => {
         if (!selectedProject?._id) return;
@@ -66,6 +52,25 @@ function ProjectCredential() {
         } catch (error) {
             console.log(error);
             message.error("Failed to rotate license");
+        }
+    };
+    const handleRotateSecret = async () => {
+        if (!selectedProject?._id) return;
+
+        try {
+            const response = await rotateSecrets(selectedProject._id);
+
+            if (response?.status) {
+                setCredentials((prev) => ({
+                    ...prev,
+                    ...response.credentials,
+                }));
+
+                message.success(response.message);
+            }
+        } catch (error) {
+            console.log(error);
+            message.error("Failed to rotate secret");
         }
     };
 
@@ -148,32 +153,35 @@ function ProjectCredential() {
                         <Space direction="vertical" size="large" style={{ width: '100%', }}>
 
                             <Card size="small">
-                                <Flex justify="space-between" align="center" gap="middle">
-                                    <Space direction="vertical" size={0}>
-                                        <Space size="small">
-                                            <Text type="secondary">
-                                                {t("primary.secret", { defaultValue: "Primary Secret" })}
-                                            </Text>
+                                <Flex vertical gap="small">
+                                    <Space size="small">
+                                        <Text type="secondary">
+                                            {t("primary.secret", { defaultValue: "Primary Secret", })}
+                                        </Text>
 
-                                            <Tag color="blue">
-                                                {credentials?.signingSecretVersion || "N/A"}
-                                            </Tag>
-                                        </Space>
-
-                                        <Text code> whsec_•••••••••••••••••••• </Text>
+                                        <Tag color="blue">
+                                            {credentials?.signingSecretVersion || "N/A"}
+                                        </Tag>
                                     </Space>
 
-                                    <Button
-                                        icon={<CopyOutlined />}
-                                        onClick={() =>
-                                            handleCopy(
-                                                'whsec_••••••••••••••••••••',
-                                                'Primary Secret'
-                                            )
-                                        }
-                                    >
-                                        Copy
-                                    </Button>
+                                    <Flex justify="space-between" align="center" gap="large" style={{ width: "100%" }}>
+                                        <Text code style={{ flex: 1 }}>
+                                            {credentials?.Secrets || "N/A"}
+                                        </Text>
+
+                                        <Space size="middle">
+                                            <Button
+                                                icon={<ReloadOutlined />}
+                                                onClick={handleRotateSecret}
+                                            >
+                                                {t("rotate.license", {
+                                                    defaultValue: "Rotate License",
+                                                })}
+                                            </Button>
+                                            <Text copyable={{ text: credentials?.Secrets || "", }}
+                                            />
+                                        </Space>
+                                    </Flex>
                                 </Flex>
                             </Card>
 

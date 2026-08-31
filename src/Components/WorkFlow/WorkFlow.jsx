@@ -12,7 +12,7 @@ import {
 } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 
-import { setTheme } from "../Redux/Reducer/reducer.app";
+import { setSelectedProject, setTheme } from "../Redux/Reducer/reducer.app";
 import StepWorkspaceBasics from "./StepWorkspaceBasics";
 import StepCreateProject from "./StepCreateProject";
 import StepConnectDomain from "./StepConnectDomain";
@@ -78,7 +78,7 @@ export default function WorkFlow() {
                     borderRadius: 12,
                 },
 
-                
+
                 components: {
                     Steps: {
                         colorPrimary: PRIMARY_COLOR,
@@ -96,14 +96,7 @@ export default function WorkFlow() {
                 },
             }}
         >
-            <Layout
-                style={{
-                    minHeight: "100vh",
-                    background: isDark
-                        ? "#071923"
-                        : "#F0F9FC",
-                }}
-            >
+            <Layout>
                 <Content
                     style={{
                         minHeight: "100vh",
@@ -115,7 +108,6 @@ export default function WorkFlow() {
                         style={{
                             display: "flex",
                             justifyContent: "flex-end",
-                            marginBottom: 24,
                         }}
                     >
                         <Button
@@ -165,10 +157,11 @@ export default function WorkFlow() {
                         {/* Step 2 */}
                         {step === 1 && (
                             <StepCreateProject
-                                onNext={(projectId) => {
+                                onNext={(project) => {
                                     setCreatedProjectId(
-                                        projectId
+                                        project?.id || project?._id
                                     );
+                                    dispatch(setSelectedProject(project));
                                     next();
                                 }}
                                 onBack={back}
@@ -178,9 +171,7 @@ export default function WorkFlow() {
                         {/* Step 3 */}
                         {step === 2 && (
                             <StepConnectDomain
-                                projectId={
-                                    createdProjectId
-                                }
+                                projectId={createdProjectId}
                                 onBack={back}
                                 onComplete={() => {
                                     window.location.href =

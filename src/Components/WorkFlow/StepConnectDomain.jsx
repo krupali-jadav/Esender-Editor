@@ -93,74 +93,68 @@ export default function StepConnectDomain({ onBack, onComplete, projectId, }) {
                 {t('connect.your.domain', { defaultValue: 'Connect your domain' })}
             </Title>
 
-            <Alert
-                type="warning"
-                showIcon
-                message={t('one.time.credentials', { defaultValue: 'One-time credentials should be shown before this step.' })}
-                style={{ marginBottom: 20 }}
-            />
+            <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+                <Alert
+                    type="warning"
+                    showIcon
+                    message={t('one.time.credentials', { defaultValue: 'One-time credentials should be shown before this step.' })}
+                />
 
-            <div
-                style={{
-                    background: theme ? "#142b42" : "#FAFAFA",
-                    borderRadius: 8,
-                    padding: "12px 16px",
-                    marginBottom: 20,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                }}
-            >
-                <div>
-                    <Text strong style={{ fontSize: 12, display: "block" }}>
-                        {t('public.project.id', { defaultValue: 'PUBLIC PROJECT ID' })}
-                    </Text>
+                <div
+                    style={{
+                        background: theme ? "#142b42" : "#FAFAFA",
+                        borderRadius: 8,
+                        padding: "12px 16px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                    }}
+                >
+                    <div>
+                        <Text strong style={{ fontSize: 12, display: "block" }}>
+                            {t('public.project.id', { defaultValue: 'PUBLIC PROJECT ID' })}
+                        </Text>
 
-                    <Text code style={{ background: "transparent" }}>
-                        {publicProjectId || "Loading..."}
-                    </Text>
+                        <Text code style={{ background: "transparent" }}>
+                            {publicProjectId || "Loading..."}
+                        </Text>
+                    </div>
+
+                    <Button
+                        icon={<CopyOutlined />}
+                        onClick={handleCopy}
+                    >
+                        Copy
+                    </Button>
                 </div>
 
-                <Button
-                    icon={<CopyOutlined />}
-                    onClick={handleCopy}
-                >
-                    Copy
-                </Button>
-            </div>
+                <Text strong style={{ fontSize: 12,}}>
+                    {t('allowed.domain', { defaultValue: 'ALLOWED DOMAIN' })}
+                </Text>
 
-            <Text strong style={{ fontSize: 12 }}>
-                {t('allowed.domain', { defaultValue: 'ALLOWED DOMAIN' })}
-            </Text>
+                <Input
+                    placeholder={t('localhost.3000', { defaultValue: 'localhost:3000' })}
+                    value={domain}
+                    onChange={(e) => setDomain(e.target.value)}
+                />
 
-            <Input
-                placeholder={t('localhost.3000', { defaultValue: 'localhost:3000' })}
-                value={domain}
-                onChange={(e) => setDomain(e.target.value)}
-                style={{
-                    marginTop: 6,
-                    marginBottom: 16,
-                }}
-            />
+                <Alert
+                    type="info"
+                    showIcon
+                    icon={<InfoCircleOutlined />}
+                    message={
+                        <>
+                            {t('wildcards.supported', { defaultValue: 'Wildcards are supported. Use' })}{" "}
+                            <Text code>*.example.com</Text> {t('for.subdomains', { defaultValue: 'for subdomains.' })}
+                        </>
+                    }
+                />
 
-            <Alert
-                type="info"
-                showIcon
-                icon={<InfoCircleOutlined />}
-                message={
-                    <>
-                        {t('wildcards.supported', { defaultValue: 'Wildcards are supported. Use' })}{" "}
-                        <Text code>*.example.com</Text> {t('for.subdomains', { defaultValue: 'for subdomains.' })}
-                    </>
-                }
-                style={{ marginBottom: 20 }}
-            />
-
-            <Divider style={{ margin: "0 0 20px" }} />
+                <Divider style={{ margin: "0 0 20px" }} />
+            </Space>
 
             <Row justify="space-between" align="middle">
                 <Link onClick={onBack}>{t('back', { defaultValue: 'Back' })}</Link>
-
                 <Space>
                     <Link onClick={onComplete}>
                         {t('skip.for.now', { defaultValue: 'Skip for now' })}

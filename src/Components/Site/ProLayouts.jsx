@@ -18,6 +18,7 @@ import { Avatar, Breadcrumb, Dropdown, Flex, Grid, Modal, Select, Space, Typogra
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { changeCurrency, changeLanguage, setTheme } from "../Redux/Reducer/reducer.app";
+
 import { getMediaPath } from "../../util/getMediaPath";
 import lang from "../../util/lang/lang.json"
 import { logout } from "../Redux/action";
@@ -26,6 +27,7 @@ import { IoCodeSharp } from "react-icons/io5";
 import { MdOutlineDataUsage } from "react-icons/md";
 import { FaRegMoneyBill1 } from "react-icons/fa6";
 import { checkBasicInfo, checkProfile } from "../../util/profileValidation";
+import { formatDate } from "../../util/commom.utils";
 
 const ProLayouts = ({ children }) => {
     const { useBreakpoint } = Grid;
@@ -44,13 +46,14 @@ const ProLayouts = ({ children }) => {
     const location = useLocation();
     const navigate = useNavigate();
     const { Text } = Typography;
+    const CompanyName = t("esender.web", { defaultValue: "E-Sender Editor" });
 
     const menuRoutes = {
-        path: "/",  
+        path: "/",
         routes: [
             {
                 path: "/overview",
-                name:  t("overview", { defaultValue: "Overview" }) ,
+                name: t("overview", { defaultValue: "Overview" }),
                 icon: <AppstoreAddOutlined />,
             },
             {
@@ -63,7 +66,7 @@ const ProLayouts = ({ children }) => {
                 name: t("templates", { defaultValue: "Templates" }),
                 icon: <MailOutlined />,
             },
-            
+
             {
                 path: "/usage",
                 name: t("usage", { defaultValue: "Usage" }),
@@ -536,6 +539,25 @@ const ProLayouts = ({ children }) => {
                             />
                         </>,
                     ];
+                }}
+                menuFooterRender={(props) => {
+                    if (props?.collapsed) return undefined;
+                    return (
+                        <>
+                            <Flex vertical align="center">
+                                <div>
+                                    © {formatDate(new Date(), "YYYY")}{" "}
+                                    {t("designed_&_developed", {
+                                        defaultValue: "Designed & Developed",
+                                    })}
+                                </div>
+                                <small>
+                                    {t("by", { defaultValue: "By" })}{" "}
+                                    <strong>{CompanyName}</strong>
+                                </small>
+                            </Flex>
+                        </>
+                    );
                 }}
                 menu={{
                     type: "sub",
