@@ -9,11 +9,11 @@ export const listProjects = async () => {
             return response.data;
         }
 
-        message.error(response.data?.message || "Failed to get project");
+        message.error(response.data?.message);
         return null;
     } catch (error) {
         console.log(error);
-        message.error(error?.message || "Failed to get project");
+        message.error(error?.message);
         return null;
     }
 };
@@ -27,7 +27,7 @@ export const getProjectById = async (projectId) => {
         return response.data;
     } catch (error) {
         console.error(error);
-        message.error(error?.message || "Failed to get project");
+        message.error(error?.message);
         throw error;
     }
 };

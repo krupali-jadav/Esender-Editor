@@ -2,7 +2,7 @@ import { FacebookFilled, InstagramFilled, LinkedinFilled, TwitterSquareFilled, Y
 import { Button, Card, Col, Form, Input, message, Row } from "antd"
 import { t } from "i18next"
 import { useSelector } from "react-redux";
-import {  saveSocialMedia } from "./SettingApi";
+import { saveSocialMedia } from "./SettingApi";
 import { useEffect, useState } from "react";
 import { formatDate } from "../../util/commom.utils";
 
@@ -28,30 +28,30 @@ function SocialMedia() {
 
       if (data?.status) {
         message.success(
-          data?.message || "Social media details saved successfully"
+          data?.message
         );
-        
+
       }
     } catch (error) {
       console.log(error);
-      message.error(error?.message || "Failed to save social media details");
+      message.error(error?.message);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-        if (!setting) return;
+    if (!setting) return;
 
-        form.setFieldsValue({
-            linkedin: setting?.socialMedia?.linkedin,
-            facebook: setting?.socialMedia?.facebook,
-            twitter: setting?.socialMedia?.twitter,
-            instagram: setting?.socialMedia?.instagram,
-            youtube: setting?.socialMedia?.youtube,
-        });
-        setLastUpdated(setting?.updatedAt || "");
-    }, [setting]);
+    form.setFieldsValue({
+      linkedin: setting?.socialMedia?.linkedin,
+      facebook: setting?.socialMedia?.facebook,
+      twitter: setting?.socialMedia?.twitter,
+      instagram: setting?.socialMedia?.instagram,
+      youtube: setting?.socialMedia?.youtube,
+    });
+    setLastUpdated(setting?.updatedAt || "");
+  }, [setting]);
 
   return (
     <Card

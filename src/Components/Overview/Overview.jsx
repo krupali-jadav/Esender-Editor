@@ -31,7 +31,6 @@ import { PageContainer } from "@ant-design/pro-components";
 import AppPageHeader from "../Styles/AppHeader";
 import { t } from "i18next";
 import { useSelector } from "react-redux";
-// import EmptyState from "../Styles/EmptyState";
 import { useEffect, useState } from "react";
 import { getDashboardOverview } from "./OverviewApi";
 import { Column } from "@ant-design/plots";
@@ -134,13 +133,7 @@ export default function Overview() {
             dataIndex: "environment",
             key: "environment",
             render: (environment) => (
-                <Tag
-                    color={
-                        environment === "live"
-                            ? "blue"
-                            : "default"
-                    }
-                >
+                <Tag color={environment === "live"? "blue": "default"}>
                     {environment}
                 </Tag>
             ),
@@ -197,14 +190,14 @@ export default function Overview() {
                             value: "7",
                             label: t("last7Days", { defaultValue: "Last 7 Days" }),
                         },
-                        {
-                            value: "30",
-                            label: t("last30Days", { defaultValue: "Last 30 Days" }),
-                        },
-                        {
-                            value: "90",
-                            label: t("last90Days", { defaultValue: "Last 90 Days" }),
-                        },
+                        // {
+                        //     value: "15",
+                        //     label: t("last15Days", { defaultValue: "Last 15 Days" }),
+                        // },
+                        // {
+                        //     value: "30",
+                        //     label: t("last30Days", { defaultValue: "Last 30 Days" }),
+                        // },
                     ]}
                 />
             </Flex>
@@ -327,8 +320,8 @@ export default function Overview() {
                                     suffixIcon={<DownOutlined />}
                                     options={[
                                         { value: "7", label: t("last.7.Days", { defaultValue: "Last 7 Days" }) },
-                                        { value: "30", label: t("last.30.Days", { defaultValue: "Last 30 Days" }) },
-                                        { value: "90", label: t("last.90.Days", { defaultValue: "Last 90 Days" }) },
+                                        // { value: "15", label: t("last.15.Days", { defaultValue: "Last 15 Days" }) },
+                                        // { value: "30", label: t("last.30.Days", { defaultValue: "Last 30 Days" }) },
                                     ]}
                                 />
                             }
@@ -403,11 +396,9 @@ export default function Overview() {
                                             type="text"
                                             icon={item.icon}
                                             block
-                                            style={{
-                                                textAlign: "left",
-                                            }}
-                                        >
+                                            style={{textAlign: "left",}}>
                                             {item.title}
+                                            {item.description && <Text type="secondary">{item.description}</Text>}
                                         </Button>
                                     </List.Item>
                                 )}

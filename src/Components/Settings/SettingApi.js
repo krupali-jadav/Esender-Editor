@@ -117,7 +117,7 @@ export const saveSocialMedia = async (payload) => {
         }
     } catch (error) {
         console.log(error);
-        message.error(error?.message || "Failed to save social media details");
+        message.error(error?.message);
     }
 };
 export const generateApiKey = async () => {
@@ -133,6 +133,6 @@ export const generateApiKey = async () => {
         }
     } catch (error) {
         console.log(error);
-        message.error(error?.message || "Failed to generate API key");
+        message.error(error?.message );
     }
 };

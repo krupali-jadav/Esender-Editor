@@ -53,15 +53,13 @@ function Support() {
           });
 
           if (data?.status) {
-            message.success(
-              data?.message || t("support.deleted.successfully", { defaultValue: "Support deleted successfully" })
-            );
+            message.success(data?.message);
 
             getSupportList();
           }
         } catch (error) {
           console.log(error);
-          message.error(error?.message || t("failed.to.delete.support", { defaultValue: "Failed to delete support" }));
+          message.error(error?.message);
         }
       },
     });

@@ -4,8 +4,8 @@ import { InfoCircleOutlined, CopyOutlined, } from "@ant-design/icons";
 
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { getProject, updateProjectDomains } from "./WorkFlowApi";
 import { t } from "i18next";
+import { getProject, updateProjectDomains } from "./WorkFlowApi";
 
 const { Title, Text, Link } = Typography;
 
@@ -32,18 +32,11 @@ export default function StepConnectDomain({ onBack, onComplete, projectId, }) {
                         data?.project?.publicProjectId || ""
                     );
                 } else {
-                    message.error(
-                        data?.message || "Failed to get project"
-                    );
+                    message.error(data?.message);
                 }
             } catch (error) {
-                console.error("GET PROJECT ERROR:", error);
-
-                message.error(
-                    error?.response?.data?.message ||
-                    error?.message ||
-                    "Failed to fetch project details"
-                );
+                console.error(error);
+                message.error(error?.message );
             }
         };
 
@@ -71,6 +64,7 @@ export default function StepConnectDomain({ onBack, onComplete, projectId, }) {
             }
         } catch (error) {
             console.error("DOMAIN UPDATE ERROR:", error);
+            message.error(error?.message );
         } finally {
             setLoading(false);
         }
@@ -124,7 +118,7 @@ export default function StepConnectDomain({ onBack, onComplete, projectId, }) {
                         icon={<CopyOutlined />}
                         onClick={handleCopy}
                     >
-                        Copy
+                        {t('copy', { defaultValue: 'Copy' })}
                     </Button>
                 </div>
 
@@ -145,7 +139,7 @@ export default function StepConnectDomain({ onBack, onComplete, projectId, }) {
                     message={
                         <>
                             {t('wildcards.supported', { defaultValue: 'Wildcards are supported. Use' })}{" "}
-                            <Text code>*.example.com</Text> {t('for.subdomains', { defaultValue: 'for subdomains.' })}
+                            <Text code>{t('wildcard.example', { defaultValue: '*.example.com' })}</Text> {t('for.subdomains', { defaultValue: 'for subdomains.' })}
                         </>
                     }
                 />

@@ -178,7 +178,7 @@ export default function Developers() {
                     <Col xs={24} lg={18}>
                         <AppPageHeader
                             title="Developers"
-                            description="Manage your API keys, monitor integration health, and access comprehensive technical resources to build on the BitBeast platform."
+                                description="Manage your API keys, monitor integration health, and access comprehensive technical resources to build on the BitBeast platform."
                         />
                     </Col>
 
@@ -196,7 +196,7 @@ export default function Developers() {
                                 type="primary"
                                 icon={<KeyOutlined />}
                             >
-                                Generate Token
+                                Generate token
                             </Button>
                         </Flex>
                     </Col>

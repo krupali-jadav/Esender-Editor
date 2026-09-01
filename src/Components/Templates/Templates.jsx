@@ -10,7 +10,6 @@ import { useEffect, useState } from "react";
 import EmptyState from "../Styles/EmptyState";
 import { formatDate } from "../../util/commom.utils";
 import { useDebounce } from "../../util/useDebounce";
-import { staticModal } from "../../util/staticFn";
 import DeleteModal from "../Styles/DeleteModel";
 const { Text } = Typography;
 const statusColors = {
@@ -105,15 +104,11 @@ export default function Templates() {
                 setDeleteModalOpen(false);
                 setDeleteTemplateRecord(null);
             } else {
-                message.error(
-                    data?.message || "Failed to delete template"
-                );
+                message.error(data?.message);
             }
         } catch (error) {
             console.error(error);
-            message.error(
-                error?.message || "Failed to delete template"
-            );
+            message.error(error?.message);
         } finally {
             setDeleteLoading(false);
         }

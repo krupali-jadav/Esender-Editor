@@ -33,13 +33,11 @@ function BillingDetails() {
             const data = await saveBillingDetails(payload);
 
             if (data?.status) {
-                message.success(
-                    data?.message || "Billing details saved successfully"
-                );
+                message.success(data?.message);
             }
         } catch (error) {
             console.log(error);
-            message.error(error?.message || "Failed to save billing details");
+            message.error(error?.message);
         } finally {
             setLoading(false);
         }
@@ -102,7 +100,7 @@ function BillingDetails() {
                     </Col>
                 </Row>
 
-                <Row gutter={[24, 16]} gutter={24}>
+                <Row gutter={[24, 16]}>
                     <Col xs={24} sm={24} md={12} lg={12}>
                         <Form.Item
                             label={t("email", { defaultValue: "Email" })}
@@ -137,7 +135,7 @@ function BillingDetails() {
                     </Col>
                 </Row>
 
-                <Row gutter={[24, 16]} gutter={24}>
+                <Row gutter={[24, 16]}>
                     <Col xs={24} sm={24} md={12} lg={12}>
                         <Form.Item
                             label={t("address", { defaultValue: "Address" })}

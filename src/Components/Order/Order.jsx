@@ -69,7 +69,7 @@ function Order() {
             align: "right",
             render: () => (
                 <Link>
-                    <FilePdfOutlined /> View PDF
+                    <FilePdfOutlined /> {t("view.Pdf", { defaultValue: "View PDF" })}
                 </Link>
             ),
         },

@@ -11,7 +11,7 @@ export const sessionAll = async (payload) => {
         }
     } catch (error) {
         console.log(error);
-        message.error(error?.message || "Failed to get sessions");
+        message.error(error?.message );
     }
 };
 
@@ -25,6 +25,6 @@ export const sessionLogout = async (payload) => {
         }
     } catch (error) {
         console.log(error);
-        message.error(error?.message || "Failed to logout");
+        message.error(error?.message);
     }
 }

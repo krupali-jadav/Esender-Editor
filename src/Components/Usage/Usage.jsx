@@ -309,8 +309,8 @@ export default function Usage() {
                                         suffixIcon={<DownOutlined />}
                                         options={[
                                             { value: "7", label: t('last.7.days', { defaultValue: 'Last 7 Days' }) },
-                                            { value: "30", label: t('last.30.days', { defaultValue: 'Last 30 Days' }) },
-                                            { value: "90", label: t('last.90.days', { defaultValue: 'Last 90 Days' }) },
+                                            // { value: "30", label: t('last.30.days', { defaultValue: 'Last 30 Days' }) },
+                                            // { value: "90", label: t('last.90.days', { defaultValue: 'Last 90 Days' }) },
                                         ]}
                                     />
                                 }
@@ -436,6 +436,7 @@ export default function Usage() {
                                     id: template._id || template.id || "-",
                                     status: template.status || "-",
                                     projectName: template.projectName || "-",
+
                                     modified:
                                         template.updatedAt ||
                                         template.modifiedAt ||
@@ -447,7 +448,7 @@ export default function Usage() {
                             pagination={false}
                             scroll={{ x: "max-content" }}
                             locale={{
-                                emptyText: "No recently updated templates",
+                                emptyText: t("no.recently.updated.templates", { defaultValue: "No recently updated templates" }),
                             }}
                             components={{
                                 header: {

@@ -20,8 +20,8 @@ import {
     LockOutlined,
 } from "@ant-design/icons";
 import { useSelector } from "react-redux";
-import { createProject } from "./WorkFlowApi";
 import { t } from "i18next";
+import { createProject } from "./WorkFlowApi";
 
 const { Title, Text, Paragraph, Link } = Typography;
 
@@ -47,8 +47,8 @@ export default function StepCreateProject({ onNext, onBack }) {
                 onNext(data?.project);
             }
         } catch (error) {
-            console.log("CREATE PROJECT ERROR:", error);
-            message.error("Failed to create project");
+            console.log(error);
+            message.error(error?.message);
         } finally {
             setLoading(false);
         }

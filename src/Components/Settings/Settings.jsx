@@ -69,7 +69,7 @@ const Settings = () => {
       <AppPageHeader
         eyebrow="Account"
         title={t("settings", { defaultValue: "Settings" })}
-        description="Manage your account, billing, support, and integration details."
+        description={t("manage.your.account.billing.support.and.integration.details", { defaultValue: "Manage your account, billing, support, and integration details." })}
       />
 
       <Card styles={{body: {padding: screens.md ? "16px 8px" : 16,},}}>

@@ -35,9 +35,7 @@ function BasicInformation() {
       const data = await saveBasicInfo(payload);
 
       if (data?.status) {
-        message.success(
-          data?.message || "Basic information saved successfully"
-        );
+        message.success(data?.message);
         const res = await getUserSetting();
 
         if (res?.status) {
@@ -46,7 +44,7 @@ function BasicInformation() {
       }
     } catch (error) {
       console.log(error);
-      message.error(error?.message || "Failed to save basic information");
+      message.error(error?.message);
     } finally {
       setLoading(false);
     }
