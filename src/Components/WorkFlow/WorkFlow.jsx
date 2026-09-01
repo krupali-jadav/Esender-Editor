@@ -17,6 +17,7 @@ import StepWorkspaceBasics from "./StepWorkspaceBasics";
 import StepCreateProject from "./StepCreateProject";
 import StepConnectDomain from "./StepConnectDomain";
 import { t } from "i18next";
+import { getProject } from "./WorkFlowApi";
 
 const { Content } = Layout;
 
@@ -97,19 +98,9 @@ export default function WorkFlow() {
             }}
         >
             <Layout>
-                <Content
-                    style={{
-                        minHeight: "100vh",
-                        padding: "32px 24px",
-                    }}
-                >
+                <Content style={{ minHeight: "100vh", padding: "32px 24px", }}>
                     {/* Theme Toggle */}
-                    <div
-                        style={{
-                            display: "flex",
-                            justifyContent: "flex-end",
-                        }}
-                    >
+                    <div style={{ display: "flex", justifyContent: "flex-end", }}>
                         <Button
                             shape="circle"
                             size="large"
@@ -120,9 +111,7 @@ export default function WorkFlow() {
                                     <SunOutlined />
                                 )
                             }
-                            onClick={() =>
-                                dispatch(setTheme(!isDark))
-                            }
+                            onClick={() => dispatch(setTheme(!isDark))}
                         />
                     </div>
 
@@ -135,11 +124,7 @@ export default function WorkFlow() {
                         }}
                     >
                         {/* Steps */}
-                        <div
-                            style={{
-                                marginBottom: 32,
-                            }}
-                        >
+                        <div style={{ marginBottom: 32, }}>
                             <Steps
                                 current={step}
                                 items={stepItems}
@@ -149,19 +134,30 @@ export default function WorkFlow() {
 
                         {/* Step 1 */}
                         {step === 0 && (
-                            <StepWorkspaceBasics
-                                onNext={next}
-                            />
+                            <StepWorkspaceBasics onNext={next} />
                         )}
 
                         {/* Step 2 */}
                         {step === 1 && (
                             <StepCreateProject
-                                onNext={(project) => {
-                                    setCreatedProjectId(
-                                        project?.id || project?._id
-                                    );
-                                    dispatch(setSelectedProject(project));
+                                onNext={async (project) => {
+                                    const projectId = project?.id || project?._id;
+
+                                    setCreatedProjectId(projectId);
+                                    try {
+                                        const response = await getProject(projectId);
+                                        if (response?.status && response?.project) {
+                                            // Store complete project data
+                                            dispatch(setSelectedProject(response.project));
+                                        } else {
+                                            // Fallback to created project
+                                            dispatch(setSelectedProject(project));
+                                        }
+                                    } catch (error) {
+                                        console.error( error);
+                                        dispatch(setSelectedProject(project));
+                                    }
+
                                     next();
                                 }}
                                 onBack={back}

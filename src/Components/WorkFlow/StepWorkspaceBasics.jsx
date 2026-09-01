@@ -68,20 +68,13 @@ export default function StepWorkspaceBasics({ onNext }) {
             const data = await saveProfile(payload);
 
             if (data?.status) {
-                message.success(
-                    data?.message || "Profile saved successfully"
-                );
+                message.success(data?.message);
                 onNext();
             } else {
-                message.error(
-                    data?.message || "Failed to save profile"
-                );
+                message.error(data?.message );
             }
         } catch (error) {
-            message.error(
-                error?.response?.data?.message ||
-                "Failed to save profile"
-            );
+            message.error(error?.message);
         } finally {
             setLoading(false);
         }
@@ -156,9 +149,7 @@ export default function StepWorkspaceBasics({ onNext }) {
                                 <Col xs={24} sm={12} key={item.key}>
                                     <SelectTile
                                         selected={useCase === item.key}
-                                        onClick={() =>
-                                            setUseCase(item.key)
-                                        }
+                                        onClick={() =>setUseCase(item.key)}
                                         icon={item.icon}
                                         title={item.title}
                                         desc={item.desc}
@@ -182,11 +173,7 @@ export default function StepWorkspaceBasics({ onNext }) {
                 </Form>
             </Card>
 
-            <div
-                style={{
-                    textAlign: "center",
-                }}
-            >
+            <div style={{textAlign: "center",}}>
                 <Text type="secondary">
                     {t('need.help', { defaultValue: 'Need help?' })} <Link>{t('read.the.setup.guide', { defaultValue: 'Read the setup guide.' })}</Link>
                 </Text>

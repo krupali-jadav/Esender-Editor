@@ -9,12 +9,12 @@ export const createProject = async (payload) => {
             return response.data;
         }
 
-        message.error(response.data?.message || "Failed to create project");
+        message.error(response.data?.message);
 
         return null;
     } catch (error) {
         console.log(error);
-        message.error(error?.message || "Failed to create project");
+        message.error(error?.message );
         return null;
     }
 };
@@ -29,11 +29,11 @@ export const updateProjectDomains = async (projectId, payload) => {
             return response.data;
         }
 
-        message.error(response.data?.message || "Failed to update domains");
+        message.error(response.data?.message);
         return null;
     } catch (error) {
         console.log(error);
-        message.error(error?.message || "Failed to update domains");
+        message.error(error?.message);
         return null;
     }
 };
@@ -45,11 +45,11 @@ export const getProject = async (projectId) => {
             return response.data;
         }
 
-        message.error(response.data?.message || "Failed to get project");
+        message.error(response.data?.message );
         return null;
     } catch (error) {
         console.log(error);
-        message.error(error?.message || "Failed to get project");
+        message.error(error?.message);
         return null;
     }
 };

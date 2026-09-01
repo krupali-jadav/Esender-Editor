@@ -1,4 +1,4 @@
-import { Layout, Typography, Card, Tag, Space, ConfigProvider, theme as antdTheme, Spin, Empty, message, Select, Row, Col, Avatar, Button, Divider, Flex, Badge, } from "antd";
+import { Layout, Typography, Card, Tag, Space, ConfigProvider, theme as antdTheme, Spin, message, Select, Row, Col, Avatar, Button, Divider, Flex, Badge, } from "antd";
 import { MoonOutlined, SunOutlined, RightOutlined, FolderOpenOutlined, CalendarOutlined, GlobalOutlined, PlusOutlined, FileTextOutlined, } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
@@ -81,15 +81,12 @@ export default function SelectProject() {
                 // Save selected project in Redux
                 dispatch(setSelectedProject(selectedProject));
 
-                // Save selected project for refresh
-                localStorage.setItem("selectedProject", JSON.stringify(selectedProject));
-                message.success(response?.message || "Project selected successfully");
+                message.success(response?.message);
                 navigate("/overview");
             }
         } catch (error) {
             console.error("GET PROJECT ERROR:", error);
-
-            message.error(error?.message || "Failed to select project");
+            message.error(error?.message);
         } finally {
             setLoading(false);
         }

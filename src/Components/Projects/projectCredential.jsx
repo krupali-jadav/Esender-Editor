@@ -22,11 +22,12 @@ function ProjectCredential() {
 
             if (response?.status) {
                 setCredentials(response?.credentials);
+                message.success(response?.message);
             } else {
                 setCredentials();
             }
         } catch (error) {
-            console.error("FETCH CREDENTIALS ERROR:", error);
+            console.error( error);
             setCredentials(null);
         } finally {
             setCredentialsLoading(false);
@@ -51,8 +52,8 @@ function ProjectCredential() {
             }
         } catch (error) {
             console.log(error);
-            message.error("Failed to rotate license");
-        }
+            message.error(error?.message);
+        }   
     };
     const handleRotateSecret = async () => {
         if (!selectedProject?._id) return;
@@ -70,7 +71,7 @@ function ProjectCredential() {
             }
         } catch (error) {
             console.log(error);
-            message.error("Failed to rotate secret");
+            message.error(error?.message);
         }
     };
 
@@ -98,7 +99,7 @@ function ProjectCredential() {
                         loading={credentialsLoading}
                         title={
                             <Space direction="vertical" size={0}>
-                                <Title level={5}>{t("api.keys", { defaultValue: "API Keys" })}</Title>
+                                <Title level={5} style={{ margin: 0 }}>{t("api.keys", { defaultValue: "API Keys" })}</Title>
                                 <Text type="secondary">
                                     {t("manage.api.keys", { defaultValue: "Manage your project's API keys for authentication." })}
                                 </Text>
@@ -139,7 +140,9 @@ function ProjectCredential() {
                     <Card
                         title={
                             <Space direction="vertical" size={0}>
-                                <Title level={5}>{t("signing.secrets", { defaultValue: "Signing Secrets" })}</Title>
+                                <Title level={5} style={{ margin: 0 }}>
+                                    {t("signing.secrets", { defaultValue: "Signing Secrets" })}
+                                </Title>
 
                                 <Text type="secondary">
                                     {t("used.to.verify.webhook.payloads", {

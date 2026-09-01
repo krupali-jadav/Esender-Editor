@@ -19,14 +19,11 @@ function ApiKey() {
 
       if (data?.status) {
         setApiKey(data.apiKey);
-
-        message.success(
-          data?.message || "API key generated successfully"
-        );
+        message.success(data?.message );
       }
     } catch (error) {
       console.log(error);
-      message.error(error?.message || "Failed to generate API key");
+      message.error(error?.message);
     } finally {
       setLoading(false);
     }

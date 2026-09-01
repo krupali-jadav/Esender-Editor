@@ -95,7 +95,7 @@ function Login() {
                 message.error(data.message);
             }
         } catch (error) {
-            message.error(error?.response?.data?.message || error.message);
+            message.error(error.message);
         } finally {
             setLoading(false);
         }
@@ -114,9 +114,7 @@ function Login() {
             );
 
             if (data.status) {
-                message.success(
-                    data.message || "Login Successfully"
-                );
+                message.success(data.message || "Login Successfully");
 
                 dispatch(setUserDetails(data));
 
@@ -142,11 +140,7 @@ function Login() {
         } catch (error) {
             console.error("LOGIN ERROR:", error);
 
-            message.error(
-                error?.response?.data?.message ||
-                error?.message ||
-                "Login failed"
-            );
+            message.error(error?.message);
         } finally {
             setLoading(false);
         }
@@ -253,7 +247,7 @@ function Login() {
                                         {t("keep.me.signed.in", { defaultValue: "Keep me signed in" })}
                                     </Checkbox>
 
-                                    <Tooltip title="This will keep you signed in until you manually sign out">
+                                    <Tooltip title={t("this.will.keep.you.signed.in", { defaultValue: "This will keep you signed in until you manually sign out" })}>
                                         <ExclamationCircleOutlined />
                                     </Tooltip>
                                 </div>
@@ -300,11 +294,11 @@ function Login() {
 
                             <div className="auth-heading">
                                 <Typography.Title>
-                                   {t("verify.number", { defaultValue: "Verify your number" })}
+                                    {t("verify.number", { defaultValue: "Verify your number" })}
                                 </Typography.Title>
 
                                 <Typography.Text>
-                                    We've sent a verification code to
+                                    {t("weve.sent.a.verification.code.to", { defaultValue: "We've sent a verification code to" })}
                                 </Typography.Text>
 
                                 <div className="auth-phone">
@@ -313,9 +307,7 @@ function Login() {
                                     <Button
                                         type="link"
                                         icon={<EditOutlined />}
-                                        onClick={() =>
-                                            setIsLoginPage(true)
-                                        }
+                                        onClick={() => setIsLoginPage(true)}
                                     />
                                 </div>
                             </div>
@@ -326,7 +318,7 @@ function Login() {
                                 className="auth-form"
                             >
                                 <Form.Item
-                                    label="Enter verification code"
+                                    label={t("enter.verification.code", { defaultValue: "Enter verification code" })}
                                     name="otp"
                                     className="auth-form-item otp-item"
                                 >
@@ -404,13 +396,13 @@ function Login() {
                         <h2>
                             {t("connect", { defaultValue: "Connect." })}
                             <br />
-                           {t("create", { defaultValue: "Create." })}
+                            {t("create", { defaultValue: "Create." })}
                             <br />
-                           {t("grow", { defaultValue: "Grow." })}
+                            {t("grow", { defaultValue: "Grow." })}
                         </h2>
 
                         <p>
-                          {t("powerful.email.communication", { defaultValue: "Powerful email communication" })}<br />{t("made.beautifully.simple", { defaultValue: "Made beautifully simple." })}
+                            {t("powerful.email.communication", { defaultValue: "Powerful email communication" })}<br />{t("made.beautifully.simple", { defaultValue: "Made beautifully simple." })}
                         </p>
                     </div>
 
