@@ -8,7 +8,6 @@ import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { t } from 'i18next'
 import ProjectOverview from './ProjectOverview'
-import ProjectUsage from './ProjectUsage'
 const { Title,Text } = Typography
 
 
@@ -17,7 +16,6 @@ const TAB_ITEMS = [
     { key: 'templates', label: 'Templates' },
     { key: 'domains', label: 'Domains' },
     { key: 'credentials', label: 'Credentials' },
-    // { key: 'usage', label: 'Usage' },
     { key: 'integration', label: 'Integration' },
 ]
 
@@ -76,7 +74,6 @@ function Projects() {
                 {activeTab === 'templates' && (<ProjectTemplate />)}
                 {activeTab === 'credentials' && (<ProjectCredential />)}
                 {activeTab === 'integration' && (<ProjectIntegration />)}
-                {/* {activeTab === 'usage' && (<ProjectUsage />)} */}
             </div>
         </div>
     )
