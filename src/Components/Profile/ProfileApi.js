@@ -13,7 +13,7 @@ export const getProfile = async () => {
         message.error(response.data?.message);
     } catch (error) {
         console.log(error);
-        message.error(error?.message || "Failed to get profile");
+        message.error(error?.message);
     }
 };
 
@@ -25,11 +25,11 @@ export const saveProfile = async (payload) => {
             return response.data;
         }
 
-        message.error(response.data?.message || "Failed to save profile");
+        message.error(response.data?.message);
         return null;
     } catch (error) {
         console.log(error);
-        message.error(error?.message ||"Failed to save profile");
+        message.error(error?.message);
         return null;
     }
 };
@@ -52,6 +52,6 @@ export const uploadImage = async (payload) => {
         }
     } catch (error) {
         console.log(error);
-        message.error(error?.message || "Failed to upload image");
+        message.error(error?.message);
     }
 };

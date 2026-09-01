@@ -258,58 +258,52 @@ export default function Overview() {
                         </Card>
                     </Col>
 
-                {/* Monthly Editor Users */}
-                <Col xs={24} sm={12} lg={6}>
-                    <Card loading={loading}>
-                        <Space style={{ width: "100%", justifyContent: "space-between", }} align="start">
-                            <Text type="secondary">
-                                {t("monthly.Editor.Users", { defaultValue: "MONTHLY EDITOR USERS" })}
-                            </Text>
+                    {/* Monthly Editor Users */}
+                    <Col xs={24} sm={12} lg={6}>
+                        <Card loading={loading}>
+                            <Space style={{ width: "100%", justifyContent: "space-between", }} align="start">
+                                <Text type="secondary">
+                                    {t("monthly.Editor.Users", { defaultValue: "MONTHLY EDITOR USERS" })}
+                                </Text>
 
-                            <TeamOutlined style={{ color: "#20A6CE", fontSize: 20, }} />
-                        </Space>
+                                <TeamOutlined style={{ color: "#20A6CE", fontSize: 20, }} />
+                            </Space>
 
-                        <Title level={3} style={{ margin: "8px 0" }}>
-                            {stats ? `${stats.monthlyEditorUsersUsed} / ${stats.monthlyEditorUsersLimit}` : "-"}
-                        </Title>
+                            <Title level={3} style={{ margin: "8px 0" }}>
+                                {stats ? `${stats.monthlyEditorUsersUsed} / ${stats.monthlyEditorUsersLimit}` : "-"}
+                            </Title>
 
-                        <Progress
-                            percent={editorUsersPercent}
-                            showInfo={false}
-                            strokeColor="#20A6CE"
-                        />
-                    </Card>
-                </Col>
+                            <Progress
+                                percent={editorUsersPercent}
+                                showInfo={false}
+                                strokeColor="#20A6CE"
+                            />
+                        </Card>
+                    </Col>
 
-                {/* Monthly Sessions */}
-                <Col xs={24} sm={12} lg={6}>
-                    <Card loading={loading}>
-                        <Space style={{ width: "100%", justifyContent: "space-between", }} align="start">
-                            <Text type="secondary">
-                                {t("monthly.Sessions", { defaultValue: "MONTHLY SESSIONS" })}
-                            </Text>
+                    {/* Monthly Sessions */}
+                    <Col xs={24} sm={12} lg={6}>
+                        <Card loading={loading}>
+                            <Space style={{ width: "100%", justifyContent: "space-between", }} align="start">
+                                <Text type="secondary">
+                                    {t("monthly.Sessions", { defaultValue: "MONTHLY SESSIONS" })}
+                                </Text>
 
-                            <ThunderboltOutlined style={{ color: "#52c41a", fontSize: 20, }} />
-                        </Space>
+                                <ThunderboltOutlined style={{ color: "#52c41a", fontSize: 20, }} />
+                            </Space>
 
-                        <Title level={3} style={{ margin: "8px 0" }}>
-                            {stats ? `${stats.monthlySessionsUsed} / ${stats.monthlySessionsLimit}` : "-"}
-                        </Title>
+                            <Title level={3} style={{ margin: "8px 0" }}>
+                                {stats ? `${stats.monthlySessionsUsed} / ${stats.monthlySessionsLimit}` : "-"}
+                            </Title>
 
-                        <Progress
-                            percent={sessionsPercent}
-                            showInfo={false}
-                            strokeColor="#52c41a"
-                        />
-                    </Card>
-                </Col>
-            </Row>
-
-            {/* Usage Trend + Quick Actions */}
-            {/* <Row
-                gutter={[16, 16]}
-                style={{ marginBottom: 16 }}
-            > */}
+                            <Progress
+                                percent={sessionsPercent}
+                                showInfo={false}
+                                strokeColor="#52c41a"
+                            />
+                        </Card>
+                    </Col>
+                </Row>
 
                 {/* Usage Trend + Quick Actions */}
                 <Row

@@ -191,7 +191,7 @@ export default function SelectProject() {
                             </Flex>
                         )}
 
-                    <Space style={{ marginTop: 20, }} direction="vertical" size={12}>
+                    <Space style={{ marginTop: 20, width: "100%" }} direction="vertical" size={12} >
                         {loading ? (
                             <Flex justify="center" align="center" style={{ minHeight: 350, }}>
                                 <Space direction="vertical" align="center">

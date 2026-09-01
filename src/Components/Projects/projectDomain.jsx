@@ -53,7 +53,7 @@ function ProjectDomain() {
                 setDomains([]);
             }
         } catch (error) {
-            console.error("FETCH DOMAINS ERROR:", error);
+            console.error(error);
             setDomains([]);
         } finally {
             setDomainsLoading(false);
@@ -84,7 +84,7 @@ function ProjectDomain() {
                 setValidationResult(data);
             }
         } catch (error) {
-            console.error("VERIFY ORIGIN ERROR:", error);
+            console.error(error);
         } finally {
             setVerifyLoading(false);
         }
@@ -130,11 +130,7 @@ function ProjectDomain() {
             width: 140,
             render: (status) => (
                 <Badge
-                    status={
-                        status === "active"
-                            ? "success"
-                            : "warning"
-                    }
+                    status={status === "active" ? "success" : "warning"}
                     text={status}
                 />
             ),

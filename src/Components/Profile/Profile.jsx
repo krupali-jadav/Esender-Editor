@@ -103,7 +103,7 @@ const Profile = () => {
   return (
     <PageContainer title={false} breadcrumb={false}>
       <AppPageHeader
-        eyebrow="Account"
+        eyebrow={t("profile", { defaultValue: "Profile" })}
         title={t("profile", { defaultValue: "Profile" })}
         description="Update your personal details and contact information."
       />

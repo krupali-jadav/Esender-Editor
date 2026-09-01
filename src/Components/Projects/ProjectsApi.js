@@ -11,7 +11,7 @@ export const getDomains = async (projectId) => {
         message.error(response.data?.message);
     } catch (error) {
         console.log(error);
-        message.error(error?.response?.data?.message);
+        message.error(error?.message);
     }
 };
 export const getCredentials = async (projectId) => {
@@ -25,7 +25,7 @@ export const getCredentials = async (projectId) => {
         message.error(response.data?.message);
     } catch (error) {
         console.log(error);
-        message.error(error?.response?.data?.message);
+        message.error(error?.message);
     }
 };
 export const rotateLicense = async (projectId) => {
@@ -39,7 +39,7 @@ export const rotateLicense = async (projectId) => {
         }
     } catch (error) {
         console.log(error);
-        message.error(error?.response?.data?.message || "Failed to rotate license");
+        message.error(error?.message);
     }
 };
 export const rotateSecrets = async (projectId) => {
@@ -53,7 +53,7 @@ export const rotateSecrets = async (projectId) => {
         }
     } catch (error) {
         console.log(error);
-        message.error(error?.response?.data?.message || "Failed to rotate license");
+        message.error(error?.message);
     }
 };
 export const validateProjectDomain = async (projectId, payload) => {
@@ -71,10 +71,8 @@ export const validateProjectDomain = async (projectId, payload) => {
 
         return null;
     } catch (error) {
-        console.error("VALIDATE DOMAIN ERROR:", error);
-
-        message.error(error?.response?.data?.message);
-
+        console.error(error);
+        message.error(error?.message);
         return null;
     }
 };

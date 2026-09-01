@@ -185,7 +185,7 @@ export default function Usage() {
                 setSessionTrendData([]);
             }
         } catch (error) {
-            console.error("FETCH USAGE TREND ERROR:", error);
+            console.error(error);
             setSessionTrendData([]);
         } finally {
             setTrendLoading(false);
@@ -205,7 +205,7 @@ export default function Usage() {
                 setAlerts([]);
             }
         } catch (error) {
-            console.error("FETCH USAGE ALERTS ERROR:", error);
+            console.error(error);
             setAlerts([]);
         } finally {
             setAlertsLoading(false);
@@ -231,7 +231,7 @@ export default function Usage() {
                 setUsageSummary(null);
             }
         } catch (error) {
-            console.error("FETCH USAGE SUMMARY ERROR:", error);
+            console.error(error);
             setUsageSummary(null);
         } finally {
             setSummaryLoading(false);
@@ -265,20 +265,12 @@ export default function Usage() {
                         {usageStats.map((stat) => (
                             <Card
                                 key={stat.title}
-                                style={{
-                                    flex: "1 1 180px",
-                                    minWidth: 180,
-                                }}
+                                style={{ flex: "1 1 180px", minWidth: 180, }}
                             >
                                 <Flex justify="space-between" align="center">
                                     <Text type="secondary">{stat.title}</Text>
 
-                                    <span
-                                        style={{
-                                            color: stat.color,
-                                            fontSize: 20,
-                                        }}
-                                    >
+                                    <span style={{ color: stat.color, fontSize: 20, }}>
                                         {stat.icon}
                                     </span>
                                 </Flex>
@@ -390,12 +382,7 @@ export default function Usage() {
                                 ) : (
                                     alerts.map((alert, index) => (
                                         <div key={index} style={{ marginTop: 20 }}>
-                                            <Space
-                                                style={{
-                                                    width: "100%",
-                                                    justifyContent: "space-between",
-                                                }}
-                                            >
+                                            <Space style={{ width: "100%", justifyContent: "space-between", }}>
                                                 <Text strong>{alert.resource}</Text>
 
                                                 <Text strong type="danger">

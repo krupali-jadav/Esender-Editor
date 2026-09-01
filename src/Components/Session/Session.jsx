@@ -35,11 +35,11 @@ const Sessions = () => {
 
     const handleSessionLogout = (id) => {
         staticModal.confirm({
-            title: t("confirm.logout"),
+            title: t("confirm.logout", { defaultValue: "Confirm Logout" }),
             icon: <InfoCircleOutlined />,
-            content: t("session.content"),
-            cancelText: t("cancel"),
-            okText: t("ok"),
+            content: t("are.you.sure.want.to.logout.of.this.session", { defaultValue: "Are you sure you want to log out of this session?" }),
+            cancelText: t("cancel", { defaultValue: "Cancel" }),
+            okText: t("ok", { defaultValue: "OK" }),
             onOk: async () => {
                 setButtonLoading((prev) => ({ ...prev, [id]: true }));
                 try {
@@ -106,10 +106,10 @@ const Sessions = () => {
                                             loading={loadingButton[item._id]}
                                             onClick={() => handleSessionLogout(item._id)}
                                         >
-                                            {t("layout.logout")}
+                                            {t("layout.logout", { defaultValue: "Layout Logout" })}
                                         </Button>
                                     ) : (
-                                        <Text type="secondary">{t("signedout")}</Text>
+                                        <Text type="secondary">{t("signedout", { defaultValue: "Signed Out" })}</Text>
                                     )}
                                 </Col>
                             </Row>
@@ -123,7 +123,7 @@ const Sessions = () => {
     return (
         <PageContainer title={false} breadcrumb={false}>
             <AppPageHeader
-                eyebrow="Account"
+                eyebrow={t("account", { defaultValue: "Account" })}
                 title={t("session", { defaultValue: "Sessions" })}
                 description="Review and sign out of devices logged into your account."
             />
@@ -144,7 +144,7 @@ const Sessions = () => {
                             ),
                             < WindowsOutlined />,
                             "#52C41A",
-                            t("desktop.sessions")
+                            t("desktop.sessions", { defaultValue: "Desktop Sessions" })
                         )}
                     </Col>
                     <Col xs={24} md={12}>
@@ -152,7 +152,7 @@ const Sessions = () => {
                             sessionData?.filter((item) => item?.info?.os?.name?.toLowerCase() === "android"),
                             <MobileOutlined />,
                             "#FAAD14",
-                            t("mobile.sessions")
+                            t("mobile.sessions", { defaultValue: "Mobile Sessions" })
                         )}
                     </Col>
                 </Row>
