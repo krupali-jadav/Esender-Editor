@@ -8,8 +8,6 @@ import { useEffect, useState } from "react";
 import { getPlans, getSubscriptionPlans } from "./PlanApi";
 import EmptyState from "../Styles/EmptyState";
 
-
-
 export default function Plans() {
     const { Title, Text, Paragraph } = Typography;
     const theme = useSelector((state) => state?.app?.theme);
@@ -29,7 +27,7 @@ export default function Plans() {
                 setPlans([]);
             }
         } catch (error) {
-            console.error("FETCH PLANS ERROR:", error);
+            console.error(error);
             setPlans([]);
         } finally {
             setPlansLoading(false);
@@ -47,7 +45,7 @@ export default function Plans() {
                 setSubscription(null);
             }
         } catch (error) {
-            console.error("FETCH SUBSCRIPTION ERROR:", error);
+            console.error(error);
             setSubscription(null);
         } finally {
             setSubscriptionLoading(false);
@@ -74,21 +72,13 @@ export default function Plans() {
                             loading={subscriptionLoading}
                             styles={{ body: { padding: 24 }, }}>
                             {/* Header */}
-                            <Flex
-                                justify="space-between"
-                                align="center"
-                                wrap="wrap"
-                                gap={12}
-                            >
+                            <Flex justify="space-between" align="center" wrap="wrap" gap={12}>
                                 <Space size={12}>
                                     <Avatar
                                         shape="square"
                                         size={42}
                                         icon={<CreditCardOutlined />}
-                                        style={{
-                                            background: "rgba(32, 166, 206, 0.12)",
-                                            color: "#20A6CE",
-                                        }}
+                                        style={{ background: "rgba(32, 166, 206, 0.12)", color: "#20A6CE", }}
                                     />
 
                                     <div>
@@ -103,14 +93,8 @@ export default function Plans() {
                                 </Space>
 
                                 <Badge
-                                    status={
-                                        subscription?.status === "active"
-                                            ? "success"
-                                            : "warning"
-                                    }
-                                    text={
-                                        subscription?.status || "No Subscription"
-                                    }
+                                    status={subscription?.status === "active" ? "success" : "warning"}
+                                    text={subscription?.status || "No Subscription"}
                                 />
                             </Flex>
 
@@ -119,29 +103,18 @@ export default function Plans() {
                             {/* Subscription Details */}
                             <Row gutter={[16, 16]}>
                                 <Col xs={24} md={8}>
-                                    <Card
-                                        size="small"
-                                        style={{
-                                            height: "100%",
-                                            background: "rgba(32, 166, 206, 0.04)",
-                                        }}
-                                    >
+                                    <Card size="small" style={{ height: "100%", background: "rgba(32, 166, 206, 0.04)", }}>
                                         <Space
                                             direction="vertical"
                                             size={4}
                                         >
                                             <Text type="secondary">
-                                                {t("plan", {
-                                                    defaultValue: "Plan",
-                                                })}
+                                                {t("plan", { defaultValue: "Plan", })}
                                             </Text>
 
                                             <Text
                                                 strong
-                                                style={{
-                                                    fontSize: 18,
-                                                }}
-                                            >
+                                                style={{ fontSize: 18, }}>
                                                 {subscription?.planName || "-"}
                                             </Text>
                                         </Space>
@@ -149,37 +122,18 @@ export default function Plans() {
                                 </Col>
 
                                 <Col xs={24} md={8}>
-                                    <Card
-                                        size="small"
-                                        style={{
-                                            height: "100%",
-                                        }}
-                                    >
-                                        <Space
-                                            direction="vertical"
-                                            size={4}
-                                        >
+                                    <Card size="small" style={{ height: "100%", }}>
+                                        <Space direction="vertical" size={4}>
                                             <Space size={6}>
-                                                <CalendarOutlined
-                                                    style={{
-                                                        color: "#20A6CE",
-                                                    }}
-                                                />
+                                                <CalendarOutlined style={{ color: "#20A6CE", }} />
 
                                                 <Text type="secondary">
-                                                    {t("renewalDate", {
-                                                        defaultValue:
-                                                            "Renewal Date",
-                                                    })}
+                                                    {t("renewalDate", { defaultValue: "Renewal Date", })}
                                                 </Text>
                                             </Space>
 
                                             <Text strong>
-                                                {subscription?.renewalDate
-                                                    ? new Date(
-                                                        subscription.renewalDate
-                                                    ).toLocaleDateString()
-                                                    : "N/A"}
+                                                {subscription?.renewalDate ? new Date(subscription.renewalDate).toLocaleDateString() : "N/A"}
                                             </Text>
                                         </Space>
                                     </Card>
@@ -191,15 +145,15 @@ export default function Plans() {
                                         style={{ height: "100%", }}>
                                         <Space direction="vertical" size={4}>
                                             <Space size={6}>
-                                                <CreditCardOutlined style={{ color: "#20A6CE", }}/>
+                                                <CreditCardOutlined style={{ color: "#20A6CE", }} />
 
                                                 <Text type="secondary">
-                                                    {t("paymentMethod", {defaultValue:"Payment Method",})}
+                                                    {t("paymentMethod", { defaultValue: "Payment Method", })}
                                                 </Text>
                                             </Space>
 
                                             <Text strong>
-                                                {subscription?.paymentMethod ||"Not available"}
+                                                {subscription?.paymentMethod || "Not available"}
                                             </Text>
                                         </Space>
                                     </Card>
@@ -209,27 +163,19 @@ export default function Plans() {
                             <Divider style={{ margin: "22px 0 18px" }} />
 
                             {/* Footer */}
-                            <Flex
-                                justify="space-between"
-                                align="center"
-                                wrap="wrap"
-                                gap={12}
-                            >
+                            <Flex justify="space-between" align="center" wrap="wrap" gap={12}>
                                 <Space direction="vertical" size={0}>
                                     <Text strong>
-                                        {t("need.To.Update.Subscription", {defaultValue:"Need to update your subscription?"})}
+                                        {t("need.to.update.your.subscription", { defaultValue: "Need to update your subscription?" })}
                                     </Text>
 
                                     <Text type="secondary">
-                                        {t("manage.Plan.Payment", {defaultValue:"Manage your plan and payment details."})}
+                                        {t("manage.your.plan.and.payment.details", { defaultValue: "Manage your plan and payment details." })}
                                     </Text>
                                 </Space>
 
-                                <Button
-                                    type="primary"
-                                    icon={<CreditCardOutlined />}
-                                >
-                                    {t("manage.Billing", {defaultValue: "Manage Billing",})}
+                                <Button type="primary" icon={<CreditCardOutlined />}>
+                                    {t("manage.Billing", { defaultValue: "Manage Billing", })}
                                 </Button>
                             </Flex>
                         </Card>
@@ -238,43 +184,22 @@ export default function Plans() {
 
                 {/* Available Plans */}
                 <Card
-                    style={{
-                        background: "transparent",
-                        border: "none",
-                        boxShadow: "none",
-                    }}
+                    style={{ background: "transparent", border: "none", boxShadow: "none", }}
                     styles={{ body: { padding: 0, }, }}
                 >
                     {/* Heading */}
                     <div style={{ textAlign: "center", marginTop: 50, }}>
-                        <Title
-                            level={2}
-                            style={{
-                                margin: 0,
-                                color: theme ? "#FFFFFF" : "#1F2937",
-                                fontWeight: 700,
-                            }}
-                        >
+                        <Title level={2} style={{ margin: 0, color: theme ? "#FFFFFF" : "#1F2937", fontWeight: 700, }}>
                             {t("available.Plans", { defaultValue: "Available Plans" })}
                         </Title>
 
-                        <Paragraph
-                            style={{
-                                marginTop: 8,
-                                fontSize: 14,
-                                color: theme ? "#98A2B3" : "#667085",
-                            }}
-                        >
-                            {t("upgrade.To.Unlock.Features", { defaultValue: "Upgrade to unlock more features and higher limits." })}
+                        <Paragraph style={{ marginTop: 8, fontSize: 14, color: theme ? "#98A2B3" : "#667085", }}>
+                            {t("upgrade.to.unlock.more.features.and.higher.limits", { defaultValue: "Upgrade to unlock more features and higher limits." })}
                         </Paragraph>
                     </div>
 
                     {plansLoading ? (
-                        <Flex
-                            justify="center"
-                            align="center"
-                            style={{ minHeight: 300 }}
-                        >
+                        <Flex justify="center" align="center" style={{ minHeight: 300 }}>
                             <Spin size="middle" />
                         </Flex>
                     ) : plans.length === 0 ? (
@@ -284,10 +209,7 @@ export default function Plans() {
                             description={t('no.plans.description', { defaultValue: 'There are no plans available    .' })}
                         />
                     ) : (
-                        <Row
-                            gutter={[32, 60]}
-                            justify="center"
-                        >
+                        <Row gutter={[32, 60]} justify="center">
                             {plans.map((plan, index) => {
                                 const isCurrentPlan = plan.slug === currentPlanSlug || plan.name?.toLowerCase() === currentPlanName?.toLowerCase();
                                 const planColors = [
@@ -308,8 +230,7 @@ export default function Plans() {
                                         end: "#7C3AED",
                                     },
                                 ];
-                                const color =
-                                    planColors[index % planColors.length];
+                                const color = planColors[index % planColors.length];
 
                                 const features = Object.entries(plan.features || {}).map(
                                     ([key, enabled]) => ({
@@ -323,12 +244,7 @@ export default function Plans() {
 
                                 return (
                                     <Col xs={24} sm={12} md={8} lg={6} key={plan._id}>
-                                        <div
-                                            style={{
-                                                position: "relative",
-                                                paddingTop: 42,
-                                            }}
-                                        >
+                                        <div style={{ position: "relative", paddingTop: 42, }}>
                                             {/* PRICE CIRCLE */}
                                             <div
                                                 style={{
@@ -345,20 +261,11 @@ export default function Plans() {
                                                     flexDirection: "column",
                                                     alignItems: "center",
                                                     justifyContent: "center",
-                                                    /** Theme-aware border*/
                                                     border: `8px solid ${theme ? "#0A101C" : "#EEF3FA"}`,
-                                                    boxShadow: theme
-                                                        ? "0 8px 25px rgba(0,0,0,0.45)"
-                                                        : "0 8px 25px rgba(30,50,80,0.15)",
+                                                    boxShadow: theme ? "0 8px 25px rgba(0,0,0,0.45)" : "0 8px 25px rgba(30,50,80,0.15)",
                                                 }}
                                             >
-                                                <div
-                                                    style={{
-                                                        display: "flex",
-                                                        alignItems: "flex-start",
-                                                        color: "#FFFFFF",
-                                                    }}
-                                                >
+                                                <div style={{ display: "flex", alignItems: "flex-start", color: "#FFFFFF", }}>
                                                     <span style={{ fontSize: 14, marginTop: 4, }}>₹</span>
 
                                                     <span style={{ fontSize: 32, lineHeight: 1, fontWeight: 700, }}>
@@ -366,34 +273,20 @@ export default function Plans() {
                                                     </span>
                                                 </div>
 
-                                                <span
-                                                    style={{
-                                                        color: "rgba(255,255,255,0.9)",
-                                                        fontSize: 10,
-                                                    }}
-                                                >
+                                                <span style={{ color: "rgba(255,255,255,0.9)", fontSize: 10, }}>
                                                     /{plan.billingInterval}
                                                 </span>
                                             </div>
 
                                             {/* MAIN CARD */}
                                             <Card
-                                                 variant="borderless"
+                                                variant="borderless"
                                                 style={{
                                                     borderRadius: "14px 14px 18px 18px",
-                                                    background: theme
-                                                        ? "#152A3C"
-                                                        : "#FFFFFF",
-
-                                                    boxShadow: theme
-                                                        ? "0 12px 35px rgba(0,0,0,0.35)"
-                                                        : "0 12px 35px rgba(30,50,80,0.12)",
-
+                                                    background: theme ? "#152A3C" : "#FFFFFF",
+                                                    boxShadow: theme ? "0 12px 35px rgba(0,0,0,0.35)" : "0 12px 35px rgba(30,50,80,0.12)",
                                                     overflow: "hidden",
-
-                                                    border: theme
-                                                        ? "1px solid rgba(255,255,255,0.08)"
-                                                        : "1px solid rgba(30,50,80,0.08)",
+                                                    border: theme ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(30,50,80,0.08)",
                                                 }}
                                                 styles={{
                                                     body: {
@@ -410,10 +303,7 @@ export default function Plans() {
                                                     style={{
                                                         textAlign: "center",
                                                         margin: 0,
-                                                        color: theme
-                                                            ? "#FFFFFF"
-                                                            : "#1D2939",
-
+                                                        color: theme ? "#FFFFFF" : "#1D2939",
                                                         fontSize: 22,
                                                         letterSpacing: 1,
                                                         fontWeight: 700,
@@ -423,14 +313,7 @@ export default function Plans() {
                                                 </Title>
 
                                                 {/* DIVIDER */}
-                                                <div
-                                                    style={{
-                                                        width: 70,
-                                                        height: 2,
-                                                        background: color.end,
-                                                        margin: "18px auto 20px",
-                                                    }}
-                                                />
+                                                <div style={{ width: 70, height: 2, background: color.end, margin: "18px auto 20px", }} />
                                                 <Row gutter={[8, 8]} style={{ marginBottom: 20 }}>
                                                     {[
                                                         {
@@ -478,26 +361,18 @@ export default function Plans() {
                                                                 }}
                                                             >
                                                                 <Flex wrap vertical align="center" gap={2}>
-                                                                    <span
-                                                                        style={{
-                                                                            color: color.end,
-                                                                            fontSize: 16,
-                                                                        }}
-                                                                    >
+                                                                    <span style={{
+                                                                        color: color
+                                                                            .end, fontSize: 16,
+                                                                    }}>
                                                                         {limit.icon}
                                                                     </span>
 
-                                                                    <Text
-                                                                        strong
-                                                                        style={{ fontSize: 14, color: theme ? "#FFFFFF" : "#1D2939", }}
-                                                                    >
+                                                                    <Text strong style={{ fontSize: 14, color: theme ? "#FFFFFF" : "#1D2939", }}>
                                                                         {limit.value}
                                                                     </Text>
 
-                                                                    <Text
-                                                                        type="secondary"
-                                                                        style={{ fontSize: 11 }}
-                                                                    >
+                                                                    <Text type="secondary" style={{ fontSize: 11 }}>
                                                                         {limit.label}
                                                                     </Text>
                                                                 </Flex>
@@ -506,53 +381,22 @@ export default function Plans() {
                                                     ))}
                                                 </Row>
                                                 {/* FEATURES */}
-                                                <div
-                                                    style={{
-                                                        display: "flex",
-                                                        flexDirection: "column",
-                                                        gap: 8,
-                                                        marginTop: 4,
-                                                    }}
-                                                >
+                                                <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 4, }}>
                                                     {features.map(({ key, label, enabled }) => (
                                                         <div
                                                             key={key}
-                                                            style={{
-                                                                display: "flex",
-                                                                alignItems: "center",
-                                                                gap: 8,
-                                                                minHeight: 20,
-                                                            }}
-                                                        >
+                                                            style={{ display: "flex", alignItems: "center", gap: 8, minHeight: 20, }}>
                                                             {enabled ? (
                                                                 <CheckCircleFilled
-                                                                    style={{
-                                                                        color: "#20A6CE",
-                                                                        fontSize: 16,
-                                                                        flexShrink: 0,
-                                                                    }}
+                                                                    style={{ color: "#20A6CE", fontSize: 16, flexShrink: 0, }}
                                                                 />
                                                             ) : (
                                                                 <CloseCircleFilled
-                                                                    style={{
-                                                                        color: theme
-                                                                            ? "#667085"
-                                                                            : "#98A2B3",
-                                                                        fontSize: 16,
-                                                                        flexShrink: 0,
-                                                                    }}
+                                                                    style={{ color: theme ? "#667085" : "#98A2B3", fontSize: 16, flexShrink: 0, }}
                                                                 />
                                                             )}
 
-                                                            <Text
-                                                                style={{
-                                                                    fontSize: 14,
-                                                                    lineHeight: "18px",
-                                                                    color: theme
-                                                                        ? "#D0D5DD"
-                                                                        : "#475467",
-                                                                }}
-                                                            >
+                                                            <Text style={{ fontSize: 14, lineHeight: "18px", color: theme ? "#D0D5DD" : "#475467", }}>
                                                                 {label}
                                                             </Text>
                                                         </div>
@@ -570,19 +414,13 @@ export default function Plans() {
                                                             marginBottom: 18,
                                                             border: "none",
                                                             borderRadius: 8,
-                                                            background: isCurrentPlan
-                                                                ? undefined
-                                                                : `linear-gradient(90deg,${color.start},${color.end})`,
+                                                            background: isCurrentPlan ? undefined : `linear-gradient(90deg,${color.start},${color.end})`,
                                                             fontSize: 12,
                                                             fontWeight: 600,
-                                                            boxShadow: theme
-                                                                ? "0 5px 15px rgba(0,0,0,0.35)"
-                                                                : "0 5px 12px rgba(0,0,0,0.12)",
+                                                            boxShadow: theme ? "0 5px 15px rgba(0,0,0,0.35)" : "0 5px 12px rgba(0,0,0,0.12)",
                                                         }}
                                                     >
-                                                        {isCurrentPlan
-                                                            ? "CURRENT PLAN"
-                                                            : `CHOOSE ${plan.name.toUpperCase()}`}
+                                                        {isCurrentPlan ? "CURRENT PLAN" : `CHOOSE ${plan.name.toUpperCase()}`}
                                                     </Button>
                                                 </div>
                                             </Card>
@@ -593,9 +431,8 @@ export default function Plans() {
                         </Row>
                     )}
                 </Card>
-
             </Space>
 
-        </PageContainer>
+        </PageContainer >
     );
 }

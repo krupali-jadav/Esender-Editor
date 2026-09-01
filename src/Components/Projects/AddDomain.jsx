@@ -26,25 +26,17 @@ function AddDomain({ open, onClose, projectId, onSuccess, editingDomain }) {
             const domain = values.name?.trim();
 
             if (!domain) {
-                message.warning(
-                    t("please.enter.domain", {
-                        defaultValue: "Please enter a domain",
-                    })
-                );
+                message.warning(t("please.enter.domain", { defaultValue: "Please enter a domain", }));
                 return;
             }
 
             if (!projectId) return;
-
             setLoading(true);
-
             let data;
 
             if (editingDomain) {
                 // EDIT / UPDATE DOMAIN
-                const payload = {
-                    allowedDomains: [domain],
-                };
+                const payload = { allowedDomains: [domain], };
 
                 data = await updateProjectDomains(
                     projectId,
@@ -52,30 +44,20 @@ function AddDomain({ open, onClose, projectId, onSuccess, editingDomain }) {
                 );
             } else {
                 // ADD DOMAIN
-                const payload = {
-                    domain: domain,
-                };
-
-                data = await addProjectDomain(
-                    projectId,
-                    payload
-                );
+                // const payload = { domain: domain, };
+                // data = await addProjectDomain(
+                //     projectId,
+                //     payload
+                // );
             }
-
             if (data?.status) {
-                message.success(
-                    data?.message ||
-                    (editingDomain
-                        ? "Domain updated successfully"
-                        : "Domain added successfully")
-                );
-
+                message.success(data?.message);
                 form.resetFields();
                 onClose();
                 onSuccess?.();
             }
         } catch (error) {
-            console.error("DOMAIN ERROR:", error);
+            console.log(error);
         } finally {
             setLoading(false);
         }
@@ -91,56 +73,26 @@ function AddDomain({ open, onClose, projectId, onSuccess, editingDomain }) {
                     {t("cancel", { defaultValue: "Cancel", })}
                 </Button>,
 
-                <Button
-                    key="update"
-                    type="primary"
-                    loading={loading}
-                    onClick={handleUpdate}
-                >
-                    {editingDomain
-                        ? t("update.domain", { defaultValue: "Update Domain" })
-                        : t("add.domain", { defaultValue: "Add Domain" })}
+                <Button key="update" type="primary" loading={loading} onClick={handleUpdate}>
+                    {editingDomain ? t("update.domain", { defaultValue: "Update Domain" }) : t("add.domain", { defaultValue: "Add Domain" })}
                 </Button>,
             ]}
         >
             <AppPageHeader
-                title={
-                    editingDomain
-                        ? t("update.domain", { defaultValue: "Update Domain" })
-                        : t("add.domain", { defaultValue: "Add Domain" })
-                }
+                title={editingDomain ? t("update.domain", { defaultValue: "Update Domain" }) : t("add.domain", { defaultValue: "Add Domain" })}
             />
-            <Form
-                form={form}
-                layout="vertical"
-            >
+            <Form form={form} layout="vertical">
                 <Form.Item
-                    label={t("domain.name", {
-                        defaultValue: "Domain Name",
-                    })}
+                    label={t("domain.name", { defaultValue: "Domain Name", })}
                     name="name"
                     rules={[
                         {
                             required: true,
-                            message: t(
-                                "please.enter.domain.name",
-                                {
-                                    defaultValue:
-                                        "Please enter domain name",
-                                }
-                            ),
+                            message: t("please.enter.domain.name", { defaultValue: "Please enter domain name", }),
                         },
                     ]}
                 >
-                    <Input
-                        placeholder={t(
-                            "enter.domain.name",
-                            {
-                                defaultValue:
-                                    "Enter Domain Name",
-                            }
-                        )}
-                    />
+                    <Input placeholder={t("enter.domain.name", { defaultValue: "Enter Domain Name", })} />
                 </Form.Item>
             </Form>
         </Modal>
