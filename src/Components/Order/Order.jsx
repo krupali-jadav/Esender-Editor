@@ -1,4 +1,4 @@
-import { FilePdfOutlined } from "@ant-design/icons";
+import { FilePdfOutlined, FileTextOutlined } from "@ant-design/icons";
 import { PageContainer } from "@ant-design/pro-components";
 import { Card, Table, Tag, Typography } from "antd"
 import { t } from "i18next";
@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import AppPageHeader from "../Styles/AppHeader";
 import { useEffect, useState } from "react";
 import { getInvoices } from "../Plans/PlanApi";
+import EmptyState from "../Styles/EmptyState";
 
 const { Text, Link } = Typography;
 function Order() {
@@ -83,13 +84,21 @@ function Order() {
             <Card title={t("billing.invoiceHistory", { defaultValue: "Invoice History" })}
                 styles={{ body: { padding: 0 } }}
             >
-
                 <Table
                     columns={invoiceColumns}
                     dataSource={invoices}
                     loading={loading}
                     pagination={false}
                     scroll={{ x: "max-content" }}
+                    locale={{
+                        emptyText: (
+                            <EmptyState
+                                icon={<FileTextOutlined />}
+                                title={t("no.orders.found", { defaultValue: "No Orders found" })}
+                                description={t("no.orders.description", { defaultValue: "There are no Orders available.", })}
+                            />
+                        ),
+                    }}
                     components={{
                         header: {
                             cell: (props) => (

@@ -11,6 +11,7 @@ import {
     Flex,
     Spin,
     Badge,
+    Button,
 } from "antd";
 import {
     TeamOutlined,
@@ -21,6 +22,7 @@ import {
     DownOutlined,
     MailOutlined,
     ArrowRightOutlined,
+    FileTextOutlined,
 } from "@ant-design/icons";
 import { Column } from "@ant-design/plots";
 import { PageContainer } from "@ant-design/pro-components";
@@ -31,6 +33,7 @@ import { getUsageAlerts, getUsageSummary, getUsageTrend } from "./UsageApi";
 import { useNavigate } from "react-router-dom";
 import { t } from "i18next";
 import { formatDate } from "../../util/commom.utils";
+import EmptyState from "../Styles/EmptyState";
 
 const { Title, Text, Link } = Typography;
 
@@ -432,23 +435,29 @@ export default function Usage() {
                             dataSource={(usageSummary?.recentTemplates || []).map(
                                 (template, index) => ({
                                     key: template._id || template.id || index,
-                                    name: template.name || template.title || "-",
-                                    id: template._id || template.id || "-",
+                                    name: template.name || "-",
+                                    id: template._id || "-",
                                     status: template.status || "-",
                                     projectName: template.projectName || "-",
-
-                                    modified:
-                                        template.updatedAt ||
-                                        template.modifiedAt ||
-                                        template.updated ||
-                                        "-",
+                                    modified: template.updatedAt || "-",
                                     icon: <MailOutlined />,
                                 })
                             )}
                             pagination={false}
                             scroll={{ x: "max-content" }}
                             locale={{
-                                emptyText: t("no.recently.updated.templates", { defaultValue: "No recently updated templates" }),
+                                emptyText: (
+                                    <EmptyState
+                                        icon={<FileTextOutlined />}
+                                        title={t("no.templates.found", { defaultValue: "No Templates found" })}
+                                        description={t("no.templates.description", { defaultValue: "There are no Templates available.", })}
+                                        action={
+                                            <Button type="primary" onClick={() => navigate("/templates/create-template")}>
+                                                {t("create.template", { defaultValue: "Create Template" })}
+                                            </Button>
+                                        }
+                                    />
+                                ),
                             }}
                             components={{
                                 header: {

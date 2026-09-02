@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Typography, Tag, Tabs, ConfigProvider, Button, Flex } from 'antd'
+import { Typography, Tag, Tabs, ConfigProvider, Button, Flex, Space } from 'antd'
 import ProjectDomain from './projectDomain'
 import ProjectTemplate from './projectTemplate'
 import ProjectCredential from './projectCredential'
@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { t } from 'i18next'
 import ProjectOverview from './ProjectOverview'
-const { Title,Text } = Typography
+const { Title, Text } = Typography
 
 
 const TAB_ITEMS = [
@@ -38,7 +38,7 @@ function Projects() {
                             gap={8}
                             style={{ minWidth: 0, flex: 1 }}
                         >
-                            <Title level={3} ellipsis style={{ margin: 0, minWidth: 0,}}>
+                            <Title level={3} ellipsis style={{ margin: 0, minWidth: 0, }}>
                                 {selectedProject?.name || "Project"}
                             </Title>
 
@@ -50,12 +50,14 @@ function Projects() {
                             </Tag>
                         </Flex>
                         <div>
-                            <Button type="primary" style={{ marginRight: 10 }} onClick={() => navigate('/select-project')}>
-                                {t('switch.project', { defaultValue: 'Switch Project' })}
-                            </Button>
-                            <Button type="primary" style={{ marginRight: 10 }} onClick={() => navigate('/workflow')}>
-                                {t('create.new.project', { defaultValue: 'Create New Project' })}
-                            </Button>
+                            <Space direction='horizontal' size={8} wrap="wrap" >
+                                <Button type="primary" style={{ marginRight: 10 }} onClick={() => navigate('/select-project')}>
+                                    {t('switch.project', { defaultValue: 'Switch Project' })}
+                                </Button>
+                                <Button type="primary" style={{ marginRight: 10 }} onClick={() => navigate('/workflow')}>
+                                    {t('create.new.project', { defaultValue: 'Create New Project' })}
+                                </Button>
+                            </Space>
                         </div>
                     </Flex>
 
