@@ -387,16 +387,12 @@ export default function Plans() {
                                                             key={key}
                                                             style={{ display: "flex", alignItems: "center", gap: 8, minHeight: 20, }}>
                                                             {enabled ? (
-                                                                <CheckCircleFilled
-                                                                    style={{ color: "#20A6CE", fontSize: 16, flexShrink: 0, }}
-                                                                />
+                                                                <CheckCircleFilled style={{ color: "#20A6CE", fontSize: 16, flexShrink: 0, }}/>
                                                             ) : (
-                                                                <CloseCircleFilled
-                                                                    style={{ color: theme ? "#667085" : "#98A2B3", fontSize: 16, flexShrink: 0, }}
-                                                                />
+                                                                <CloseCircleFilled style={{ color: theme ? "#667085" : "#98A2B3", fontSize: 16, flexShrink: 0, }}/>
                                                             )}
 
-                                                            <Text style={{ fontSize: 14, lineHeight: "18px", color: theme ? "#D0D5DD" : "#475467", }}>
+                                                            <Text style={{fontSize: 14, lineHeight: "18px", color: enabled ? (theme ? "#D0D5DD" : "#475467"): (theme ? "#667085" : "#98A2B3"),  }}>
                                                                 {label}
                                                             </Text>
                                                         </div>

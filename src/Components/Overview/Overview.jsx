@@ -36,6 +36,7 @@ import { getDashboardOverview } from "./OverviewApi";
 import { Column } from "@ant-design/plots";
 import { useNavigate } from "react-router-dom";
 import { formatDate } from "../../util/commom.utils";
+import EmptyState from "../Styles/EmptyState";
 
 const { Title, Text, Link } = Typography;
 
@@ -133,7 +134,7 @@ export default function Overview() {
             dataIndex: "environment",
             key: "environment",
             render: (environment) => (
-                <Tag color={environment === "live"? "blue": "default"}>
+                <Tag color={environment === "live" ? "blue" : "default"}>
                     {environment}
                 </Tag>
             ),
@@ -396,7 +397,7 @@ export default function Overview() {
                                             type="text"
                                             icon={item.icon}
                                             block
-                                            style={{textAlign: "left",}}>
+                                            style={{ textAlign: "left", }}>
                                             {item.title}
                                             {item.description && <Text type="secondary">{item.description}</Text>}
                                         </Button>
@@ -429,7 +430,18 @@ export default function Overview() {
                                 )}
                                 pagination={false}
                                 locale={{
-                                    emptyText: t("no.Recent.Projects", { defaultValue: "No recent projects" }),
+                                    emptyText: (
+                                        <EmptyState
+                                            icon={<FileTextOutlined />}
+                                            title={t("no.projects.found", { defaultValue: "No Projects found" })}
+                                            description={t("no.projects.description", { defaultValue: "There are no Projects available.", })}
+                                            action={
+                                                <Button type="primary" onClick={() => navigate("/select-project")}>
+                                                    {t("create.project", { defaultValue: "Create Project" })}
+                                                </Button>
+                                            }
+                                        />
+                                    ),
                                 }}
                                 scroll={{ x: "max-content" }}
                                 components={{

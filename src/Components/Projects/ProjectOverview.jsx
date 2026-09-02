@@ -278,9 +278,7 @@ export default function ProjectOverview({ setActiveTab }) {
                                         <Text>Published</Text>
                                     </Space>
 
-                                    <Text strong>
-                                        {publishedTemplates}
-                                    </Text>
+                                    <Text strong>{publishedTemplates}</Text>
                                 </Flex>
 
                                 <Progress
@@ -300,7 +298,7 @@ export default function ProjectOverview({ setActiveTab }) {
 
                                 <Divider />
 
-                                <Flex justify="space-between" style={{ fontSize: 14,marginTop: 28,}}>
+                                <Flex justify="space-between" style={{ fontSize: 14, marginTop: 28, }}>
                                     <Text type="secondary"> Total Templates</Text>
                                     <Text strong>{totalTemplates}</Text>
                                 </Flex>
