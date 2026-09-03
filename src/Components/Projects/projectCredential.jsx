@@ -118,6 +118,7 @@ function ProjectCredential() {
 
                             {/* License Key */}
                             <Card size="small" loading={credentialsLoading} >
+                                {/* <Loading/> */}
                                 <Text type="secondary">{t("license.key", { defaultValue: "License Key:" })}{" "}</Text>
                                 <Flex justify="space-between" align="center">
                                     <Text code>

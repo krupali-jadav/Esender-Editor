@@ -12,6 +12,7 @@ import {
     Spin,
     Badge,
     Button,
+    Tag,
 } from "antd";
 import {
     TeamOutlined,
@@ -54,16 +55,16 @@ export default function Usage() {
             title: t('template.name', { defaultValue: 'Template Name' }),
             dataIndex: "name",
             key: "name",
-            render: (text, record) => (
+            render: (text) => (
                 <Space>
-                    <Avatar shape="square" size="small" icon={record.icon} />
+                    <Avatar shape="square" size="small" icon={<MailOutlined />} />
                     <Text strong>{text}</Text>
                 </Space>
             ),
         },
         {
             title: t('id', { defaultValue: 'ID' }),
-            dataIndex: "id",
+            dataIndex: "_id",
             key: "id",
             render: (id) => <Text code copyable>{id}</Text>,
         },
@@ -71,7 +72,7 @@ export default function Usage() {
             title: t('project_name', { defaultValue: 'Project Name' }),
             dataIndex: "projectName",
             key: "projectName",
-        },
+        },  
         {
             title: t("status", { defaultValue: "Status" }),
             dataIndex: "status",
@@ -431,18 +432,10 @@ export default function Usage() {
                         styles={{ body: { padding: 0 } }}
                     >
                         <Table
+                            rowKey="_id"
+                            loading={summaryLoading}
                             columns={templateColumns}
-                            dataSource={(usageSummary?.recentTemplates || []).map(
-                                (template, index) => ({
-                                    key: template._id || template.id || index,
-                                    name: template.name || "-",
-                                    id: template._id || "-",
-                                    status: template.status || "-",
-                                    projectName: template.projectName || "-",
-                                    modified: template.updatedAt || "-",
-                                    icon: <MailOutlined />,
-                                })
-                            )}
+                            dataSource={usageSummary?.recentTemplates || []}
                             pagination={false}
                             scroll={{ x: "max-content" }}
                             locale={{

@@ -394,14 +394,12 @@ export default function Overview() {
                             styles={{ body: { padding: 0, }, }}
                         >
                             <Table
+                                rowKey="_id"
+                                loading={loading}
+                                scroll={{ x: "max-content" }}
                                 columns={projectColumns}
-                                dataSource={overview.recentProjects.map(
-                                    (project) => ({
-                                        ...project,
-                                        key: project._id,
-                                    })
-                                )}
                                 pagination={false}
+                                dataSource={overview.recentProjects}
                                 locale={{
                                     emptyText: (
                                         <EmptyState
@@ -416,7 +414,6 @@ export default function Overview() {
                                         />
                                     ),
                                 }}
-                                scroll={{ x: "max-content" }}
                                 components={{
                                     header: {
                                         cell: (props) => (

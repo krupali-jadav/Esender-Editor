@@ -138,8 +138,8 @@ function Login() {
                 message.error(data.message);
             }
         } catch (error) {
-            console.error("LOGIN ERROR:", error);
-
+            console.error(error);
+            {"substravion,"}
             message.error(error?.message);
         } finally {
             setLoading(false);
@@ -151,12 +151,7 @@ function Login() {
         <div className="auth-page">
             {/* TOP RIGHT CONTROLS */}
             <div className="auth-top-controls">
-                <span
-                    className="auth-theme-btn"
-                    onClick={toggleTheme}
-                    role="button"
-                    aria-label="Toggle theme"
-                >
+                <span className="auth-theme-btn" onClick={toggleTheme} role="button" aria-label="Toggle theme">
                     {theme ? <MoonOutlined /> : <SunOutlined />}
                 </span>
 
@@ -166,11 +161,7 @@ function Login() {
                     showSearch
                     variant="filled"
                     className="auth-language"
-                    classNames={{
-                        popup: {
-                            root: "auth-language-dropdown",
-                        },
-                    }}
+                    classNames={{popup: {root: "auth-language-dropdown"}}}
                     popupMatchSelectWidth={180}
                     options={lang?.map((x) => ({
                         value: x.key,
