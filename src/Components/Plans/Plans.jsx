@@ -206,7 +206,7 @@ export default function Plans() {
                         <EmptyState
                             icon={<FileTextOutlined />}
                             title={t('no.plans.found', { defaultValue: 'No Plans found' })}
-                            description={t('no.plans.description', { defaultValue: 'There are no plans available    .' })}
+                            description={t('no.plans.description', { defaultValue: 'There are no plans available.' })}
                         />
                     ) : (
                         <Row gutter={[32, 60]} justify="center">

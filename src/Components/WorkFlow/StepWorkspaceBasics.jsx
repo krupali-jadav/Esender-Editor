@@ -68,7 +68,7 @@ export default function StepWorkspaceBasics({ onNext }) {
             const data = await saveProfile(payload);
 
             if (data?.status) {
-                message.success(data?.message);
+                // message.success(data?.message);
                 onNext();
             } else {
                 message.error(data?.message );

@@ -55,20 +55,8 @@ export default function StepCreateProject({ onNext, onBack }) {
     };
 
     return (
-        <Card
-            style={{
-                width: "100%",
-                borderTop: "3px solid #20A6CE",
-            }}
-        >
-            <Text
-                strong
-                style={{
-                    color: "#20A6CE",
-                    fontSize: 12,
-                    letterSpacing: 0.5,
-                }}
-            >
+        <Card style={{width: "100%", borderTop: "3px solid #20A6CE",}}>
+            <Text strong style={{ color: "#20A6CE", fontSize: 12, letterSpacing: 0.5, }}>
                 {t('step.2.of.4', { defaultValue: 'STEP 2 OF 4' })}
             </Text>
 
@@ -80,7 +68,7 @@ export default function StepCreateProject({ onNext, onBack }) {
                 {t('let.s.set.up.your.primary.workspace.you.can.always.create.more.projects.later', { defaultValue: "Let's set up your primary workspace. You can always create more projects later." })}
             </Paragraph>
 
-            <Space direction="vertical" size="large" style={{ width: "100%" }}>
+            <Space direction="vertical" size="large">
                 <Form
                     form={form}
                     layout="vertical"
@@ -98,9 +86,7 @@ export default function StepCreateProject({ onNext, onBack }) {
                     >
                         <Input
                             prefix={
-                                <FolderOutlined
-                                    style={{ color: "#98A2B3" }}
-                                />
+                                <FolderOutlined style={{ color: "#98A2B3" }} />
                             }
                             placeholder={t('e.g.internal.tools.marketing.app', { defaultValue: 'e.g., Internal Tools, Marketing App' })}
                         />
@@ -148,13 +134,7 @@ export default function StepCreateProject({ onNext, onBack }) {
                                             gap: 24,
                                         }}
                                     >
-                                        <Text strong
-                                            style={{
-                                                color: "#20A6CE",
-                                                fontSize: 12,
-                                                minWidth: 40,
-                                            }}
-                                        >
+                                        <Text strong style={{color: "#20A6CE", fontSize: 12, minWidth: 40, }}>
                                             {t('post', { defaultValue: 'POST' })}
                                         </Text>
 

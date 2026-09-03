@@ -80,12 +80,10 @@ export default function SelectProject() {
 
                 // Save selected project in Redux
                 dispatch(setSelectedProject(selectedProject));
-
-                message.success(response?.message);
                 navigate("/overview");
             }
         } catch (error) {
-            console.error("GET PROJECT ERROR:", error);
+            console.error(error);
             message.error(error?.message);
         } finally {
             setLoading(false);

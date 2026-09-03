@@ -5,6 +5,8 @@ import {
     theme as antdTheme,
     Button,
     Layout,
+    Flex,
+    Space,
 } from "antd";
 import {
     MoonOutlined,
@@ -42,15 +44,9 @@ export default function WorkFlow() {
     };
 
     const stepItems = [
-        {
-            title: t('workspace.basics', { defaultValue: 'Workspace Basics' }),
-        },
-        {
-            title: t('create.project', { defaultValue: 'Create Project' }),
-        },
-        {
-            title: t('connect.domain', { defaultValue: 'Connect Domain' }),
-        },
+        {title: t('workspace.basics', { defaultValue: 'Workspace Basics' })},
+        {title: t('create.project', { defaultValue: 'Create Project' })},
+        {title: t('connect.domain', { defaultValue: 'Connect Domain' })}
     ];
 
     return (
@@ -100,7 +96,7 @@ export default function WorkFlow() {
             <Layout>
                 <Content style={{ minHeight: "100vh", padding: "32px 24px", }}>
                     {/* Theme Toggle */}
-                    <div style={{ display: "flex", justifyContent: "flex-end", }}>
+                    <Flex justify="end" >
                         <Button
                             shape="circle"
                             size="large"
@@ -113,68 +109,67 @@ export default function WorkFlow() {
                             }
                             onClick={() => dispatch(setTheme(!isDark))}
                         />
-                    </div>
+                    </Flex>
 
                     {/* Wizard */}
-                    <div
-                        style={{
-                            width: "100%",
-                            maxWidth: WIZARD_WIDTH,
-                            margin: "0 auto",
-                        }}
-                    >
-                        {/* Steps */}
-                        <div style={{ marginBottom: 32, }}>
-                            <Steps
-                                current={step}
-                                items={stepItems}
-                                responsive
-                            />
-                        </div>
+                    <div style={{ width: "100%", maxWidth: WIZARD_WIDTH, margin: "0 auto", }}>
+                        <Space direction="vertical" size={24} style={{ width: "100%" }}>
+                            {/* Steps */}
+                            <div style={{}}>
+                                <Steps
+                                    current={step}
+                                    items={stepItems}
+                                    responsive
+                                />
+                            </div>
 
-                        {/* Step 1 */}
-                        {step === 0 && (
-                            <StepWorkspaceBasics onNext={next} />
-                        )}
 
-                        {/* Step 2 */}
-                        {step === 1 && (
-                            <StepCreateProject
-                                onNext={async (project) => {
-                                    const projectId = project?.id || project?._id;
+                            <div>
+                                {/* Step 1 */}
+                                {step === 0 && (
+                                    <StepWorkspaceBasics onNext={next} />
+                                )}
 
-                                    setCreatedProjectId(projectId);
-                                    try {
-                                        const response = await getProject(projectId);
-                                        if (response?.status && response?.project) {
-                                            // Store complete project data
-                                            dispatch(setSelectedProject(response.project));
-                                        } else {
-                                            // Fallback to created project
-                                            dispatch(setSelectedProject(project));
-                                        }
-                                    } catch (error) {
-                                        console.error( error);
-                                        dispatch(setSelectedProject(project));
-                                    }
+                                {/* Step 2 */}
+                                {step === 1 && (
+                                    <StepCreateProject
+                                        onNext={async (project) => {
+                                            const projectId = project?.id || project?._id;
 
-                                    next();
-                                }}
-                                onBack={back}
-                            />
-                        )}
+                                            setCreatedProjectId(projectId);
+                                            try {
+                                                const response = await getProject(projectId);
+                                                if (response?.status && response?.project) {
+                                                    // Store complete project data
+                                                    dispatch(setSelectedProject(response.project));
+                                                } else {
+                                                    // Fallback to created project
+                                                    dispatch(setSelectedProject(project));
+                                                }
+                                            } catch (error) {
+                                                console.error(error);
+                                                dispatch(setSelectedProject(project));
+                                            }
 
-                        {/* Step 3 */}
-                        {step === 2 && (
-                            <StepConnectDomain
-                                projectId={createdProjectId}
-                                onBack={back}
-                                onComplete={() => {
-                                    window.location.href =
-                                        "/overview";
-                                }}
-                            />
-                        )}
+                                            next();
+                                        }}
+                                        onBack={back}
+                                    />
+                                )}
+
+                                {/* Step 3 */}
+                                {step === 2 && (
+                                    <StepConnectDomain
+                                        projectId={createdProjectId}
+                                        onBack={back}
+                                        onComplete={() => {
+                                            window.location.href =
+                                                "/overview";
+                                        }}
+                                    />
+                                )}
+                            </div>
+                        </Space>
                     </div>
                 </Content>
             </Layout>
