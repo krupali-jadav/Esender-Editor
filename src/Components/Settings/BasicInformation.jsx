@@ -9,7 +9,6 @@ import { formatDate } from '../../util/commom.utils';
 import { setUserSetting } from '../Redux/Reducer/reducer.app';
 
 function BasicInformation() {
-
   const dispatch = useDispatch();
   const theme = useSelector((state) => state?.app?.theme);
   const setting = useSelector((state) => state.app.userSetting);
@@ -19,7 +18,6 @@ function BasicInformation() {
   const [form] = Form.useForm();
 
   const handleSubmit = async (values) => {
-    console.log("Form Values:", values);
     try {
       setLoading(true);
       const payload = {
@@ -64,7 +62,7 @@ function BasicInformation() {
     });
 
     setPhone(setting?.basicInfo?.phone || "");
-     setLastUpdated(setting?.updatedAt || "");
+    setLastUpdated(setting?.updatedAt || "");
   }, [setting]);
 
   const handlePhoneChange = (value) => {
@@ -78,15 +76,8 @@ function BasicInformation() {
   };
 
   return (
-    <Card
-      style={{
-        borderRadius: 0,
-        borderColor: theme ? "transparent" : "#fff",
-      }} >
-
-      <Form form={form}
-        layout="vertical"
-        onFinish={handleSubmit}>
+    <Card style={{ borderRadius: 0, borderColor: theme ? "transparent" : "#fff", }}>
+      <Form form={form} layout="vertical" onFinish={handleSubmit}>
         <Row gutter={[24, 16]}>
           <Col xs={24} sm={24} md={12} lg={12}>
             <Form.Item
@@ -95,12 +86,12 @@ function BasicInformation() {
               rules={[
                 {
                   required: true,
-                  message: t("please.enter.business.name", { defaultValue: "Please enter business name" }),
+                  message: t("please.enter.business.name", { defaultValue: "Please Enter Business Name" }),
                 },
               ]}
             >
               <Input
-                placeholder={t("bussiness.name", { defaultValue: "Enter Your Bussiness Name", })} />
+                placeholder={t("enter.your.business.name", { defaultValue: "Enter Your Business Name", })} />
             </Form.Item>
           </Col>
 
@@ -111,12 +102,12 @@ function BasicInformation() {
               rules={[
                 {
                   required: true,
-                  message: t("please.enter.business.category", { defaultValue: "Please enter business category" })
+                  message: t("please.enter.business.category", { defaultValue: "Please Enter Business Category" })
                 },
               ]}
             >
               <Input
-                placeholder={t("business.category", { defaultValue: "Enter Your Business Category", })} />
+                placeholder={t("enter.your.business.category", { defaultValue: "Enter Your Business Category", })} />
             </Form.Item>
           </Col>
         </Row>
@@ -129,12 +120,12 @@ function BasicInformation() {
               rules={[
                 {
                   required: true,
-                  message: t("please.enter.address", { defaultValue: "Please enter address" }),
+                  message: t("please.enter.address", { defaultValue: "Please Enter Address" }),
                 },
               ]}
             >
               <Input
-                placeholder={t("address", { defaultValue: "Enter Your  Address", })} />
+                placeholder={t("enter.your.address", { defaultValue: "Enter Your Address", })} />
             </Form.Item>
           </Col>
 
@@ -144,7 +135,7 @@ function BasicInformation() {
               name="website_url"
             >
               <Input
-                placeholder={t("website.url", { defaultValue: "Enter Website Url", })} />
+                placeholder={t("enter.website.url", { defaultValue: "Enter Website Url", })} />
             </Form.Item>
           </Col>
         </Row>
@@ -157,12 +148,12 @@ function BasicInformation() {
               rules={[
                 {
                   required: true,
-                  message: t("please.enter.email", { defaultValue: "Please enter email" }),
+                  message: t("please.enter.email", { defaultValue: "Please Enter Email" }),
                 },
               ]}
             >
               <Input
-                placeholder={t("email", { defaultValue: "Enter Your Email", })} />
+                placeholder={t("enter.your.email", { defaultValue: "Enter Your Email", })} />
             </Form.Item>
           </Col>
 
@@ -174,7 +165,7 @@ function BasicInformation() {
               rules={[
                 {
                   required: true,
-                  message: t("please.enter.phone", { defaultValue: "Please enter phone" }),
+                  message: t("please.enter.phone", { defaultValue: "Please Enter Phone Number" }),
                 },
               ]}
             >
@@ -183,13 +174,7 @@ function BasicInformation() {
                 country={"in"}
                 value={phone}
                 onChange={handlePhoneChange}
-                placeholder={t("phone.number", { defaultValue: "Enter Phone Number" })}
-              // onKeyDown={(e) => {
-              //   if (e.key === "Enter") {
-              //     e.preventDefault();
-              //     onSendOtp();
-              //   }
-              // }}
+                placeholder={t("enter.phone.number", { defaultValue: "Enter Phone Number" })}
               />
             </Form.Item>
 
@@ -202,12 +187,12 @@ function BasicInformation() {
           rules={[
             {
               required: true,
-              message: t("please.enter.about.your.business", { defaultValue: "Please enter about your business" }),
+              message: t("please.enter.about.your.business", { defaultValue: "Please Enter About Your Business" }),
             },
           ]}
         >
           <TextArea rows={5}
-            placeholder={t("about.your.business", { defaultValue: "Enter About Your Business", })} />
+            placeholder={t("enter.about.your.business", { defaultValue: "Enter About Your Business", })} />
         </Form.Item>
 
         <Row gutter={[24, 16]} justify="space-between" align="middle" >

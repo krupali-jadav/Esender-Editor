@@ -12,14 +12,8 @@ import { formatDate } from "../../util/commom.utils";
 import { useDebounce } from "../../util/useDebounce";
 import DeleteModal from "../Styles/DeleteModel";
 const { Text } = Typography;
-const statusColors = {
-    published: "success",
-    draft: "warning",
-    archived: "default",
-};
 
 export default function Templates() {
-
     const navigate = useNavigate();
     const [templates, setTemplates] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -37,6 +31,11 @@ export default function Templates() {
     const [deleteTemplateRecord, setDeleteTemplateRecord] = useState(null);
     const [deleteLoading, setDeleteLoading] = useState(false);
 
+    const statusColors = {
+        published: "success",
+        draft: "warning",
+        archived: "default",
+    };
     const isEmptyEditorHtml = (html) =>
         !html ||
         html.trim() === "" ||
@@ -91,15 +90,8 @@ export default function Templates() {
             });
 
             if (data?.status) {
-                setTemplates((prev) =>
-                    prev.filter(
-                        (item) => item._id !== deleteTemplateRecord._id
-                    )
-                );
-
-                message.success(
-                    data?.message || "Template deleted successfully"
-                );
+                setTemplates((prev) => prev.filter((item) => item._id !== deleteTemplateRecord._id));
+                message.success(data?.message);
 
                 setDeleteModalOpen(false);
                 setDeleteTemplateRecord(null);
@@ -112,7 +104,6 @@ export default function Templates() {
         } finally {
             setDeleteLoading(false);
         }
-
     };
 
     const handleChangeStatus = async (template, enable) => {
@@ -126,10 +117,7 @@ export default function Templates() {
 
             if (data?.status) {
                 setTemplates((prev) =>
-                    prev.map((item) =>
-                        item._id === template._id ? { ...item, enable, } : item
-                    )
-                );
+                    prev.map((item) => item._id === template._id ? { ...item, enable, } : item));
                 message.success(enable ? "Template enabled successfully" : "Template disabled successfully");
             } else {
                 message.error(data?.message || "Failed to change template status");
@@ -148,12 +136,8 @@ export default function Templates() {
                 <Row gutter={[16, 16]} align="middle">
                     <Col xs={24} lg={14}>
                         <AppPageHeader
-                            title={t("templates.library", {
-                                defaultValue: "Template Library",
-                            })}
-                            description={t("templates.description", {
-                                defaultValue: "Manage and discover email templates across your workspace.",
-                            })}
+                            title={t("templates.library", { defaultValue: "Template Library", })}
+                            description={t("templates.description", { defaultValue: "Manage and discover email templates across your workspace.", })}
                         />
                     </Col>
 
@@ -192,11 +176,7 @@ export default function Templates() {
                                     defaultValue="all"
                                     variant="borderless"
                                     suffixIcon={<DownOutlined />}
-                                    style={{
-                                        width: 130,
-                                        background: theme ? "#0A1622" : "#F5F8FA",
-                                        borderRadius: 8,
-                                    }}
+                                    style={{ width: 130, background: theme ? "#0A1622" : "#F5F8FA", borderRadius: 8, }}
                                     options={[
                                         { value: "all", label: t('all.projects', { defaultValue: 'All Projects' }) },
                                         { value: "marketing", label: t('marketing.hub', { defaultValue: 'Marketing Hub' }) },
@@ -230,11 +210,7 @@ export default function Templates() {
                                     onChange={(value) => setSortBy(value)}
                                     variant="borderless"
                                     suffixIcon={<DownOutlined />}
-                                    style={{
-                                        width: 150,
-                                        background: theme ? "#0A1622" : "#F5F8FA",
-                                        borderRadius: 8,
-                                    }}
+                                    style={{ width: 150, background: theme ? "#0A1622" : "#F5F8FA", borderRadius: 8, }}
                                     options={[
                                         {
                                             value: "created-at",
@@ -261,8 +237,7 @@ export default function Templates() {
                         </Col>
                     ) : templates.length > 0 ? (
                         templates.map((tpl) => (
-                            <Col key={tpl._id} xs={24} sm={12} lg={6}
-                            >
+                            <Col key={tpl._id} xs={24} sm={12} lg={6}>
                                 <Card
                                     hoverable
                                     style={{ background: theme ? "#0F2233" : "#e1e4e6", }}
@@ -286,15 +261,7 @@ export default function Templates() {
                                                     }}
                                                 />
                                             ) : tpl.text?.trim() ? (
-                                                <Flex
-                                                    align="center"
-                                                    justify="center"
-                                                    style={{
-                                                        height: "100%",
-                                                        padding: 16,
-                                                        background: "#fff",
-                                                    }}
-                                                >
+                                                <Flex align="center" justify="center" style={{ height: "100%", padding: 16, background: "#fff", }}>
                                                     <Text style={{ color: "#000" }}>
                                                         {tpl.text.replace(/{{\s*[^}]+\s*}}/g, "{{name}}")}
                                                     </Text>
@@ -378,9 +345,7 @@ export default function Templates() {
                                                     size="small"
                                                     checked={tpl.enable}
                                                     loading={statusLoading === tpl._id}
-                                                    onChange={(checked) =>
-                                                        handleChangeStatus(tpl, checked)
-                                                    }
+                                                    onChange={(checked) => handleChangeStatus(tpl, checked)}
                                                     style={{ marginRight: 4, transform: "scale(0.85)", }}
                                                 />
                                                 <Tag variant="filled" style={{ background: theme ? "#0A1622" : "#F5F8FA", }} >

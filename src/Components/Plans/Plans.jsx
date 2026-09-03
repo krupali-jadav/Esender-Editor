@@ -7,9 +7,9 @@ import { t } from "i18next";
 import { useEffect, useState } from "react";
 import { getPlans, getSubscriptionPlans } from "./PlanApi";
 import EmptyState from "../Styles/EmptyState";
+const { Title, Text, Paragraph } = Typography;
 
 export default function Plans() {
-    const { Title, Text, Paragraph } = Typography;
     const theme = useSelector((state) => state?.app?.theme);
     const [plans, setPlans] = useState([]);
     const [plansLoading, setPlansLoading] = useState(false);
@@ -104,17 +104,12 @@ export default function Plans() {
                             <Row gutter={[16, 16]}>
                                 <Col xs={24} md={8}>
                                     <Card size="small" style={{ height: "100%", background: "rgba(32, 166, 206, 0.04)", }}>
-                                        <Space
-                                            direction="vertical"
-                                            size={4}
-                                        >
+                                        <Space direction="vertical" size={4}>
                                             <Text type="secondary">
                                                 {t("plan", { defaultValue: "Plan", })}
                                             </Text>
 
-                                            <Text
-                                                strong
-                                                style={{ fontSize: 18, }}>
+                                            <Text strong style={{ fontSize: 18, }}>
                                                 {subscription?.planName || "-"}
                                             </Text>
                                         </Space>
@@ -338,10 +333,7 @@ export default function Plans() {
                                                         },
                                                         {
                                                             label: t("storage", { defaultValue: "Storage" }),
-                                                            value: `${(
-                                                                (plan.limits?.storageBytes ?? 0) /
-                                                                (1024 * 1024 * 1024)
-                                                            ).toFixed(0)} GB`,
+                                                            value: `${((plan.limits?.storageBytes ?? 0) / (1024 * 1024 * 1024)).toFixed(0)} GB`,
                                                             icon: <DatabaseOutlined />,
                                                         },
                                                         {
@@ -361,10 +353,7 @@ export default function Plans() {
                                                                 }}
                                                             >
                                                                 <Flex wrap vertical align="center" gap={2}>
-                                                                    <span style={{
-                                                                        color: color
-                                                                            .end, fontSize: 16,
-                                                                    }}>
+                                                                    <span style={{ color: color.end, fontSize: 16, }}>
                                                                         {limit.icon}
                                                                     </span>
 
@@ -387,12 +376,12 @@ export default function Plans() {
                                                             key={key}
                                                             style={{ display: "flex", alignItems: "center", gap: 8, minHeight: 20, }}>
                                                             {enabled ? (
-                                                                <CheckCircleFilled style={{ color: "#20A6CE", fontSize: 16, flexShrink: 0, }}/>
+                                                                <CheckCircleFilled style={{ color: "#20A6CE", fontSize: 16, flexShrink: 0, }} />
                                                             ) : (
-                                                                <CloseCircleFilled style={{ color: theme ? "#667085" : "#98A2B3", fontSize: 16, flexShrink: 0, }}/>
+                                                                <CloseCircleFilled style={{ color: theme ? "#667085" : "#98A2B3", fontSize: 16, flexShrink: 0, }} />
                                                             )}
 
-                                                            <Text style={{fontSize: 14, lineHeight: "18px", color: enabled ? (theme ? "#D0D5DD" : "#475467"): (theme ? "#667085" : "#98A2B3"),  }}>
+                                                            <Text style={{ fontSize: 14, lineHeight: "18px", color: enabled ? (theme ? "#D0D5DD" : "#475467") : (theme ? "#667085" : "#98A2B3"), }}>
                                                                 {label}
                                                             </Text>
                                                         </div>

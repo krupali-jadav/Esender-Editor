@@ -37,27 +37,25 @@ import { Column } from "@ant-design/plots";
 import { useNavigate } from "react-router-dom";
 import { formatDate } from "../../util/commom.utils";
 import EmptyState from "../Styles/EmptyState";
-
 const { Title, Text, Link } = Typography;
-
-const quickActions = [
-    { title: "API Docs", icon: <FileTextOutlined /> },
-    { title: "SDK Snippets", icon: <CodeOutlined /> },
-    { title: "Support Center", icon: <CustomerServiceOutlined /> },
-];
 
 export default function Overview() {
     const navigate = useNavigate();
     const theme = useSelector((state) => state?.app?.theme);
     const [range, setRange] = useState(7);
     const [loading, setLoading] = useState(false);
-
     const [overview, setOverview] = useState({
         subscription: null,
         stats: null,
         usageTrend: [],
         recentProjects: [],
     });
+
+    const quickActions = [
+        { title: "API Docs", icon: <FileTextOutlined /> },
+        { title: "SDK Snippets", icon: <CodeOutlined /> },
+        { title: "Support Center", icon: <CustomerServiceOutlined /> },
+    ];
 
     const fetchOverview = async (selectedRange = range) => {
         try {
@@ -97,23 +95,9 @@ export default function Overview() {
 
     const stats = overview.stats;
     const subscription = overview.subscription;
-
-    const projectPercent =
-        stats?.projectsLimit > 0
-            ? (stats.projectsUsed / stats.projectsLimit) * 100
-            : 0;
-
-    const editorUsersPercent =
-        stats?.monthlyEditorUsersLimit > 0
-            ? (stats.monthlyEditorUsersUsed /
-                stats.monthlyEditorUsersLimit) *
-            100
-            : 0;
-
-    const sessionsPercent =
-        stats?.monthlySessionsLimit > 0
-            ? (stats.monthlySessionsUsed / stats.monthlySessionsLimit) * 100
-            : 0;
+    const projectPercent = stats?.projectsLimit > 0 ? (stats.projectsUsed / stats.projectsLimit) * 100 : 0;
+    const editorUsersPercent = stats?.monthlyEditorUsersLimit > 0 ? (stats.monthlyEditorUsersUsed / stats.monthlyEditorUsersLimit) * 100 : 0;
+    const sessionsPercent = stats?.monthlySessionsLimit > 0 ? (stats.monthlySessionsUsed / stats.monthlySessionsLimit) * 100 : 0;
 
     const projectColumns = [
         {
@@ -155,11 +139,7 @@ export default function Overview() {
             key: "status",
             render: (status) => (
                 <Badge
-                    status={
-                        status === "active"
-                            ? "success"
-                            : "warning"
-                    }
+                    status={status === "active" ? "success" : "warning"}
                     text={status}
                 />
             ),
@@ -177,7 +157,7 @@ export default function Overview() {
         <PageContainer title={false}>
             <Flex justify="space-between" align="center">
                 <AppPageHeader title={t("overview", { defaultValue: "Overview", })}
-                    description={t("overview.description", { defaultValue: "Good morning, Alex. Here's what's happening with your workspace." })}
+                    description={t("overview.description", { defaultValue: "Here's what's happening with your workspace." })}
                 />
 
                 <Select
@@ -214,12 +194,7 @@ export default function Overview() {
                                     {t("subscription", { defaultValue: "SUBSCRIPTION" })}
                                 </Text>
 
-                                <CreditCardOutlined
-                                    style={{
-                                        color: "#20A6CE",
-                                        fontSize: 20,
-                                    }}
-                                />
+                                <CreditCardOutlined style={{ color: "#20A6CE", fontSize: 20, }} />
                             </Space>
 
                             <Title level={3} style={{ margin: "8px 0" }}>
@@ -245,9 +220,7 @@ export default function Overview() {
                             </Space>
 
                             <Title level={3} style={{ margin: "8px 0" }}>
-                                {stats
-                                    ? `${stats.projectsUsed} / ${stats.projectsLimit}`
-                                    : "-"}
+                                {stats ? `${stats.projectsUsed} / ${stats.projectsLimit}` : "-"}
                             </Title>
 
                             <Progress
@@ -448,9 +421,7 @@ export default function Overview() {
                                                 {...props}
                                                 style={{
                                                     ...props.style,
-                                                    background: theme
-                                                        ? "#0e1c29"
-                                                        : "#f0f0f0",
+                                                    background: theme ? "#0e1c29" : "#f0f0f0",
                                                 }}
                                             />
                                         ),
