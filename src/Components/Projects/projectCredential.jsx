@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { getCredentials, rotateLicense, rotateSecrets } from './ProjectsApi';
 import { t } from 'i18next';
-
 const { Text, Title } = Typography
 
 function ProjectCredential() {
@@ -22,13 +21,13 @@ function ProjectCredential() {
 
             if (response?.status) {
                 setCredentials(response?.credentials);
-                message.success(response?.message);
             } else {
                 setCredentials();
             }
         } catch (error) {
-            console.error( error);
+            console.error(error);
             setCredentials(null);
+            message.error(error?.message);
         } finally {
             setCredentialsLoading(false);
         }
@@ -53,7 +52,7 @@ function ProjectCredential() {
         } catch (error) {
             console.log(error);
             message.error(error?.message);
-        }   
+        }
     };
     const handleRotateSecret = async () => {
         if (!selectedProject?._id) return;
@@ -88,8 +87,7 @@ function ProjectCredential() {
                         description={
                             <Text type="secondary">
                                 {t("one.time.reveal.policy", {
-                                    defaultValue:
-                                        "For your security, secret keys are only displayed once upon creation or rotation. If lost, you must rotate the key to generate a new one. We do not store plain-text keys.",
+                                    defaultValue: "For your security, secret keys are only displayed once upon creation or rotation. If lost, you must rotate the key to generate a new one. We do not store plain-text keys.",
                                 })}
                             </Text>
                         }
@@ -129,7 +127,7 @@ function ProjectCredential() {
                                         <Button icon={<ReloadOutlined />} onClick={handleRotateLicense}>
                                             {t("rotate.license", { defaultValue: "Rotate License" })}
                                         </Button>
-                                        <Text copyable={{ text: credentials?.licenseKeyPrefix || "", }} />
+                                        <Text copyable={{ text: credentials?.licenseKeyPrefix }} />
                                     </Flex>
                                 </Flex>
                             </Card>
@@ -146,8 +144,7 @@ function ProjectCredential() {
 
                                 <Text type="secondary">
                                     {t("used.to.verify.webhook.payloads", {
-                                        defaultValue:
-                                            "Used to cryptographically verify webhook payloads sent to your endpoints.",
+                                        defaultValue: "Used to cryptographically verify webhook payloads sent to your endpoints.",
                                     })}
                                 </Text>
                             </Space>
@@ -168,18 +165,13 @@ function ProjectCredential() {
                                     </Space>
 
                                     <Flex justify="space-between" align="center" gap="large" style={{ width: "100%" }}>
-                                        <Text code style={{ flex: 1 }}>
-                                            {credentials?.Secrets || "N/A"}
+                                        <Text code>
+                                            {credentials?.Secrets || "reagtehwetjhew"}
                                         </Text>
 
                                         <Space size="middle">
-                                            <Button
-                                                icon={<ReloadOutlined />}
-                                                onClick={handleRotateSecret}
-                                            >
-                                                {t("rotate.license", {
-                                                    defaultValue: "Rotate License",
-                                                })}
+                                            <Button icon={<ReloadOutlined />} onClick={handleRotateSecret}>
+                                                {t("rotate.license", { defaultValue: "Rotate License", })}
                                             </Button>
                                             <Text copyable={{ text: credentials?.Secrets || "", }}
                                             />

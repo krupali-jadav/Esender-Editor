@@ -19,7 +19,7 @@ function ApiKey() {
 
       if (data?.status) {
         setApiKey(data.apiKey);
-        message.success(data?.message );
+        message.success(data?.message);
       }
     } catch (error) {
       console.log(error);
@@ -36,11 +36,7 @@ function ApiKey() {
 
   return (
     <Col xs={24} sm={26} md={22} lg={22} xl={24} xxl={13}>
-      <Card
-        style={{
-          borderRadius: 0,
-          borderColor: theme ? "transparent" : "#fff",
-        }}>
+      <Card style={{ borderRadius: 0, borderColor: theme ? "transparent" : "#fff", }}>
         <Space direction="vertical" style={{ width: "100%" }}>
           <Text>
             {t("your.api.key", { defaultValue: "Your API Key" })}
@@ -67,17 +63,12 @@ function ApiKey() {
                   />
                 ) : null
               }
-              style={{ minWidth: 0, flex: 1 }}
             />
 
             <Button
               type="primary"
               loading={loading}
               onClick={handleGenerate}
-              style={{
-                flexShrink: 0,
-                whiteSpace: "nowrap",
-              }}
             >
               {t("generate", { defaultValue: "Generate" })}
             </Button>
