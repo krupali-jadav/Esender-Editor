@@ -30,18 +30,14 @@ function AddSupport({ open, onClose, onSuccess, editData }) {
             }
 
             if (data?.status) {
-                message.success(
-                    editData
-                        ? t("support.updated.successfully", { defaultValue: "Support updated successfully" })
-                        : t("support.added.successfully", { defaultValue: "Support added successfully" })
-                );
-
+                message.success(editData ? t("support.updated.successfully", { defaultValue: "Support updated successfully" }) : t("support.added.successfully", { defaultValue: "Support added successfully" }));
                 onSuccess?.();
                 form.resetFields();
                 setPhone("");
                 onClose();
             }
         } catch (error) {
+            message.error(error?.message);
             console.log(error);
         } finally {
             setLoading(false);
@@ -76,76 +72,70 @@ function AddSupport({ open, onClose, onSuccess, editData }) {
     };
     return (
         <Col>
-        <Modal
-            title={editData
-                ? t("edit.support", {
-                    defaultValue: "Edit Support",
-                })
-                : t("add.support", {
-                    defaultValue: "Add Support",
-                })}
-            open={open}
-            onCancel={() => {
-                form.resetFields();
-                setPhone("");
-                onClose();
-            }}
-                width = { 500}
+            <Modal
+                title={editData ? t("edit.support", { defaultValue: "Edit Support", }) : t("add.support", { defaultValue: "Add Support", })}
+                open={open}
+                onCancel={() => {
+                    form.resetFields();
+                    setPhone("");
+                    onClose();
+                }}
+                width={500}
                 centered
-                footer = {
+                footer={
                     [
-                    <Button key="cancel" onClick={onClose}>
-                        {t("cancel", { defaultValue: "Cancel" })}
-                    </Button>,
-                    <Button
-                        key="add"
-                        type="primary"
-                        loading={loading}
-                        onClick={() => form.submit()}
-                    >
-                        {editData ? t("edit", { defaultValue: "Edit" }) : t("add", { defaultValue: "Add" })}
-                    </Button>
+                        <Button key="cancel" onClick={onClose}>
+                            {t("cancel", { defaultValue: "Cancel" })}
+                        </Button>,
+                        <Button
+                            key="add"
+                            type="primary"
+                            loading={loading}
+                            onClick={() => form.submit()}
+                        >
+                            {editData ? t("edit", { defaultValue: "Edit" }) : t("add", { defaultValue: "Add" })}
+                        </Button>
                     ]}
+            >
+
+                <Form layout="vertical" form={form} onFinish={handleSubmit}>
+                    <Form.Item
+                        label={t("name", { defaultValue: "Name" })}
+                        name="name"
                     >
+                        <Input
+                            placeholder={t("enter.name", { defaultValue: "Enter name" })}
+                        />
+                    </Form.Item>
 
-                    <Form layout="vertical" form={form} onFinish={handleSubmit}>
-                        <Form.Item
-                            label={t("name", { defaultValue: "Name" })}
-                            name="name"
-                        >
-                            <Input
-                                placeholder={t("enter.name", { defaultValue: "Enter name" })}
-                            />
-                        </Form.Item>
+                    <Form.Item
+                        name="phone"
+                        label={t("phone.number", { defaultValue: "Phone Number" })}
 
-                        <Form.Item
-                            name="phone"
-                            label={t("phone.number", { defaultValue: "Phone Number" })}
-                        
-                        >
-                            <PhoneInput
-                                enableSearch
-                                country={"in"}
-                                value={phone}
-                                onChange={handlePhoneChange}
-                                placeholder={t("phone.number", { defaultValue: "Enter Phone Number" })}
+                    >
+                        <PhoneInput
+                            enableSearch
+                            country={"in"}
+                            value={phone}
+                            onChange={handlePhoneChange}
+                            placeholder={t("phone.number", { defaultValue: "Enter Phone Number" })}
 
-                            />
-                        </Form.Item>
+                        />
+                    </Form.Item>
 
-                        <Form.Item
-                            label={t("department", { defaultValue: "Department" })}
-                            name="department"
-                        >
-                            <Input
-                                placeholder={t("enter.department", { defaultValue: "Enter Department" })}
-                            />
-                        </Form.Item>
-                    </Form>
+                    <Form.Item
+                        label={t("department", { defaultValue: "Department" })}
+                        name="department"
+                    >
+                        <Input
+                            placeholder={t("enter.department", { defaultValue: "Enter Department" })}
+                        />
+                    </Form.Item>
+                </Form>
 
-        </Modal >
+            </Modal >
         </Col>
     )
-            }
+}
 
 export default AddSupport

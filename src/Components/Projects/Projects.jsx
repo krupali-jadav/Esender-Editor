@@ -10,34 +10,28 @@ import { t } from 'i18next'
 import ProjectOverview from './ProjectOverview'
 const { Title, Text } = Typography
 
-
-const TAB_ITEMS = [
-    { key: 'overview', label: 'Overview' },
-    { key: 'templates', label: 'Templates' },
-    { key: 'domains', label: 'Domains' },
-    { key: 'credentials', label: 'Credentials' },
-    { key: 'integration', label: 'Integration' },
-]
-
 function Projects() {
     const navigate = useNavigate()
     const [activeTab, setActiveTab] = useState('overview');
     const selectedProject = useSelector((state) => state?.app?.selectedProject);
+
+    const TAB_ITEMS = [
+        { key: 'overview', label: t('overview', { defaultValue: 'Overview' }) },
+        { key: 'templates', label: t('templates', { defaultValue: 'Templates' }) },
+        { key: 'domains', label: t('domains', { defaultValue: 'Domains' }) },
+        { key: 'credentials', label: t('credentials', { defaultValue: 'Credentials' }) },
+        { key: 'integration', label: t('integration', { defaultValue: 'Integration' }) },
+    ]
 
     return (
         <div>
             <div style={{ margin: 0 }}>
                 <div style={{ padding: '24px 0 0 24px' }}>
                     {/* Breadcrumb */}
-                    <Text type="secondary">Projects</Text>
+                    <Text type="secondary">{t('project', { defaultValue: 'Project' })}</Text>
 
                     <Flex wrap="wrap" justify="space-between" align="center" gap={12}>
-                        <Flex
-                            wrap="wrap"
-                            align="center"
-                            gap={8}
-                            style={{ minWidth: 0, flex: 1 }}
-                        >
+                        <Flex wrap="wrap" align="center" gap={8} style={{ minWidth: 0, flex: 1 }}>
                             <Title level={3} ellipsis style={{ margin: 0, minWidth: 0, }}>
                                 {selectedProject?.name || "Project"}
                             </Title>
@@ -62,7 +56,7 @@ function Projects() {
                     </Flex>
 
                     <ConfigProvider theme={{ token: { colorPrimary: '#20A6CE', }, }}>
-                        <Tabs
+                        <Tabs 
                             activeKey={activeTab}
                             onChange={setActiveTab}
                             items={TAB_ITEMS}

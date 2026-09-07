@@ -171,14 +171,6 @@ export default function Overview() {
                             value: "7",
                             label: t("last7Days", { defaultValue: "Last 7 Days" }),
                         },
-                        // {
-                        //     value: "15",
-                        //     label: t("last15Days", { defaultValue: "Last 15 Days" }),
-                        // },
-                        // {
-                        //     value: "30",
-                        //     label: t("last30Days", { defaultValue: "Last 30 Days" }),
-                        // },
                     ]}
                 />
             </Flex>
@@ -210,8 +202,7 @@ export default function Overview() {
                     {/* Projects */}
                     <Col xs={24} sm={12} lg={6}>
                         <Card loading={loading}>
-                            <Space
-                                style={{ width: "100%", justifyContent: "space-between", }} align="start">
+                            <Space style={{ width: "100%", justifyContent: "space-between", }} align="start">
                                 <Text type="secondary">
                                     {t("projects", { defaultValue: "PROJECTS" })}
                                 </Text>
@@ -294,8 +285,6 @@ export default function Overview() {
                                     suffixIcon={<DownOutlined />}
                                     options={[
                                         { value: "7", label: t("last.7.Days", { defaultValue: "Last 7 Days" }) },
-                                        // { value: "15", label: t("last.15.Days", { defaultValue: "Last 15 Days" }) },
-                                        // { value: "30", label: t("last.30.Days", { defaultValue: "Last 30 Days" }) },
                                     ]}
                                 />
                             }
