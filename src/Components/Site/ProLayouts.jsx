@@ -104,9 +104,9 @@ const ProLayouts = ({ children }) => {
         if (profileMissing) {
             if (location.pathname !== "/profile") {
                 setRedirectPage("/profile");
-                setModalTitle("Please Complete Your Profile");
+                setModalTitle(t("please.complete.profile", { defaultValue: "Please Complete Your Profile" }));
                 setModalDescription(
-                    "Please complete your profile information before continuing."
+                    t("please.complete.your.profile.information.before.continuing", { defaultValue: "Please complete your profile information before continuing." })
                 );
                 setOpen(true);
             }
@@ -116,9 +116,9 @@ const ProLayouts = ({ children }) => {
         if (basicMissing) {
             if (location.pathname !== "/settings") {
                 setRedirectPage("/settings");
-                setModalTitle("Please Complete Your Settings");
+                setModalTitle(t("please.complete.settings", { defaultValue: "Please Complete Your Settings" }));
                 setModalDescription(
-                    "Please complete your basic information before continuing."
+                    t("please.complete.your.basic.information.before.continuing", { defaultValue: "Please complete your basic information before continuing." })
                 );
                 setOpen(true);
             }
@@ -155,19 +155,13 @@ const ProLayouts = ({ children }) => {
 
         const breadcrumbItems = [
             {
-                title: (
-                    <HomeOutlined
-                        onClick={() => navigate("/")}
-                    />
-                ),
+                title: (<HomeOutlined onClick={() => navigate("/")} />),
             },
             ...items,
         ];
 
         return (
-            <Breadcrumb
-                items={screens.md ? breadcrumbItems : [breadcrumbItems.at(-1)]}
-            />
+            <Breadcrumb items={screens.md ? breadcrumbItems : [breadcrumbItems.at(-1)]} />
         );
     };
     const handleLanguageChange = (lang) => {
@@ -356,29 +350,17 @@ const ProLayouts = ({ children }) => {
                                     <Select
                                         showSearch
                                         placeholder={t("selectCurrencies")}
-                                        onChange={(value) => {
-                                            dispatch(changeCurrency(value));
-                                        }}
+                                        onChange={(value) => { dispatch(changeCurrency(value)); }}
                                         value={currency}
                                         style={{ width: 100, padding: "3px" }}
                                     >
                                         {panel?.currencies?.map((currencyItem) => (
                                             <Select.Option
-                                                key={
-                                                    typeof currencyItem === "object"
-                                                        ? currencyItem?.code
-                                                        : currencyItem
-                                                }
-                                                value={
-                                                    typeof currencyItem === "object"
-                                                        ? currencyItem?.code
-                                                        : currencyItem
-                                                }
+                                                key={typeof currencyItem === "object" ? currencyItem?.code : currencyItem}
+                                                value={typeof currencyItem === "object" ? currencyItem?.code : currencyItem}
                                             >
                                                 <Space>
-                                                    {typeof currencyItem === "object"
-                                                        ? currencyItem?.code
-                                                        : currencyItem}
+                                                    {typeof currencyItem === "object" ? currencyItem?.code : currencyItem}
                                                 </Space>
                                             </Select.Option>
                                         ))}
@@ -422,10 +404,7 @@ const ProLayouts = ({ children }) => {
                             <Select
                                 value={language ?? "en"}
                                 showSearch
-                                style={{
-                                    height: 45,
-                                    width: 150,
-                                }}
+                                style={{ height: 45, width: 150, }}
                                 onChange={handleLanguageChange}
                                 options={lang?.map((x) => ({
                                     value: x.key,
@@ -464,21 +443,11 @@ const ProLayouts = ({ children }) => {
                                 >
                                     {panel?.currencies?.map((currencyItem) => (
                                         <Select.Option
-                                            key={
-                                                typeof currencyItem === "object"
-                                                    ? currencyItem?.code
-                                                    : currencyItem
-                                            }
-                                            value={
-                                                typeof currencyItem === "object"
-                                                    ? currencyItem?.code
-                                                    : currencyItem
-                                            }
+                                            key={typeof currencyItem === "object" ? currencyItem?.code : currencyItem}
+                                            value={typeof currencyItem === "object" ? currencyItem?.code : currencyItem}
                                         >
                                             <Space>
-                                                {typeof currencyItem === "object"
-                                                    ? currencyItem?.code
-                                                    : currencyItem}
+                                                {typeof currencyItem === "object" ? currencyItem?.code : currencyItem}
                                             </Space>
                                         </Select.Option>
                                     ))}
@@ -522,10 +491,7 @@ const ProLayouts = ({ children }) => {
                             <Select
                                 value={language ?? "en"}
                                 showSearch
-                                style={{
-                                    height: 35,
-                                    width: 150,
-                                }}
+                                style={{ height: 35 }}
                                 onChange={handleLanguageChange}
                                 options={lang?.map((x) => ({
                                     value: x.key,
@@ -547,9 +513,7 @@ const ProLayouts = ({ children }) => {
                             <Flex vertical align="center">
                                 <div>
                                     © {formatDate(new Date(), "YYYY")}{" "}
-                                    {t("designed_&_developed", {
-                                        defaultValue: "Designed & Developed",
-                                    })}
+                                    {t("designed_&_developed", { defaultValue: "Designed & Developed" })}
                                 </div>
                                 <small>
                                     {t("by", { defaultValue: "By" })}{" "}
@@ -559,10 +523,7 @@ const ProLayouts = ({ children }) => {
                         </>
                     );
                 }}
-                menu={{
-                    type: "sub",
-                    collapsedShowGroupTitle: false,
-                }}
+                menu={{ type: "sub", collapsedShowGroupTitle: false }}
                 menuItemRender={(item, dom) => (
                     <div
                         onClick={() => {

@@ -20,6 +20,7 @@ import Package from "esender-email-editor";
 import AppPageHeader from "../Styles/AppHeader";
 import { useSelector } from "react-redux";
 import { createTemplate, getTemplateById, updateTemplate } from "./TemplateApi";
+import { t } from "i18next";
 const { Text } = Typography;
 
 function CreateTemplates() {
@@ -31,10 +32,7 @@ function CreateTemplates() {
     const { templateId } = useParams();
     const [editorLoading, setEditorLoading] = useState(!!templateId);
     const theme = useSelector((state) => state?.app?.theme);
-    const selectedProject = useSelector(
-        (state) => state?.app?.selectedProject
-    );
-
+    const selectedProject = useSelector((state) => state?.app?.selectedProject);
     const projectId = selectedProject?._id;
 
     const fetchTemplate = async () => {
@@ -46,11 +44,11 @@ function CreateTemplates() {
             if (data?.status) {
                 setTemplateData(data.template);
             } else {
-                message.error(data?.message || "Failed to load template");
+                message.error(data?.message);
             }
         } catch (error) {
             console.log(error);
-            message.error(error?.message || "Failed to load template");
+            message.error(error?.message);
         } finally {
             setEditorLoading(false);
         }
@@ -103,7 +101,7 @@ function CreateTemplates() {
             const hasHtmlContent = html && html.replace(/<[^>]*>/g, "").trim().length > 0;
 
             if (!hasHtmlContent && !text) {
-                message.warning("Add email content or a plain text version before saving.");
+                message.warning(t("add.email.content.or.plain.text.version", { defaultValue: "Add email content or a plain text version before saving." }));
                 return;
             }
 
@@ -138,15 +136,15 @@ function CreateTemplates() {
             }
 
             if (data?.status) {
-                message.success(data?.message || (templateId ? "Template updated successfully" : "Template created successfully"));
+                message.success(data?.message);
                 form.resetFields();
                 navigate("/templates");
             } else {
-                message.error(data?.message || (templateId ? "Failed to update template" : "Failed to create template"));
+                message.error(data?.message);
             }
         } catch (error) {
             console.log(error);
-            message.error(error?.message || (templateId ? "Failed to update template" : "Failed to create template"));
+            message.error(error?.message);
         } finally {
             setLoading(false);
         }
@@ -157,14 +155,14 @@ function CreateTemplates() {
             <Flex justify="space-between" align="center" >
                 {/* Header */}
                 <AppPageHeader
-                    title="Create Template"
-                    description="Create and design your email template."
+                    title={templateId ? t("editTemplate", { defaultValue: "Edit Template" }) : t("createTemplate", { defaultValue: "Create Template" })}
+                    description={templateId ? t("editTemplateDescription", { defaultValue: "Edit and design your email template." }) : t("createTemplateDescription", { defaultValue: "Create and design your email template." })}
                 />
                 <Button
                     icon={<ArrowLeftOutlined />}
                     onClick={() => navigate("/templates")}
                 >
-                    Back to Templates
+                    {t("back.to.templates", { defaultValue: "Back to Templates" })}
                 </Button>
             </Flex>
 
@@ -175,31 +173,31 @@ function CreateTemplates() {
                         <Row gutter={16} align="bottom">
                             <Col xs={24} md={11}>
                                 <Form.Item
-                                    label="Template Name"
+                                    label={t("template.name", { defaultValue: "Template Name" })}
                                     name="templateName"
                                     rules={[
                                         {
                                             required: true,
-                                            message: "Please enter template name",
+                                            message: t("please.enter.template.name", { defaultValue: "Please enter template name" }),
                                         },
                                     ]}
                                 >
-                                    <Input placeholder="Enter template name" />
+                                    <Input placeholder={t("enter.template.name", { defaultValue: "Enter template name" })} />
                                 </Form.Item>
                             </Col>
 
                             <Col xs={24} md={11}>
                                 <Form.Item
-                                    label="Subject"
+                                    label={t("subject", { defaultValue: "Subject" })}
                                     name="subject"
                                     rules={[
                                         {
                                             required: true,
-                                            message: "Please enter subject",
+                                            message: t("please.enter.subject", { defaultValue: "Please enter subject" }),
                                         },
                                     ]}
                                 >
-                                    <Input placeholder="Enter subject" />
+                                    <Input placeholder={t("enter.subject", { defaultValue: "Enter subject" })} />
                                 </Form.Item>
                             </Col>
 
@@ -211,7 +209,7 @@ function CreateTemplates() {
                                         loading={loading}
                                         block
                                     >
-                                        {templateId ? "Save" : "Create"}
+                                        {templateId ? t("save", { defaultValue: "Save" }) : t("create", { defaultValue: "Create" })}
                                     </Button>
                                 </Form.Item>
                             </Col>
@@ -220,11 +218,10 @@ function CreateTemplates() {
                         <Form.Item
                             label={<>Plain text version{" "}<Text type="secondary">(Optional)</Text></>}
                             name="text"
-                            tooltip="Fallback text shown by clients that cannot render HTML."
-                        >
+                            tooltip={t("fallback.text.tooltip", { defaultValue: "Fallback text shown by clients that cannot render HTML." })}>
                             <Input.TextArea
                                 rows={3}
-                                placeholder="Enter a plain text version of your email"
+                                placeholder={t("enter.plain.text.version", { defaultValue: "Enter a plain text version of your email" })}
                             />
                         </Form.Item>
                     </div>
