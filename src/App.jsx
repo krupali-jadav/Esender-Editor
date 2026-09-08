@@ -25,10 +25,11 @@ import WorkFlow from "./Components/WorkFlow/WorkFlow";
 import CreateTemplates from "./Components/Templates/CreateTemplate";
 import Sessions from "./Components/Session/Session";
 import SelectProject from "./Components/SelectProject/SelectProject";
-import { refreshProfile } from "./Components/Redux/action";
+import { getAppDetails, getExchangeRates, refreshProfile } from "./Components/Redux/action";
 import Settings from "./Components/Settings/Settings";
 import Order from "./Components/Order/Order";
 import Plans from "./Components/Plans/Plans";
+import { setPanel } from "./Components/Redux/Reducer/reducer.app";
 
 const ProtectedRoute = ({ component: Component, isAuthenticated, selectedProject }) => {
   if (!isAuthenticated) {
@@ -66,10 +67,23 @@ function App() {
   useEffect(() => {
     if (!token) return;
     dispatch(refreshProfile());
-    // dispatch(getExchangeRates());
+    dispatch(getExchangeRates());
 
   }, [token, dispatch]);
+  useEffect(() => {
+    const loadAppDetails = async () => {
+      try {
+        const app = await getAppDetails();
+        if (app) {
+          dispatch(setPanel(app));
+        }
+      } catch (error) {
+        console.error("Failed to load app details:", error);
+      }
+    };
 
+    loadAppDetails();
+  }, [dispatch]);
   const routes = [
     { path: "/overview", component: Overview },
     { path: "/templates", component: Templates },

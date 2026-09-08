@@ -53,7 +53,7 @@ function ProjectTemplate() {
     const isEmptyEditorHtml = (html) =>
         !html ||
         html.trim() === "" ||
-        html.includes("Drag Content Block Here");
+        html.includes(t("drag.content.block.here", { defaultValue: "Drag Content Block Here" }));
 
     const fetchTemplates = async (projectId) => {
         if (!projectId) {
@@ -88,7 +88,7 @@ function ProjectTemplate() {
             <Card>
                 <Flex justify="space-between" align="center" gap="middle">
                     <Input
-                        placeholder="Search templates..."
+                        placeholder={t("search.templates", { defaultValue: "(Search templates...)" })}
                         prefix={<SearchOutlined />}
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
@@ -162,9 +162,7 @@ function ProjectTemplate() {
                                         )}
 
                                         {hoveredTemplate === template._id && (
-                                            <Flex justify="center" align="center"
-                                                style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.4)" }}
-                                            >
+                                            <Flex justify="center" align="center" style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.4)" }} >
                                                 <Button
                                                     shape="circle"
                                                     icon={<EyeOutlined />}

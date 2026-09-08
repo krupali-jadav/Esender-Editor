@@ -33,7 +33,7 @@ function Projects() {
                     <Flex wrap="wrap" justify="space-between" align="center" gap={12}>
                         <Flex wrap="wrap" align="center" gap={8} style={{ minWidth: 0, flex: 1 }}>
                             <Title level={3} ellipsis style={{ margin: 0, minWidth: 0, }}>
-                                {selectedProject?.name || "Project"}
+                                {selectedProject?.name || t('project', { defaultValue: 'Project' })}
                             </Title>
 
                             <Tag color="green" bordered={false} >

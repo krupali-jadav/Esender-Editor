@@ -47,3 +47,21 @@ export const getInvoices = async (page = 0, limit = 20) => {
         return null;
     }
 };
+
+export const getSubscriptionQuote = async ({slug,billingInterval = "monthly",currency,gateway,}) => {
+    try {
+        const response = await axiosInstance.get("/subscription/quote", {
+            params: {
+                slug,
+                billingInterval,
+                currency,
+                gateway,
+            },
+        });
+
+        return response.data;
+    } catch (error) {
+        console.error("GET SUBSCRIPTION QUOTE ERROR:", error);
+        throw error;
+    }
+};

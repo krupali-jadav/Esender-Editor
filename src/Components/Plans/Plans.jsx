@@ -1,12 +1,15 @@
-import { Row, Col, Card, Badge, Progress, Typography, Space, Button, Flex, Spin, Empty, Divider, Avatar, } from "antd";
-import { CreditCardOutlined, WarningOutlined, CheckCircleFilled, CloseCircleFilled, ProjectOutlined, FileTextOutlined, TeamOutlined, ThunderboltOutlined, DatabaseOutlined, RobotOutlined, CalendarOutlined, } from "@ant-design/icons";
+import { Row, Col, Card, Badge, Typography, Space, Button, Flex, Spin, Divider, Avatar, } from "antd";
+import { CreditCardOutlined, CheckCircleFilled, CloseCircleFilled, ProjectOutlined, FileTextOutlined, TeamOutlined, ThunderboltOutlined, DatabaseOutlined, RobotOutlined, CalendarOutlined, } from "@ant-design/icons";
 import { PageContainer } from "@ant-design/pro-components";
 import { useSelector } from "react-redux";
 import AppPageHeader from "../Styles/AppHeader";
 import { t } from "i18next";
 import { useEffect, useState } from "react";
-import { getPlans, getSubscriptionPlans } from "./PlanApi";
+import { getPlans, getSubscriptionPlans, getSubscriptionQuote } from "./PlanApi";
 import EmptyState from "../Styles/EmptyState";
+import UpgradePlan from "./UpgradePlan";
+import { PiClockClockwiseFill } from "react-icons/pi";
+import SearchHistory from "../SearchHistory/SearchHistory";
 const { Title, Text, Paragraph } = Typography;
 
 export default function Plans() {
@@ -15,6 +18,13 @@ export default function Plans() {
     const [plansLoading, setPlansLoading] = useState(false);
     const [subscription, setSubscription] = useState(null);
     const [subscriptionLoading, setSubscriptionLoading] = useState(false);
+    const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
+    const [selectedPlan, setSelectedPlan] = useState(null);
+    const [quoteLoading, setQuoteLoading] = useState(false);
+    const [historyOpen, setHistoryOpen] = useState(false);
+    const [quote, setQuote] = useState(null);
+    const currency = useSelector((state) => state?.app?.currency || "INR");
+    const gateway = "razorpay";
 
     const fetchPlans = async () => {
         try {
@@ -51,6 +61,28 @@ export default function Plans() {
             setSubscriptionLoading(false);
         }
     };
+    const handleChoosePlan = async (plan) => {
+        try {
+            setSelectedPlan(plan);
+            setQuoteLoading(true);
+
+            const response = await getSubscriptionQuote({
+                slug: plan.slug,
+                billingInterval: plan.billingInterval || "monthly",
+                currency,
+                gateway,
+            });
+
+            if (response?.status && response?.quote) {
+                setQuote(response.quote);
+                setUpgradeModalOpen(true);
+            }
+        } catch (error) {
+            console.error("QUOTE ERROR:", error);
+        } finally {
+            setQuoteLoading(false);
+        }
+    };
     useEffect(() => {
         fetchPlans();
         fetchSubscription();
@@ -60,10 +92,27 @@ export default function Plans() {
     return (
 
         <PageContainer title={false}>
-            <AppPageHeader
-                title={t("plans", { defaultValue: "Plans" })}
-                description={t("plans.description", { defaultValue: "Manage your subscription, payment methods, and view your plans history." })}
-            />
+
+            <Row gutter={[16, 16]} align="middle">
+                <Col xs={24} lg={14}>
+                    <AppPageHeader
+                        title={t("plans", { defaultValue: "Plans" })}
+                        description={t("plans.description", { defaultValue: "Manage your subscription, payment methods, and view your plans history." })}
+                    />
+                </Col>
+
+                <Col xs={24} lg={10}>
+                    <Flex gap={8} justify="end" wrap>
+                        <Button
+                            type="primary"
+                            icon={<PiClockClockwiseFill />}
+                            onClick={() => setHistoryOpen(true)}
+                        >
+                            {t('subscription.history', { defaultValue: 'Subscription History' })}
+                        </Button>
+                    </Flex>
+                </Col>
+            </Row>
             <Space direction="vertical" size={16} style={{ width: "100%" }}>
                 {/* Current Subscription */}
                 <Row gutter={[16, 16]}>
@@ -94,7 +143,7 @@ export default function Plans() {
 
                                 <Badge
                                     status={subscription?.status === "active" ? "success" : "warning"}
-                                    text={subscription?.status || "No Subscription"}
+                                    text={subscription?.status || t("no.subscription", { defaultValue: "No Subscription" })}
                                 />
                             </Flex>
 
@@ -110,7 +159,7 @@ export default function Plans() {
                                             </Text>
 
                                             <Text strong style={{ fontSize: 18, }}>
-                                                {subscription?.planName || "-"}
+                                                {subscription?.planName || t("not.applicable", { defaultValue: "N/A" })}
                                             </Text>
                                         </Space>
                                     </Card>
@@ -148,7 +197,7 @@ export default function Plans() {
                                             </Space>
 
                                             <Text strong>
-                                                {subscription?.paymentMethod || "Not available"}
+                                                {subscription?.paymentMethod || t("not.available", { defaultValue: "Not Available" })}
                                             </Text>
                                         </Space>
                                     </Card>
@@ -283,15 +332,7 @@ export default function Plans() {
                                                     overflow: "hidden",
                                                     border: theme ? "1px solid rgba(255,255,255,0.08)" : "1px solid rgba(30,50,80,0.08)",
                                                 }}
-                                                styles={{
-                                                    body: {
-                                                        padding: "82px 28px 0",
-                                                        height: "100%",
-                                                        display: "flex",
-                                                        flexDirection: "column",
-                                                    },
-                                                }}
-                                            >
+                                                styles={{ body: { padding: "82px 28px 0", height: "100%", display: "flex", flexDirection: "column", }, }}>
                                                 {/* PLAN NAME */}
                                                 <Title
                                                     level={3}
@@ -394,6 +435,8 @@ export default function Plans() {
                                                         type="primary"
                                                         block
                                                         disabled={isCurrentPlan}
+                                                        loading={quoteLoading && selectedPlan?.slug === plan.slug}
+                                                        onClick={() => handleChoosePlan(plan)}
                                                         style={{
                                                             height: 38,
                                                             marginBottom: 18,
@@ -416,6 +459,21 @@ export default function Plans() {
                         </Row>
                     )}
                 </Card>
+                <UpgradePlan
+                    open={upgradeModalOpen}
+                    onCancel={() => {
+                        setUpgradeModalOpen(false);
+                        setQuote(null);
+                        setSelectedPlan(null);
+                    }}
+                    quote={quote}
+                    theme={theme}
+                    loading={quoteLoading}
+                />
+                <SearchHistory
+                    open={historyOpen}
+                    onCancel={() => setHistoryOpen(false)}
+                />
             </Space>
 
         </PageContainer >

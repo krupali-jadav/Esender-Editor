@@ -146,11 +146,11 @@ function ProjectDomain() {
                         items: [
                             {
                                 key: "edit",
-                                label: "Edit",
+                                label: t("edit", { defaultValue: "Edit" }),
                             },
                             {
                                 key: "delete",
-                                label: "Delete",
+                                label: t("delete", { defaultValue: "Delete" }),
                                 danger: true,
                             },
                         ],
