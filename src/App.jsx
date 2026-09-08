@@ -29,6 +29,7 @@ import { refreshProfile } from "./Components/Redux/action";
 import Settings from "./Components/Settings/Settings";
 import Order from "./Components/Order/Order";
 import Plans from "./Components/Plans/Plans";
+import Invoice from "./Components/Order/Invoice";
 
 const ProtectedRoute = ({ component: Component, isAuthenticated, selectedProject }) => {
   if (!isAuthenticated) {
@@ -83,6 +84,7 @@ function App() {
     { path: "/developers", component: Developers },
     { path: "/Plans", component: Plans },
     { path: "/settings", component: Settings },
+    { path: "/invoice/:id", component: Invoice },
   ];
 
   return (

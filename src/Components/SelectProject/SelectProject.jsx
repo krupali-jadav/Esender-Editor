@@ -57,7 +57,7 @@ export default function SelectProject() {
             );
         } catch (error) {
             console.error(error);
-            message.error("Failed to load projects");
+            message.error(error?.message);
         } finally {
             setLoading(false);
         }
@@ -67,7 +67,7 @@ export default function SelectProject() {
         const projectId = project?._id || project?.id;
 
         if (!projectId) {
-            message.error("Project ID not found");
+            message.error(t("project.id.not.found", { defaultValue: "Project ID not found" }));
             return;
         }
 
@@ -97,9 +97,7 @@ export default function SelectProject() {
     return (
         <ConfigProvider
             theme={{
-                algorithm: isDark
-                    ? antdTheme.darkAlgorithm
-                    : antdTheme.defaultAlgorithm,
+                algorithm: isDark ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm,
 
                 token: {
                     colorPrimary: PRIMARY_COLOR,
@@ -152,8 +150,7 @@ export default function SelectProject() {
                                 value: item.key,
                                 label: item.name,
                             }))}
-                            filterOption={(input, option) =>
-                                option?.label?.toLowerCase().includes(input.toLowerCase())
+                            filterOption={(input, option) => option?.label?.toLowerCase().includes(input.toLowerCase())
                             }
                         />
                     </Space>

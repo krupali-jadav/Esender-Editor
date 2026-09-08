@@ -11,7 +11,7 @@ export const createTemplate = async (payload) => {
         return response.data;
     } catch (error) {
         console.log(error);
-        message.error(error?.message || "Failed to create template");
+        message.error(error?.message);
     }
 };
 
@@ -22,7 +22,7 @@ export const getAllTemplates = async (payload) => {
         return response.data;
     } catch (error) {
         console.log(error);
-        message.error(error?.message || "Failed to get templates");
+        message.error(error?.message);
     }
 };
 
@@ -32,7 +32,7 @@ export const deleteTemplate = async (payload) => {
         return response.data;
     } catch (error) {
         console.log(error);
-        message.error(error?.message || "Failed to delete template");
+        message.error(error?.message);
     }
 };
 
@@ -48,7 +48,7 @@ export const changeTemplateStatus = async (templateId, enable) => {
         return response.data;
     } catch (error) {
         console.log(error);
-        message.error(error?.message || "Failed to change template status");
+        message.error(error?.message);
     }
 };
 
@@ -59,7 +59,7 @@ export const updateTemplate = async (payload) => {
         return response.data;
     } catch (error) {
         console.log(error);
-        message.error(error?.message || "Failed to update template");
+        message.error(error?.message);
     }
 };
 
@@ -70,6 +70,6 @@ export const getTemplateById = async (templateId) => {
         return response.data;
     } catch (error) {
         console.log(error);
-        message.error(error?.message || "Failed to get template");
+        message.error(error?.message);
     }
 };

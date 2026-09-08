@@ -21,7 +21,6 @@ import {
 import SelectTile from "./SelectTile";
 import { saveProfile } from "../Profile/ProfileApi";
 import { t } from "i18next";
-
 const { Title, Text, Link } = Typography;
 
 export default function StepWorkspaceBasics({ onNext }) {
@@ -89,20 +88,10 @@ export default function StepWorkspaceBasics({ onNext }) {
             </div>
 
             <Card
-                style={{
-                    width: "100%",
-                    borderTop: "3px solid #20A6CE",
-                }}
+                style={{width: "100%",borderTop: "3px solid #20A6CE",}}
                 styles={{ body: { padding: 24 } }}
             >
-                <Text
-                    strong
-                    style={{
-                        color: "#20A6CE",
-                        fontSize: 12,
-                        letterSpacing: 0.5, 
-                    }}
-                >
+                <Text strong style={{color: "#20A6CE",fontSize: 12,letterSpacing: 0.5, }}>
                     {t('step.1.of.4', { defaultValue: 'STEP 1 OF 4' })}
                 </Text>
 
@@ -112,11 +101,7 @@ export default function StepWorkspaceBasics({ onNext }) {
 
                 <Divider style={{ margin: "0 0 20px" }} />
 
-                <Form
-                    form={form}
-                    layout="vertical"
-                    onFinish={onSave}
-                >
+                <Form form={form} layout="vertical" onFinish={onSave}>
                     <Form.Item
                         label={t('workspace.company.name', { defaultValue: 'Workspace / Company Name' })}
                         name="name"
@@ -127,7 +112,7 @@ export default function StepWorkspaceBasics({ onNext }) {
                             },
                         ]}
                     >
-                        <Input placeholder="e.g. Acme Corp" />
+                        <Input placeholder={t('e.g.acme.corp', { defaultValue: 'e.g. Acme Corp' })} />
                     </Form.Item>
 
                     <Form.Item
@@ -140,7 +125,7 @@ export default function StepWorkspaceBasics({ onNext }) {
                             },
                         ]}
                     >
-                        <Input placeholder="e.g. example@company.com" />
+                        <Input placeholder={t('e.g.example.company.com', { defaultValue: 'e.g. example@company.com' })} />
                     </Form.Item>
 
                     <Form.Item label={t('primary.intended.use', { defaultValue: 'Primary Intended Use' })}>

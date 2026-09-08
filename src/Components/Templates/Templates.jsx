@@ -48,9 +48,7 @@ export default function Templates() {
             const payload = {
                 search: debouncedSearch,
                 sort_by: sortBy,
-                filter_by: {
-                    enable: true,
-                },
+                filter_by: {enable: true},
                 page: currentPage - 1,
                 limit: pageSize,
             };
@@ -116,15 +114,14 @@ export default function Templates() {
             );
 
             if (data?.status) {
-                setTemplates((prev) =>
-                    prev.map((item) => item._id === template._id ? { ...item, enable, } : item));
+                setTemplates((prev) => prev.map((item) => item._id === template._id ? { ...item, enable, } : item));
                 message.success(enable ? "Template enabled successfully" : "Template disabled successfully");
             } else {
-                message.error(data?.message || "Failed to change template status");
+                message.error(data?.message);
             }
         } catch (error) {
             console.error(error);
-            message.error(error?.message || "Failed to change template status");
+            message.error(error?.message);
         } finally {
             setStatusLoading(null);
         }

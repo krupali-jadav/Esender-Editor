@@ -1,9 +1,9 @@
 import { message } from "antd";
 import axiosInstance from "../../util/axiosInstance";
 
-export const getPlans = async () => {
+export const getOrders = async (page = 0, limit = 20) => {
     try {
-        const response = await axiosInstance.get("plans");
+        const response = await axiosInstance.get(`billing/orders?page=${page}&limit=${limit}`);
 
         if (response.data?.status) {
             return response.data;
@@ -12,22 +12,25 @@ export const getPlans = async () => {
         message.error(response.data?.message);
         return null;
     } catch (error) {
-        console.error(error);
+        console.log(error);
         message.error(error?.message);
+        return null;
     }
 };
-export const getSubscriptionPlans = async () => {
+
+export const getInvoices = async (page = 0, limit = 20) => {                                                    
     try {
-        const response = await axiosInstance.get("subscription");
+        const response = await axiosInstance.get(`billing/invoices?page=${page}&limit=${limit}`);
 
         if (response.data?.status) {
-            return response.data;
+            return response.data;               
         }
 
         message.error(response.data?.message);
         return null;
     } catch (error) {
-        console.error(error);
+        console.log(error);
         message.error(error?.message);
+        return null;
     }
 };

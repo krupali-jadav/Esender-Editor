@@ -5,64 +5,97 @@ import { t } from "i18next";
 import { useSelector } from "react-redux";
 import AppPageHeader from "../Styles/AppHeader";
 import { useEffect, useState } from "react";
-import { getInvoices } from "../Plans/PlanApi";
+import { getOrders } from "./OrderApi";
 import EmptyState from "../Styles/EmptyState";
-
+import { useNavigate } from "react-router-dom";
 const { Text, Link } = Typography;
+
 function Order() {
+    const navigate = useNavigate();
     const theme = useSelector((state) => state?.app?.theme);
-    const [invoices, setInvoices] = useState([]);
+    const [order, setOrder] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    const fetchInvoices = async () => {
+    const fetchOrders = async () => {
         try {
             setLoading(true);
 
-            const response = await getInvoices(0, 20);
+            const response = await getOrders(0, 20);
 
             if (response?.status) {
-                setInvoices(
-                    (response.invoices || []).map((invoice, index) => ({
+                setOrder(
+                    (response.orders || []).map((invoice, index) => ({
                         ...invoice,
                         key: invoice._id || index,
                     }))
                 );
             } else {
-                setInvoices([]);
+                setOrder([]);
             }
         } catch (error) {
             console.log(error);
-            setInvoices([]);
+            setOrder([]);
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchInvoices();
+        fetchOrders();
     }, []);
+
+    const orders = [
+        {
+            _id: "ORD-001",
+            planName: "Pro Plan",
+            billingInterval: "Monthly",
+            amount: 999,
+            status: "Paid",
+            paymentGateway: "Stripe",
+        },
+    ];
     const invoiceColumns = [
         {
-            title: t("invoice.id", { defaultValue: "Invoice ID" }),
-            dataIndex: "id",
+            title: t("order.id", { defaultValue: "Order ID" }),
+            dataIndex: "_id",
             key: "id",
-            render: (id) => <Text underline strong>{id}</Text>,
+            render: (id) => (
+                <Text
+                    underline
+                    strong
+                    style={{ cursor: "pointer" }}
+                    onClick={() => navigate(`/invoice/12345`)}
+                >
+                    {id}
+                </Text>
+            ),
         },
         {
-            title: t("invoice.date", { defaultValue: "Date" }),
-            dataIndex: "date",
-            key: "date"
+            title: t("plan.name", { defaultValue: "Plan Name" }),
+            dataIndex: "planName",
+            key: "planName"
         },
         {
-            title: t("invoice.amount", { defaultValue: "Amount" }),
-            dataIndex: "amount",
+            title: t("billing.interval", { defaultValue: "Billing Interval" }),
+            dataIndex: "billingInterval",
+            key: "billingInterval"
+        },
+        {
+            title: t("billing.amount", { defaultValue: "Amount" }),
+            dataIndex: "total",
             key: "amount"
         },
         {
-            title: t("invoice.status", { defaultValue: "Status" }),
+            title: t("status", { defaultValue: "Status" }),
             dataIndex: "status",
             key: "status",
             render: (status) => <Tag color="success">{status}</Tag>,
+        },
+        {
+            title: t("payment.gateway", { defaultValue: "Payment Gateway" }),
+            dataIndex: "gateway",
+            key: "gateway",
+            render: (gateway) => <Tag color="success">{gateway}</Tag>,
         },
         {
             title: t("invoice.action", { defaultValue: "Action" }),
@@ -81,12 +114,10 @@ function Order() {
                 title={t("orders", { defaultValue: "Orders" })}
                 description={t("orders.description", { defaultValue: "View and manage your order history, invoices, and payment details." })}
             />
-            <Card title={t("billing.invoiceHistory", { defaultValue: "Invoice History" })}
-                styles={{ body: { padding: 0 } }}
-            >
+            <Card title={t("billing.invoiceHistory", { defaultValue: "Invoice History" })} styles={{ body: { padding: 0 } }}>
                 <Table
                     columns={invoiceColumns}
-                    dataSource={invoices}
+                    dataSource={orders}
                     loading={loading}
                     pagination={false}
                     scroll={{ x: "max-content" }}
