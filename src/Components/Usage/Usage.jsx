@@ -12,7 +12,6 @@ import {
     Spin,
     Badge,
     Button,
-    Tag,
 } from "antd";
 import {
     TeamOutlined,
@@ -35,7 +34,6 @@ import { useNavigate } from "react-router-dom";
 import { t } from "i18next";
 import { formatDate } from "../../util/commom.utils";
 import EmptyState from "../Styles/EmptyState";
-
 const { Title, Text, Link } = Typography;
 
 export default function Usage() {
@@ -72,7 +70,7 @@ export default function Usage() {
             title: t('project_name', { defaultValue: 'Project Name' }),
             dataIndex: "projectName",
             key: "projectName",
-        },  
+        },
         {
             title: t("status", { defaultValue: "Status" }),
             dataIndex: "status",
@@ -249,7 +247,7 @@ export default function Usage() {
     return (
         <PageContainer title={false}>
             <AppPageHeader
-                title="Usage"
+                title={t('usage', { defaultValue: 'Usage' })}
                 description={t('keep.track.of.your.monthly.editor.users.sessions.template.storage.stay.informed.about.resource.alerts.and.optimize.your.usage', { defaultValue: 'Keep track of your monthly editor users, sessions, template storage. Stay informed about resource alerts and optimize your usage.' })}
             />
             {summaryLoading || trendLoading ? (
@@ -261,16 +259,9 @@ export default function Usage() {
             ) : (
                 <Space direction="vertical" size={16} style={{ width: "100%" }}>
                     {/* Stat Cards */}
-                    <Flex
-                        gap={16}
-                        wrap
-                        style={{ width: "100%" }}
-                    >
+                    <Flex gap={16} wrap style={{ width: "100%" }}>
                         {usageStats.map((stat) => (
-                            <Card
-                                key={stat.title}
-                                style={{ flex: "1 1 180px", minWidth: 180, }}
-                            >
+                            <Card key={stat.title} style={{ flex: "1 1 180px", minWidth: 180, }}>
                                 <Flex justify="space-between" align="center">
                                     <Text type="secondary">{stat.title}</Text>
 
@@ -313,8 +304,6 @@ export default function Usage() {
                                         suffixIcon={<DownOutlined />}
                                         options={[
                                             { value: "7", label: t('last.7.days', { defaultValue: 'Last 7 Days' }) },
-                                            // { value: "30", label: t('last.30.days', { defaultValue: 'Last 30 Days' }) },
-                                            // { value: "90", label: t('last.90.days', { defaultValue: 'Last 90 Days' }) },
                                         ]}
                                     />
                                 }
@@ -400,12 +389,7 @@ export default function Usage() {
                                                 status="exception"
                                             />
 
-                                            <Space
-                                                style={{
-                                                    width: "100%",
-                                                    justifyContent: "space-between",
-                                                }}
-                                            >
+                                            <Space style={{ width: "100%", justifyContent: "space-between", }}>
                                                 <Text type="danger" style={{ fontSize: 12 }}>
                                                     {alert.level || "WARNING"}
                                                 </Text>
@@ -459,9 +443,7 @@ export default function Usage() {
                                             {...props}
                                             style={{
                                                 ...props.style,
-                                                background: theme
-                                                    ? "#0e1c29"
-                                                    : "#f0f0f0",
+                                                background: theme ? "#0e1c29" : "#f0f0f0",
                                             }}
                                         />
                                     ),

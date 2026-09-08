@@ -105,7 +105,7 @@ const Profile = () => {
       <AppPageHeader
         eyebrow={t("profile", { defaultValue: "Profile" })}
         title={t("profile", { defaultValue: "Profile" })}
-        description="Update your personal details and contact information."
+        description={t("update.your.personal.details.and.contact.information", { defaultValue: "Update your personal details and contact information." })}
       />
       <Row justify="center">
         <Col xs={24}>

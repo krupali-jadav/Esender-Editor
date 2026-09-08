@@ -83,7 +83,7 @@ function ProjectCredential() {
                         type="info"
                         showIcon
                         icon={<SafetyCertificateOutlined />}
-                        message="One-Time Reveal Policy"
+                        message={t("one.time.reveal.policy", { defaultValue: "One-Time Reveal Policy" })}
                         description={
                             <Text type="secondary">
                                 {t("one.time.reveal.policy", {
@@ -104,7 +104,7 @@ function ProjectCredential() {
                             </Space>
                         }
                     >
-                        <Space direction="vertical" size="middle" style={{ width: '100%', }}>
+                        <Space direction="vertical" size="middle" style={{ width: '100%' }}>
                             <Card size="small" loading={credentialsLoading}>
                                 <Text type="secondary">{t("public.project.id", { defaultValue: "Public Project ID:" })}{" "}
                                     <Flex justify="space-between" align="center">
@@ -144,9 +144,7 @@ function ProjectCredential() {
                                 </Title>
 
                                 <Text type="secondary">
-                                    {t("used.to.verify.webhook.payloads", {
-                                        defaultValue: "Used to cryptographically verify webhook payloads sent to your endpoints.",
-                                    })}
+                                    {t("used.to.verify.webhook.payloads", { defaultValue: "Used to cryptographically verify webhook payloads sent to your endpoints.", })}
                                 </Text>
                             </Space>
                         }
@@ -167,15 +165,14 @@ function ProjectCredential() {
 
                                     <Flex justify="space-between" align="center" gap="large" style={{ width: "100%" }}>
                                         <Text code>
-                                            {credentials?.Secrets || "reagtehwetjhew"}
+                                            {credentials?.Secrets || "N/A"}
                                         </Text>
 
                                         <Space size="middle">
                                             <Button icon={<ReloadOutlined />} onClick={handleRotateSecret}>
-                                                {t("rotate.license", { defaultValue: "Rotate License", })}
+                                                {t("rotate.signing.secret", { defaultValue: "Rotate Signing Secret" })}
                                             </Button>
-                                            <Text copyable={{ text: credentials?.Secrets || "", }}
-                                            />
+                                            <Text copyable={{ text: credentials?.Secrets || "", }} />
                                         </Space>
                                     </Flex>
                                 </Flex>
@@ -197,9 +194,7 @@ function ProjectCredential() {
                                         description={t("current.signing.secret.will.be.invalidated.immediately", { defaultValue: "The current signing secret will be invalidated immediately." })}
                                         okText={t("rotate", { defaultValue: "Rotate" })}
                                         cancelText={t("cancel", { defaultValue: "Cancel" })}
-                                        okButtonProps={{
-                                            danger: true,
-                                        }}
+                                        okButtonProps={{ danger: true, }}
                                         onConfirm={handleRotateSecret}
                                     >
                                         <Button

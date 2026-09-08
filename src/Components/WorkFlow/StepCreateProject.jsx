@@ -22,14 +22,12 @@ import {
 import { useSelector } from "react-redux";
 import { t } from "i18next";
 import { createProject } from "./WorkFlowApi";
-
 const { Title, Text, Paragraph, Link } = Typography;
 
 export default function StepCreateProject({ onNext, onBack }) {
     const [form] = Form.useForm();
     const [env, setEnv] = useState("test");
     const [loading, setLoading] = useState(false);
-
     const theme = useSelector((state) => state?.app?.theme);
 
     const handleCreateProject = async (values) => {
@@ -55,7 +53,7 @@ export default function StepCreateProject({ onNext, onBack }) {
     };
 
     return (
-        <Card style={{width: "100%", borderTop: "3px solid #20A6CE",}}>
+        <Card style={{ width: "100%", borderTop: "3px solid #20A6CE", }}>
             <Text strong style={{ color: "#20A6CE", fontSize: 12, letterSpacing: 0.5, }}>
                 {t('step.2.of.4', { defaultValue: 'STEP 2 OF 4' })}
             </Text>
@@ -69,11 +67,7 @@ export default function StepCreateProject({ onNext, onBack }) {
             </Paragraph>
 
             <Space direction="vertical" size="large">
-                <Form
-                    form={form}
-                    layout="vertical"
-                    onFinish={handleCreateProject}
-                >
+                <Form form={form} layout="vertical" onFinish={handleCreateProject}>
                     <Form.Item
                         label={t('project.name', { defaultValue: 'PROJECT NAME' })}
                         name="projectName"
@@ -85,9 +79,7 @@ export default function StepCreateProject({ onNext, onBack }) {
                         ]}
                     >
                         <Input
-                            prefix={
-                                <FolderOutlined style={{ color: "#98A2B3" }} />
-                            }
+                            prefix={<FolderOutlined style={{ color: "#98A2B3" }} />}
                             placeholder={t('e.g.internal.tools.marketing.app', { defaultValue: 'e.g., Internal Tools, Marketing App' })}
                         />
                     </Form.Item>
@@ -124,9 +116,7 @@ export default function StepCreateProject({ onNext, onBack }) {
                                 <Space direction="vertical" size="small" style={{ width: "100%" }}>
                                     <div
                                         style={{
-                                            background: theme
-                                                ? "#142b42"
-                                                : "#F5F7FA",
+                                            background: theme ? "#142b42" : "#F5F7FA",
                                             borderRadius: 8,
                                             padding: "10px 16px",
                                             display: "flex",
@@ -134,7 +124,7 @@ export default function StepCreateProject({ onNext, onBack }) {
                                             gap: 24,
                                         }}
                                     >
-                                        <Text strong style={{color: "#20A6CE", fontSize: 12, minWidth: 40, }}>
+                                        <Text strong style={{ color: "#20A6CE", fontSize: 12, minWidth: 40, }}>
                                             {t('post', { defaultValue: 'POST' })}
                                         </Text>
 
@@ -145,9 +135,7 @@ export default function StepCreateProject({ onNext, onBack }) {
 
                                     <div
                                         style={{
-                                            background: theme
-                                                ? "#142b42"
-                                                : "#F5F7FA",
+                                            background: theme ? "#142b42" : "#F5F7FA",
                                             borderRadius: 8,
                                             padding: "10px 16px",
                                             display: "flex",
@@ -155,14 +143,7 @@ export default function StepCreateProject({ onNext, onBack }) {
                                             gap: 24,
                                         }}
                                     >
-                                        <Text
-                                            strong
-                                            style={{
-                                                color: "#20A6CE",
-                                                fontSize: 12,
-                                                minWidth: 40,
-                                            }}
-                                        >
+                                        <Text strong style={{ color: "#20A6CE", fontSize: 12, minWidth: 40, }}>
                                             {t('returns', { defaultValue: 'RETURNS' })}
                                         </Text>
 
@@ -194,11 +175,7 @@ export default function StepCreateProject({ onNext, onBack }) {
                     </Row>
                 </Form>
 
-                <div
-                    style={{
-                        textAlign: "center",
-                    }}
-                >
+                <div style={{ textAlign: "center", }}>
                     <Text type="secondary">
                         <LockOutlined /> {t('your.data.is.secure.and.encrypted', { defaultValue: 'Your data is secure and encrypted.' })}
                     </Text>
@@ -208,14 +185,7 @@ export default function StepCreateProject({ onNext, onBack }) {
     );
 }
 
-function EnvironmentCard({
-    selected,
-    onClick,
-    icon,
-    title,
-    description,
-    recommended,
-}) {
+function EnvironmentCard({ selected, onClick, icon, title, description, recommended, }) {
     const theme = useSelector((state) => state?.app?.theme);
 
     return (
@@ -227,13 +197,7 @@ function EnvironmentCard({
                 border: theme
                     ? `1px solid ${selected ? "#142b42" : "#2b313b"}`
                     : `1px solid ${selected ? "#20A6CE" : "#E7E9F0"}`,
-                background: theme
-                    ? selected
-                        ? "#2b313b"
-                        : "#142b42"
-                    : selected
-                        ? "#F4FBFD"
-                        : "#FFFFFF",
+                background: theme ? selected ? "#2b313b" : "#142b42" : selected ? "#F4FBFD" : "#FFFFFF",
                 borderRadius: 8,
                 padding: 16,
                 cursor: "pointer",
@@ -248,13 +212,7 @@ function EnvironmentCard({
                 <Radio checked={selected} />
             </Row>
 
-            <Paragraph
-                type="secondary"
-                style={{
-                    fontSize: 13,
-                    margin: "8px 0",
-                }}
-            >
+            <Paragraph type="secondary" style={{ fontSize: 13, margin: "8px 0", }}>
                 {description}
             </Paragraph>
 

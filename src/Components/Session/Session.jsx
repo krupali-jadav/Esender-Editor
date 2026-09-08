@@ -3,7 +3,6 @@ import { Button, Col, Row, Spin, Typography, notification, Flex, Space, Card, me
 import { staticModal } from "../../util/staticFn";
 import { WindowsOutlined, MobileOutlined, LogoutOutlined, InfoCircleOutlined, } from "@ant-design/icons";
 import { PageContainer } from "@ant-design/pro-components";
-
 import { t } from "i18next";
 import { formatDate } from "../../util/commom.utils";
 import { sessionAll, sessionLogout } from "./SessionApi";
@@ -23,7 +22,7 @@ const Sessions = () => {
                 setSessionData(data.sessions);
             }
         } catch (error) {
-            message.error(error?.message || "Failed to get sessions");
+            message.error(error?.message);
             console.error(error);
         } finally {
             setLoading(false);
@@ -45,11 +44,11 @@ const Sessions = () => {
                 try {
                     const data = await sessionLogout({ session_id: id });
                     if (data?.status) {
-                        message.success(data?.message || "Session logged out successfully");
+                        message.success(data?.message);
                         await sessionDevices();
                     }
                 } catch (error) {
-                    message.error(error?.message || "Failed to log out session");
+                    message.error(error?.message);
                     console.error(error);
                 } finally {
                     setButtonLoading((prev) => ({ ...prev, [id]: false }));
@@ -94,7 +93,7 @@ const Sessions = () => {
                                     </Text>
                                     <br />
                                     <Text type="secondary">
-                                        {t("last.active")}{" "}
+                                        {t("last.active", { defaultValue: "Last Active" })}{" "}
                                         {item?.createdAt ? formatDate(item.createdAt) : "N/A"}
                                     </Text>
                                 </Col>
@@ -125,17 +124,14 @@ const Sessions = () => {
             <AppPageHeader
                 eyebrow={t("account", { defaultValue: "Account" })}
                 title={t("session", { defaultValue: "Sessions" })}
-                description="Review and sign out of devices logged into your account."
+                description={t("review.and.sign.out.of.devices.logged.into.your.account", { defaultValue: "Review and sign out of devices logged into your account." })}
             />
             {loading ? (
                 <Flex justify="center" align="center" style={{ height: "50vh" }}>
                     <Spin spinning={loading} />
                 </Flex>
             ) : (
-                <Row
-                    gutter={[16, 24]}
-                    style={{ minHeight: "57vh" }}
-                >
+                <Row gutter={[16, 24]} style={{ minHeight: "57vh" }}>
                     <Col xs={24} md={12}>
                         {renderSessions(
                             sessionData?.filter(

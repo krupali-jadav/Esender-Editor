@@ -1,25 +1,17 @@
 import { Card, Input, Button, Typography, Space, Divider, Row, Alert, message, } from "antd";
-
 import { InfoCircleOutlined, CopyOutlined, } from "@ant-design/icons";
-
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { t } from "i18next";
 import { getProject, updateProjectDomains } from "./WorkFlowApi";
-
 const { Title, Text, Link } = Typography;
 
 export default function StepConnectDomain({ onBack, onComplete, projectId, }) {
     const theme = useSelector((state) => state?.app?.theme);
-
     const [domain, setDomain] = useState("");
     const [publicProjectId, setPublicProjectId] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const handleCopy = () => {
-        navigator.clipboard.writeText(publicProjectId);
-        message.success("Copied to clipboard");
-    };
     useEffect(() => {
         const fetchProject = async () => {
             if (!projectId) return;
@@ -28,15 +20,13 @@ export default function StepConnectDomain({ onBack, onComplete, projectId, }) {
                 const data = await getProject(projectId);
 
                 if (data?.status) {
-                    setPublicProjectId(
-                        data?.project?.publicProjectId || ""
-                    );
+                    setPublicProjectId(data?.project?.publicProjectId || "");
                 } else {
                     message.error(data?.message);
                 }
             } catch (error) {
                 console.error(error);
-                message.error(error?.message );
+                message.error(error?.message);
             }
         };
 
@@ -51,7 +41,6 @@ export default function StepConnectDomain({ onBack, onComplete, projectId, }) {
 
         try {
             setLoading(true);
-
             const payload = {
                 allowedDomains: [domain.trim()],
             };
@@ -63,8 +52,8 @@ export default function StepConnectDomain({ onBack, onComplete, projectId, }) {
                 onComplete();
             }
         } catch (error) {
-            console.error("DOMAIN UPDATE ERROR:", error);
-            message.error(error?.message );
+            console.error(error);
+            message.error(error?.message);
         } finally {
             setLoading(false);
         }
@@ -72,14 +61,7 @@ export default function StepConnectDomain({ onBack, onComplete, projectId, }) {
 
     return (
         <Card style={{ width: "100%", borderTop: "3px solid #20A6CE" }}>
-            <Text
-                strong
-                style={{
-                    color: "#20A6CE",
-                    fontSize: 12,
-                    letterSpacing: 0.5,
-                }}
-            >
+            <Text strong style={{ color: "#20A6CE", fontSize: 12, letterSpacing: 0.5, }}>
                 {t('step.3.of.4', { defaultValue: 'STEP 3 OF 4' })}
             </Text>
 
@@ -114,15 +96,10 @@ export default function StepConnectDomain({ onBack, onComplete, projectId, }) {
                         </Text>
                     </div>
 
-                    <Button
-                        icon={<CopyOutlined />}
-                        onClick={handleCopy}
-                    >
-                        {t('copy', { defaultValue: 'Copy' })}
-                    </Button>
+                    <Text copyable={{ text: publicProjectId }} />
                 </div>
 
-                <Text strong style={{ fontSize: 12,}}>
+                <Text strong style={{ fontSize: 12, }}>
                     {t('allowed.domain', { defaultValue: 'ALLOWED DOMAIN' })}
                 </Text>
 
