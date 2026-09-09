@@ -1,6 +1,6 @@
-import { FilePdfOutlined, FileTextOutlined } from "@ant-design/icons";
+import { DownloadOutlined, DownOutlined, FileTextOutlined, FilterOutlined, SearchOutlined } from "@ant-design/icons";
 import { PageContainer } from "@ant-design/pro-components";
-import { Card, Table, Tag, Typography } from "antd"
+import { Button, Card, Flex, Input, Segmented, Select, Space, Table, Tag, Typography } from "antd"
 import { t } from "i18next";
 import { useSelector } from "react-redux";
 import AppPageHeader from "../Styles/AppHeader";
@@ -8,13 +8,16 @@ import { useEffect, useState } from "react";
 import { getOrders } from "./OrderApi";
 import EmptyState from "../Styles/EmptyState";
 import { useNavigate } from "react-router-dom";
-const { Text, Link } = Typography;
+import { formatDate } from "../../util/commom.utils";
+const { Text } = Typography;
 
 function Order() {
     const navigate = useNavigate();
     const theme = useSelector((state) => state?.app?.theme);
     const [order, setOrder] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [search, setSearch] = useState("");
+    const [sortBy, setSortBy] = useState("created-at");
 
     const fetchOrders = async () => {
         try {
@@ -54,7 +57,7 @@ function Order() {
             paymentGateway: "Stripe",
         },
     ];
-    const invoiceColumns = [
+    const orderColumns = [
         {
             title: t("order.id", { defaultValue: "Order ID" }),
             dataIndex: "_id",
@@ -98,53 +101,117 @@ function Order() {
             render: (gateway) => <Tag color="success">{gateway}</Tag>,
         },
         {
-            title: t("invoice.action", { defaultValue: "Action" }),
-            key: "action",
-            align: "right",
-            render: () => (
-                <Link>
-                    <FilePdfOutlined /> {t("view.Pdf", { defaultValue: "View PDF" })}
-                </Link>
-            ),
+            title: t("created.at", { defaultValue: "Created At" }),
+            dataIndex: "createdAt",
+            key: "createdAt",
+            render: (date) => formatDate(date),
         },
     ];
     return (
         <PageContainer title={false}>
             <AppPageHeader
+                eyebrow={t("account", { defaultValue: "Account" })}
                 title={t("orders", { defaultValue: "Orders" })}
                 description={t("orders.description", { defaultValue: "View and manage your order history, invoices, and payment details." })}
             />
-            <Card title={t("billing.invoiceHistory", { defaultValue: "Invoice History" })} styles={{ body: { padding: 0 } }}>
-                <Table
-                    columns={invoiceColumns}
-                    dataSource={orders}
-                    loading={loading}
-                    pagination={false}
-                    scroll={{ x: "max-content" }}
-                    locale={{
-                        emptyText: (
-                            <EmptyState
-                                icon={<FileTextOutlined />}
-                                title={t("no.orders.found", { defaultValue: "No Orders found" })}
-                                description={t("no.orders.description", { defaultValue: "There are no Orders available.", })}
-                            />
-                        ),
-                    }}
-                    components={{
-                        header: {
-                            cell: (props) => (
-                                <th
-                                    {...props}
-                                    style={{
-                                        ...props.style,
-                                        background: theme ? "#0e1c29" : "#f0f0f0",
-                                    }}
+
+            <Space direction="vertical" size="large" style={{ width: "100%" }}>
+
+                <Card size="small">
+                    <Flex gap={24} justify="space-between" align="center" wrap="wrap" >
+                        {/* Search */}
+                        <Input
+                            placeholder="Search Orders..."
+                            prefix={<SearchOutlined />}
+                            allowClear
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            style={{ flex: 1, width: "100%", maxWidth: 500, minWidth: 200, }}
+                        />
+
+                        {/* Filters */}
+                        <Flex gap={16} justify="end" wrap="wrap">
+
+                            <Space size={4}>
+                                <FilterOutlined />
+                                <Text strong>{t('filters', { defaultValue: 'FILTERS' })}</Text>
+                            </Space>
+
+                            <Space size={8}>
+                                <Text type="secondary">{t('status', { defaultValue: 'Status' })}:</Text>
+                                <Segmented
+                                    defaultValue="all"
+                                    options={[
+                                        t('all', { defaultValue: 'All' }),
+                                        t('paid', { defaultValue: 'Paid' }),
+                                        t('pending', { defaultValue: 'Pending' })
+                                    ]}
+                                />
+                            </Space>
+
+                            <Space size={8}>
+                                <Text type="secondary">{t('sort', { defaultValue: 'Sort' })}:</Text>
+                                <Select
+                                    value={sortBy}
+                                    onChange={(value) => setSortBy(value)}
+                                    variant="borderless"
+                                    suffixIcon={<DownOutlined />}
+                                    style={{ width: 150, background: theme ? "#0A1622" : "#F5F8FA", borderRadius: 8, }}
+                                    options={[
+                                        {
+                                            value: "created-at",
+                                            label: t('sort.created.at', { defaultValue: 'Sort by Created At' }),
+                                        },
+                                        {
+                                            value: "name",
+                                            label: t('sort.name', { defaultValue: 'Sort by Name' }),
+                                        },
+                                    ]}
+                                />
+                            </Space>
+
+                            <Space>
+                                <Button type="primary" style={{ minWidth: "18%" }} icon={<DownloadOutlined />}>
+                                    {t("export", { defaultValue: "Export", })}
+                                </Button>
+                            </Space>
+                        </Flex>
+                    </Flex>
+                </Card>
+
+                <Card styles={{ body: { padding: 0 } }}>
+                    <Table
+                        columns={orderColumns}
+                        dataSource={orders}
+                        // dataSource={order}
+                        loading={loading}
+                        pagination={false}
+                        scroll={{ x: "max-content" }}
+                        locale={{
+                            emptyText: (
+                                <EmptyState
+                                    icon={<FileTextOutlined />}
+                                    title={t("no.orders.found", { defaultValue: "No Orders Found" })}
+                                    description={t("no.orders.description", { defaultValue: "There are no Orders available.", })}
                                 />
                             ),
-                        },
-                    }}
-                />
-            </Card>
+                        }}
+                        components={{
+                            header: {
+                                cell: (props) => (
+                                    <th
+                                        {...props}
+                                        style={{
+                                            ...props.style,
+                                            background: theme ? "#0e1c29" : "#f0f0f0",
+                                        }}
+                                    />
+                                ),
+                            },
+                        }}
+                    />
+                </Card>
+            </Space>
         </PageContainer>
     )
 }
