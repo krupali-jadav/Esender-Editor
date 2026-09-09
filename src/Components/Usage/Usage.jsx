@@ -12,6 +12,8 @@ import {
     Spin,
     Badge,
     Button,
+    Segmented,
+    Tag,
 } from "antd";
 import {
     TeamOutlined,
@@ -23,6 +25,7 @@ import {
     MailOutlined,
     ArrowRightOutlined,
     FileTextOutlined,
+    RobotOutlined,
 } from "@ant-design/icons";
 import { Column } from "@ant-design/plots";
 import { PageContainer } from "@ant-design/pro-components";
@@ -30,6 +33,9 @@ import { useSelector } from "react-redux";
 import AppPageHeader from "../Styles/AppHeader";
 import { useEffect, useState } from "react";
 import { getUsageAlerts, getUsageSummary, getUsageTrend } from "./UsageApi";
+import { getSubscriptionUsage } from "../Plans/SubscriptionApi";
+import { getAiHistory } from "../../util/AiApi";
+import { clampPct } from "../Plans/planLabels";
 import { useNavigate } from "react-router-dom";
 import { t } from "i18next";
 import { formatDate } from "../../util/commom.utils";
@@ -45,6 +51,9 @@ export default function Usage() {
     const [summaryLoading, setSummaryLoading] = useState(false);
     const [alerts, setAlerts] = useState([]);
     const [alertsLoading, setAlertsLoading] = useState(false);
+    const [trendMetric, setTrendMetric] = useState("sessions");
+    const [credits, setCredits] = useState(null);
+    const [aiActivity, setAiActivity] = useState([]);
     const theme = useSelector((state) => state?.app?.theme);
     const selectedProject = useSelector((state) => state?.app?.selectedProject);
 
@@ -180,6 +189,7 @@ export default function Usage() {
                     (response.usageTrend || []).map((item) => ({
                         day: item.date,
                         sessions: item.sessions,
+                        aiCredits: item.aiCredits || 0,
                     }))
 
                 );
@@ -239,11 +249,26 @@ export default function Usage() {
             setSummaryLoading(false);
         }
     };
+    const fetchCredits = async () => {
+        const res = await getSubscriptionUsage();
+        if (res?.status) setCredits(res.credits || null);
+        const hist = await getAiHistory({ page: 1, limit: 8 });
+        if (hist?.status) setAiActivity(hist.items || []);
+    };
     useEffect(() => {
         fetchUsageTrend();
         fetchUsageAlerts();
         fetchUsageSummary();
     }, [selectedProject?._id, trendRange]);
+    useEffect(() => { fetchCredits(); }, []);
+
+    const aiActivityColumns = [
+        { title: t("action", { defaultValue: "Action" }), dataIndex: "action", key: "action" },
+        { title: t("model", { defaultValue: "Model" }), dataIndex: "model", key: "model", render: (v) => v || "—" },
+        { title: t("tokens", { defaultValue: "Tokens" }), dataIndex: "totalTokens", key: "totalTokens" },
+        { title: t("credits", { defaultValue: "Credits" }), dataIndex: "credits", key: "credits" },
+        { title: t("date", { defaultValue: "Date" }), dataIndex: "committedAt", key: "date", render: (d, r) => formatDate(d || r.createdAt) },
+    ];
     return (
         <PageContainer title={false}>
             <AppPageHeader
@@ -296,24 +321,34 @@ export default function Usage() {
                     <Row gutter={[16, 16]} >
                         <Col xs={24} lg={13}>
                             <Card
-                                title={t('session.trend', { defaultValue: 'Session Trend' })}
+                                title={trendMetric === "sessions" ? t('session.trend', { defaultValue: 'Session Trend' }) : t('ai.credits.trend', { defaultValue: 'AI Credits Trend' })}
                                 extra={
-                                    <Select
-                                        value={String(trendRange)}
-                                        onChange={(value) => setTrendRange(Number(value))}
-                                        suffixIcon={<DownOutlined />}
-                                        options={[
-                                            { value: "7", label: t('last.7.days', { defaultValue: 'Last 7 Days' }) },
-                                        ]}
-                                    />
+                                    <Space>
+                                        <Segmented
+                                            value={trendMetric}
+                                            onChange={setTrendMetric}
+                                            options={[
+                                                { label: t('sessions', { defaultValue: 'Sessions' }), value: "sessions" },
+                                                { label: t('ai.credits', { defaultValue: 'AI Credits' }), value: "aiCredits" },
+                                            ]}
+                                        />
+                                        <Select
+                                            value={String(trendRange)}
+                                            onChange={(value) => setTrendRange(Number(value))}
+                                            suffixIcon={<DownOutlined />}
+                                            options={[
+                                                { value: "7", label: t('last.7.days', { defaultValue: 'Last 7 Days' }) },
+                                            ]}
+                                        />
+                                    </Space>
                                 }
                                 style={{ height: "100%" }}
                             >
                                 <Column
-                                    key={`${theme ? "dark" : "light"}-${trendRange}`}
+                                    key={`${theme ? "dark" : "light"}-${trendRange}-${trendMetric}`}
                                     data={sessionTrendData}
                                     xField="day"
-                                    yField="sessions"
+                                    yField={trendMetric}
                                     height={260}
                                     theme={{
                                         type: theme ? "dark" : "light",
@@ -406,6 +441,47 @@ export default function Usage() {
                         </Col>
                     </Row>
 
+
+                    {/* AI Credits detail */}
+                    <Card title={<Space><RobotOutlined style={{ color: "#20A6CE" }} />{t("ai.credits", { defaultValue: "AI Credits" })}</Space>}>
+                        {!credits || credits.limit <= 0 ? (
+                            <Flex justify="space-between" align="center" wrap gap={12}>
+                                <Text type="secondary">{t("ai.not.included.in.plan", { defaultValue: "AI credits are not included in your current plan." })}</Text>
+                                <Button type="primary" onClick={() => navigate("/plans")}>{t("view.plans", { defaultValue: "View plans" })}</Button>
+                            </Flex>
+                        ) : (
+                            <Row gutter={[16, 16]} align="middle">
+                                <Col xs={24} md={16}>
+                                    <Progress
+                                        percent={clampPct((credits.used / credits.limit) * 100)}
+                                        strokeColor="#20A6CE"
+                                    />
+                                    <Space size={16} wrap style={{ marginTop: 8 }}>
+                                        <Tag>{t("used", { defaultValue: "Used" })}: {credits.used}</Tag>
+                                        <Tag color="gold">{t("reserved", { defaultValue: "Reserved" })}: {credits.reserved}</Tag>
+                                        <Tag color="cyan">{t("remaining", { defaultValue: "Remaining" })}: {credits.remaining}</Tag>
+                                        <Tag>{t("limit", { defaultValue: "Limit" })}: {credits.limit}</Tag>
+                                    </Space>
+                                </Col>
+                                <Col xs={24} md={8}>
+                                    <Text type="secondary">{t("resets.on", { defaultValue: "Resets on" })}</Text>
+                                    <div><Text strong>{credits.cycleEndAt ? formatDate(credits.cycleEndAt) : "—"}</Text></div>
+                                </Col>
+                            </Row>
+                        )}
+                    </Card>
+
+                    {/* Recent AI activity */}
+                    <Card title={t("recent.ai.activity", { defaultValue: "Recent AI Activity" })} styles={{ body: { padding: 0 } }}>
+                        <Table
+                            rowKey="_id"
+                            columns={aiActivityColumns}
+                            dataSource={aiActivity}
+                            pagination={false}
+                            scroll={{ x: "max-content" }}
+                            locale={{ emptyText: t("no.ai.usage.yet", { defaultValue: "No AI usage yet" }) }}
+                        />
+                    </Card>
 
                     {/* Recently updated templates */}
                     <Card

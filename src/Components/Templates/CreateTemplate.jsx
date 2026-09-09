@@ -20,7 +20,13 @@ import Package from "esender-email-editor";
 import AppPageHeader from "../Styles/AppHeader";
 import { useSelector } from "react-redux";
 import { createTemplate, getTemplateById, updateTemplate } from "./TemplateApi";
+import AiAssistant from "./AiAssistant";
 import { t } from "i18next";
+
+// Editor SDK key: read from a Vite env var (never hard-coded). Configure
+// VITE_EDITOR_API_KEY in the frontend .env. This is a public embed key, not a
+// gateway/AI secret.
+const EDITOR_API_KEY = import.meta.env.VITE_EDITOR_API_KEY || "";
 const { Text } = Typography;
 
 function CreateTemplates() {
@@ -227,12 +233,23 @@ function CreateTemplates() {
                     </div>
                 </Form>
 
+                {/* AI Assistant — capability-gated; hidden when AI is unconfigured. */}
+                {projectId && (
+                    <AiAssistant
+                        projectId={projectId}
+                        templateId={templateId}
+                        form={form}
+                        editorRef={editorRef}
+                        theme={theme}
+                    />
+                )}
+
                 {/* Email Editor */}
                 <div style={{ background: theme ? "#0F2233" : "#fff", borderRadius: 10, minHeight: 600, overflow: "hidden", }}>
                     <Spin spinning={editorLoading}>
                         <Package
                             ref={editorRef}
-                            apiKey="eed_live_9a24888b38c2ac94f5f55a37ff190d8752e2ced121449e7c"
+                            apiKey={EDITOR_API_KEY}
                         />
                     </Spin>
                 </div>
