@@ -97,9 +97,7 @@ export default function Usage() {
                 value: usageSummary.projectsUsed,
                 total: usageSummary.projectsLimit,
                 percent: usageSummary.projectsLimit
-                    ? Math.round(
-                        (usageSummary.projectsUsed / usageSummary.projectsLimit) * 100
-                    )
+                    ? Math.round((usageSummary.projectsUsed / usageSummary.projectsLimit) * 100)
                     : 0,
                 icon: <FolderOutlined />,
                 color: "#20A6CE",
@@ -109,11 +107,7 @@ export default function Usage() {
                 value: usageSummary.monthlyEditorUsersUsed,
                 total: usageSummary.monthlyEditorUsersLimit,
                 percent: usageSummary.monthlyEditorUsersLimit
-                    ? Math.round(
-                        (usageSummary.monthlyEditorUsersUsed /
-                            usageSummary.monthlyEditorUsersLimit) *
-                        100
-                    )
+                    ? Math.round((usageSummary.monthlyEditorUsersUsed / usageSummary.monthlyEditorUsersLimit) * 100)
                     : 0,
                 icon: <TeamOutlined />,
                 color: "#20A6CE",
@@ -123,11 +117,7 @@ export default function Usage() {
                 value: usageSummary.monthlySessionsUsed,
                 total: usageSummary.monthlySessionsLimit,
                 percent: usageSummary.monthlySessionsLimit
-                    ? Math.round(
-                        (usageSummary.monthlySessionsUsed /
-                            usageSummary.monthlySessionsLimit) *
-                        100
-                    )
+                    ? Math.round((usageSummary.monthlySessionsUsed / usageSummary.monthlySessionsLimit) * 100)
                     : 0,
                 icon: <ClockCircleOutlined />,
                 color: "#13c2c2",
@@ -137,11 +127,7 @@ export default function Usage() {
                 value: usageSummary.templateStorageUsed,
                 total: usageSummary.templateStorageLimit,
                 percent: usageSummary.templateStorageLimit
-                    ? Math.round(
-                        (usageSummary.templateStorageUsed /
-                            usageSummary.templateStorageLimit) *
-                        100
-                    )
+                    ? Math.round((usageSummary.templateStorageUsed / usageSummary.templateStorageLimit) * 100)
                     : 0,
                 icon: <FolderOutlined />,
                 color: "#1677FF",
@@ -152,11 +138,7 @@ export default function Usage() {
                 value: usageSummary.aiCreditsUsed,
                 total: usageSummary.aiCreditsLimit,
                 percent: usageSummary.aiCreditsLimit
-                    ? Math.round(
-                        (usageSummary.aiCreditsUsed /
-                            usageSummary.aiCreditsLimit) *
-                        100
-                    )
+                    ? Math.round((usageSummary.aiCreditsUsed / usageSummary.aiCreditsLimit) * 100)
                     : 0,
                 icon: <StarOutlined />,
                 color: "#20A6CE",
@@ -244,6 +226,7 @@ export default function Usage() {
         fetchUsageAlerts();
         fetchUsageSummary();
     }, [selectedProject?._id, trendRange]);
+
     return (
         <PageContainer title={false}>
             <AppPageHeader
@@ -333,18 +316,11 @@ export default function Usage() {
                                         radiusTopRight: 4,
                                     }}
                                     axis={{
-                                        x: {
-                                            line: false,
-                                            tickLine: false,
-                                        },
+                                        x: { line: false, tickLine: false, },
                                         y: {
                                             label: false,
                                             grid: {
-                                                line: {
-                                                    style: {
-                                                        stroke: theme ? "#243746" : "#f0f0f0",
-                                                    },
-                                                },
+                                                line: { style: { stroke: theme ? "#243746" : "#f0f0f0", }, },
                                             },
                                         },
                                     }}
@@ -354,15 +330,13 @@ export default function Usage() {
                         </Col>
 
                         <Col xs={24} lg={11}>
-                            <Card
+                            <Card style={{ height: "100%" }}
                                 title={
                                     <Space>
                                         <WarningOutlined style={{ color: "#cf1322" }} />
                                         {t('resource.alerts', { defaultValue: 'Resource Alerts' })}
                                     </Space>
-                                }
-                                style={{ height: "100%" }}
-                            >
+                                }>
 
                                 {alertsLoading ? (
                                     <Flex justify="center" align="center" style={{ minHeight: 180 }}>
@@ -441,10 +415,7 @@ export default function Usage() {
                                     cell: (props) => (
                                         <th
                                             {...props}
-                                            style={{
-                                                ...props.style,
-                                                background: theme ? "#0e1c29" : "#f0f0f0",
-                                            }}
+                                            style={{ ...props.style, background: theme ? "#0e1c29" : "#f0f0f0", }}
                                         />
                                     ),
                                 },

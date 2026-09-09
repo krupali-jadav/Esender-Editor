@@ -1,7 +1,6 @@
 import { useEffect, useState, useCallback, } from "react";
 import { Typography, Row, Col, Divider, Button, message, Image, Flex, Card, } from "antd";
 import { ArrowLeftOutlined, CloudDownloadOutlined, EnvironmentOutlined, MailOutlined, PhoneOutlined, } from "@ant-design/icons";
-import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
 import { CURRENCIES_SYMBOL, formatDate } from "../../util/commom.utils";
@@ -13,12 +12,12 @@ import { getInvoices } from "./OrderApi";
 import AppPageHeader from "../Styles/AppHeader";
 import { PageContainer } from "@ant-design/pro-components";
 import StatusBadge from "../Styles/StatusBadge";
+import { t } from "i18next";
 const { Title, Text, Paragraph } = Typography;
 // import esenderLogo from "../../assets/image.png";
 
 const Invoice = ({ isEdit = false }) => {
   const { order_id } = useParams();
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const theme = useSelector((state) => state?.app?.theme);
@@ -249,15 +248,8 @@ const Invoice = ({ isEdit = false }) => {
         }
       />
 
-      <Col justify="center" align="middle" style={{ width: "100%" }}>
-        <Card
-          id="master_order_invoice"
-          style={{
-            maxWidth: 700,
-            background: theme ? "#1f1f1f" : "#fff",
-            borderRadius: 16,
-            boxShadow: "var(--ds-shadow-md)",
-          }}>
+      <Col justify="center" align="middle">
+        <Card id="master_order_invoice" style={{ maxWidth: 750, borderRadius: 16, boxShadow: "var(--ds-shadow-md)" }}>
 
           {/* header */}
           <Row justify="space-between" align="middle">
@@ -343,14 +335,7 @@ const Invoice = ({ isEdit = false }) => {
               </Col>
             </Row>
 
-            <Row
-              style={{
-                background: theme ? "#686767" : "#d8d8d8",
-                padding: "12px 15px",
-                fontWeight: 600,
-                borderBottom: "1px solid #ececec",
-              }}
-            >
+            <Row style={{ background: theme ? "#686767" : "#d8d8d8", padding: "12px 15px", fontWeight: 600, borderBottom: "1px solid #ececec" }}>
               {columns.map((col, index) => {
                 const spans = [1, 7, 6, 7, 3];
                 return (
@@ -362,14 +347,7 @@ const Invoice = ({ isEdit = false }) => {
             </Row>
 
             {(order?.lineItems || []).map((item, index) => (
-              <Row
-                key={index}
-                align="middle"
-                style={{
-                  padding: "5px",
-                  borderBottom: "1px solid #f3f3f3",
-                }}
-              >
+              <Row key={index} align="middle" style={{ padding: "5px", borderBottom: "1px solid #f3f3f3", }}>
                 <Col span={2}>
                   {index + 1}
                 </Col>
@@ -420,19 +398,19 @@ const Invoice = ({ isEdit = false }) => {
 
                 <Divider style={{ borderTop: "1px solid #d9d9d9", marginBottom: 10, marginTop: 10 }} />
 
-                <Row >
+                <Row>
                   <Col span={12}> <Text strong>{t("grand.total", { defaultValue: "Grand Total" })}</Text> </Col>
                   <Col span={12} align="right">
                     <Text strong>
                       {CURRENCIES_SYMBOL[order?.currency] || "$0"}
                       {order?.payableAmount}
-                    </Text>
+                    </Text>                                                                                                                                                    
                   </Col>
                 </Row>
               </Col>
             </Row>
 
-            {/* PAYMENT INFO */}
+            {/* Payment info */}
             <Row>
               <Col span={12} align="left" >
                 <Title level={5} > {t("paymentinfo", { defaultValue: "Payment Info", })} </Title>
@@ -479,8 +457,7 @@ const Invoice = ({ isEdit = false }) => {
 
           <Row justify="space-between" >
             <Col align="left">
-              <Space direction="vertical">
-                {" "}
+              <Space direction="vertical">{" "}
                 <Image
                   preview={false}
                   // src={esenderLogo}
@@ -492,8 +469,7 @@ const Invoice = ({ isEdit = false }) => {
                 <Paragraph >
                   {t("invoice.footer", {
                     companyName: panel?.billing?.businessName,
-                    defaultValue:
-                      "Thank You For Your Interest In {{companyName}} Products. Your Order Has Been Received And Will Be Processed Once Payment Has Been Confirmed.",
+                    defaultValue: "Thank You For Your Interest In {{companyName}} Products. Your Order Has Been Received And Will Be Processed Once Payment Has Been Confirmed.",
                   })}
                 </Paragraph>
               </Space>

@@ -31,8 +31,7 @@ export const getSubscriptionPlans = async () => {
         message.error(error?.message);
     }
 }
-
-export const getSubscriptionQuote = async ({slug,billingInterval = "monthly",currency,gateway,}) => {
+export const getSubscriptionQuote = async ({ slug, billingInterval = "monthly", currency, gateway, }) => {
     try {
         const response = await axiosInstance.get("/subscription/quote", {
             params: {
