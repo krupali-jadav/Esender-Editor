@@ -1,4 +1,4 @@
-import { Row, Col, Card, Badge, Typography, Space, Button, Flex, Spin, Divider, Avatar, } from "antd";
+import { Row, Col, Card, Badge, Typography, Space, Button, Flex, Spin, Divider, Avatar, Segmented, } from "antd";
 import { CreditCardOutlined, CheckCircleFilled, CloseCircleFilled, ProjectOutlined, FileTextOutlined, TeamOutlined, ThunderboltOutlined, DatabaseOutlined, RobotOutlined, CalendarOutlined, } from "@ant-design/icons";
 import { PageContainer } from "@ant-design/pro-components";
 import { useSelector } from "react-redux";
@@ -10,6 +10,7 @@ import EmptyState from "../Styles/EmptyState";
 import UpgradePlan from "./UpgradePlan";
 import { PiClockClockwiseFill } from "react-icons/pi";
 import SearchHistory from "../SearchHistory/SearchHistory";
+import { CURRENCIES_SYMBOL } from "../../util/commom.utils";
 const { Title, Text, Paragraph } = Typography;
 
 export default function Plans() {
@@ -23,8 +24,23 @@ export default function Plans() {
     const [quoteLoading, setQuoteLoading] = useState(false);
     const [historyOpen, setHistoryOpen] = useState(false);
     const [quote, setQuote] = useState(null);
+    const [billingCycle, setBillingCycle] = useState("monthly");
     const currency = useSelector((state) => state?.app?.currency || "INR");
     const gateway = "razorpay";
+    const setCurrencyRates = useSelector((state) => state?.app?.currencyRates || {});
+
+    const getConvertedPrice = (price) => {
+        const rate = setCurrencyRates?.[currency] || 1;
+        return Number(price || 0) * rate;
+    };
+
+    const getPlanPrice = (plan) => {
+        const option = plan?.billingOptions?.find(
+            (item) => item.interval === billingCycle
+        );
+
+        return option?.price || 0;
+    };
 
     const fetchPlans = async () => {
         try {
@@ -68,7 +84,7 @@ export default function Plans() {
 
             const response = await getSubscriptionQuote({
                 slug: plan.slug,
-                billingInterval: plan.billingInterval || "monthly",
+                billingInterval: billingCycle,
                 currency,
                 gateway,
             });
@@ -241,6 +257,23 @@ export default function Plans() {
                             {t("upgrade.to.unlock.more.features.and.higher.limits", { defaultValue: "Upgrade to unlock more features and higher limits." })}
                         </Paragraph>
                     </div>
+                    <Flex justify="center" style={{ marginBottom: 30 }}>
+                        <Segmented
+                            size="large"
+                            value={billingCycle}
+                            onChange={setBillingCycle}
+                            options={[
+                                {
+                                    label: t("monthly", { defaultValue: "Monthly" } ),
+                                    value: "monthly",
+                                },
+                                {
+                                    label: t("yearly", { defaultValue: "Yearly" }),
+                                    value: "yearly",
+                                },
+                            ]}
+                        />
+                    </Flex> 
 
                     {plansLoading ? (
                         <Flex justify="center" align="center" style={{ minHeight: 300 }}>
@@ -297,8 +330,8 @@ export default function Plans() {
                                                     left: "50%",
                                                     transform: "translateX(-50%)",
                                                     zIndex: 3,
-                                                    width: 105,
-                                                    height: 105,
+                                                    width: 135,
+                                                    height: 135,
                                                     borderRadius: "50%",
                                                     background: `linear-gradient(135deg,${color.start},${color.end})`,
                                                     display: "flex",
@@ -310,15 +343,15 @@ export default function Plans() {
                                                 }}
                                             >
                                                 <div style={{ display: "flex", alignItems: "flex-start", color: "#FFFFFF", }}>
-                                                    <span style={{ fontSize: 14, marginTop: 4, }}>₹</span>
+                                                    <span style={{ fontSize: 16, marginRight: 3 }}>{CURRENCIES_SYMBOL[currency]} </span>
 
-                                                    <span style={{ fontSize: 32, lineHeight: 1, fontWeight: 700, }}>
-                                                        {plan.price}
+                                                    <span style={{ fontSize: 24, lineHeight: 1, fontWeight: 700 }}>
+                                                        {getConvertedPrice(getPlanPrice(plan)).toFixed(2)}
                                                     </span>
                                                 </div>
 
-                                                <span style={{ color: "rgba(255,255,255,0.9)", fontSize: 10, }}>
-                                                    /{plan.billingInterval}
+                                                <span style={{ color: "rgba(255,255,255,0.9)", fontSize: 13, }}>
+                                                    /{billingCycle === "monthly" ? "month" : "year"}
                                                 </span>
                                             </div>
 
@@ -338,7 +371,7 @@ export default function Plans() {
                                                     level={3}
                                                     style={{
                                                         textAlign: "center",
-                                                        margin: 0,
+                                                        marginTop: 17,
                                                         color: theme ? "#FFFFFF" : "#1D2939",
                                                         fontSize: 22,
                                                         letterSpacing: 1,
@@ -349,7 +382,7 @@ export default function Plans() {
                                                 </Title>
 
                                                 {/* DIVIDER */}
-                                                <div style={{ width: 70, height: 2, background: color.end, margin: "18px auto 20px", }} />
+                                                <div style={{ width: 70, height: 2, background: color.end, margin: "10px auto 20px", }} />
                                                 <Row gutter={[8, 8]} style={{ marginBottom: 20 }}>
                                                     {[
                                                         {

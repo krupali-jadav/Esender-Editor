@@ -1,11 +1,11 @@
-import {Modal, Table, Tag, Typography, Button, Flex,} from "antd";
+import { Modal, Table, Tag, Typography, Button, Flex, message, } from "antd";
 import { CloseOutlined, FileTextOutlined } from "@ant-design/icons";
 import { t } from "i18next";
 import { useEffect, useState } from "react";
 import { getsearchHistory } from "./SearchHistoryApi";
 import EmptyState from "../Styles/EmptyState";
 import { useSelector } from "react-redux";
-import { formatDate } from "../../util/commom.utils";
+import { CURRENCIES_SYMBOL, formatDate } from "../../util/commom.utils";
 
 const { Text } = Typography;
 
@@ -33,6 +33,7 @@ function SearchHistory({ open, onCancel, }) {
         } catch (error) {
             console.log(error);
             setSearchHistory([]);
+            message.error(error?.message)
         } finally {
             setLoading(false);
         }
@@ -54,7 +55,7 @@ function SearchHistory({ open, onCancel, }) {
         },
         {
             title: t("billing.cycle", { defaultValue: "Billing Cycle" }),
-            dataIndex: ["planSnapshot", "billingInterval"],
+            dataIndex: "billingInterval",
             key: "billingCycle",
             render: (value) =>
                 value
@@ -63,16 +64,11 @@ function SearchHistory({ open, onCancel, }) {
         },
         {
             title: t("amount", { defaultValue: "Amount" }),
-            dataIndex: ["planSnapshot", "price"],
+            dataIndex: "price",
             key: "amount",
             render: (value, record) => {
-                const symbol =
-                    record?.currency === "INR"
-                        ? "₹"
-                        : record?.currency === "USD"
-                            ? "$"
-                            : record?.currency || "";
-
+                const currency = record?.currency || "INR";
+                const symbol = CURRENCIES_SYMBOL?.[currency] || currency;
                 return `${symbol}${Number(value || 0).toFixed(2)}`;
             },
         },
@@ -126,7 +122,7 @@ function SearchHistory({ open, onCancel, }) {
             title={
                 <Flex justify="space-between" align="center">
                     <Text strong style={{ fontSize: 16 }}>
-                        {t("subscription.history", {defaultValue: "Subscription History",})}
+                        {t("subscription.history", { defaultValue: "Subscription History", })}
                     </Text>
 
                     <Button

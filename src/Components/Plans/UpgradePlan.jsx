@@ -1,18 +1,9 @@
 import { Modal, Row, Col, Card, Typography, Flex, Divider, Button, Space, Tag, Badge } from "antd";
 import { useEffect, useState } from "react";
 import { t } from "i18next";
-import {
-    CheckCircleFilled,
-    CloseCircleFilled,
-    CreditCardOutlined,
-    ThunderboltFilled,
-    ProjectOutlined,
-    FileTextOutlined,
-    TeamOutlined,
-    DatabaseOutlined,
-    CalendarOutlined,
-} from "@ant-design/icons";
+import {CheckCircleFilled, CloseCircleFilled, CreditCardOutlined, ThunderboltFilled, ProjectOutlined,FileTextOutlined, TeamOutlined, DatabaseOutlined, CalendarOutlined,} from "@ant-design/icons";
 import { useSelector } from "react-redux";
+import { CURRENCIES_SYMBOL } from "../../util/commom.utils";
 
 const { Title, Text } = Typography;
 const PRIMARY = "#20A6CE";
@@ -41,11 +32,7 @@ const StatCard = ({ icon, label, value, colors }) => (
 function UpgradePlan({ open, onCancel, quote, theme, loading = false, onContinue }) {
     const [selectedGateway, setSelectedGateway] = useState(null);
     const isDark = !!theme;
-    const panel = useSelector((state) => state.app.panel);
     const currency = useSelector((state) => state.app.currency);
-    const selectedCurrency = panel?.currencies?.find((item) => item.code === currency);
-    const paymentGateways = selectedCurrency?.paymentGateways || [];
-    const gatewayConfigs = panel?.paymentGateways || [];
 
     const colors = {
         page: isDark ? "#102638" : "#F5F7FA",
@@ -64,8 +51,6 @@ function UpgradePlan({ open, onCancel, quote, theme, loading = false, onContinue
     if (!quote) return null;
 
     const plan = quote?.plan;
-    const currencySymbol = quote?.currency === "INR" ? "₹" : quote?.currency || "";
-    const money = (v) => `${currencySymbol}${Number(v || 0).toFixed(2)}`;
     const formatNumber = (v) => Number(v || 0).toLocaleString("en-IN");
     const formatStorage = (bytes) => (bytes ? `${(bytes / 1024 ** 3).toFixed(0)} GB` : "0 GB");
 
@@ -88,7 +73,7 @@ function UpgradePlan({ open, onCancel, quote, theme, loading = false, onContinue
             footer={null}
             width={900}
             centered
-            destroyOnClose
+            // destroyOnClose
             styles={{
                 content: { padding: 0, overflow: "hidden", background: colors.page, borderRadius: 14 },
                 header: { margin: 0, padding: "18px 24px", background: colors.card, borderBottom: `1px solid ${colors.border}` },
@@ -104,7 +89,7 @@ function UpgradePlan({ open, onCancel, quote, theme, loading = false, onContinue
                         <Text strong style={{ display: "block", color: colors.text, fontSize: 17 }}>
                             {t("upgrade.plan", { defaultValue: "Upgrade Plan" })}
                         </Text>
-                        <Text type="secondary" style={{ fontSize: 11 }}>Review your plan before continuing</Text>
+                        <Text type="secondary" style={{ fontSize: 11 }}>{t("review.your.plan.before.continuing", { defaultValue: "Review your plan before continuing" })}</Text>
                     </div>
                 </Space>
             }
@@ -118,31 +103,33 @@ function UpgradePlan({ open, onCancel, quote, theme, loading = false, onContinue
                                 <Space size={8}>
                                     <Title level={3} style={{ margin: 0, color: colors.text }}>{plan?.name || "Plan"}</Title>
                                     {plan?.isRecommended && (
-                                        <Tag color={PRIMARY} bordered={false} style={{ margin: 0, fontWeight: 600 }}>RECOMMENDED</Tag>
+                                        <Tag color={PRIMARY} bordered={false} style={{ margin: 0, fontWeight: 600 }}>{t("recommended", { defaultValue: "RECOMMENDED" })}</Tag>
                                     )}
                                 </Space>
 
                                 <Text type="secondary" style={{ maxWidth: 520, display: "block" }}>
-                                    {plan?.description || "Upgrade your subscription to unlock more features and limits."}
+                                    {plan?.description || t("upgrade.your.subscription.to.unlock.more.features.and.limits", { defaultValue: "Upgrade your subscription to unlock more features and limits." })}
                                 </Text>
 
                                 <Space size={6} wrap>
                                     <Tag bordered={false} style={{ background: isDark ? "#163548" : "#EAF7FB", color: PRIMARY }}>
-                                        {quote?.billingInterval === "yearly" ? "Yearly" : "Monthly"}
+                                        {quote?.billingInterval === "yearly" ? t("yearly", { defaultValue: "Yearly" }) : t("monthly", { defaultValue: "Monthly" })}
                                     </Tag>
                                     <Tag bordered={false} style={{ background: isDark ? "#172B3B" : "#F2F4F7", color: colors.secondary }}>
-                                        {quote?.validDays || 30} days
+                                        {quote?.validDays || 30} {t("days", { defaultValue: "days" })}
                                     </Tag>
-                                    {quote?.takesEffectImmediately && <Tag bordered={false} color="success">Starts immediately</Tag>}
+                                    {quote?.takesEffectImmediately && <Tag bordered={false} color="success">{t("starts.immediately", { defaultValue: "Starts immediately" })}</Tag>}
                                 </Space>
                             </Space>
                         </Col>
 
                         <Col>
                             <Flex vertical align="end" gap={2}>
-                                <Text type="secondary" style={{ fontSize: 12 }}>Total</Text>
-                                <Title level={2} style={{ margin: 0, color: PRIMARY }}>{money(quote?.total)}</Title>
-                                <Text type="secondary" style={{ fontSize: 12 }}>/ {quote?.billingInterval === "yearly" ? "year" : "month"}</Text>
+                                <Text type="secondary" style={{ fontSize: 12 }}>{t("total", { defaultValue: "Total" })}</Text>
+                                <Title level={2} style={{ margin: 0, color: PRIMARY }}>
+                                    {CURRENCIES_SYMBOL[currency]} {Number(quote?.total || 0).toFixed(2)}
+                                </Title>
+                                <Text type="secondary" style={{ fontSize: 12 }}>{t("per", { defaultValue: "per" })} {quote?.billingInterval === "yearly" ? t("year", { defaultValue: "year" }) : t("month", { defaultValue: "month" })}</Text>
                             </Flex>
                         </Col>
                     </Row>
@@ -151,27 +138,27 @@ function UpgradePlan({ open, onCancel, quote, theme, loading = false, onContinue
                 {/* PLAN + LIMITS */}
                 <Row gutter={[14, 14]}>
                     <Col xs={24} md={12}>
-                        <Card size="small" title={<Text strong>Plan Details</Text>} style={{ height: "100%", ...cardStyle }}>
+                        <Card size="small" title={<Text strong>{t("plan.details", { defaultValue: "Plan Details" })}</Text>} style={{ height: "100%", ...cardStyle }}>
                             <Space direction="vertical" size={4} style={{ width: "100%" }}>
-                                <Item label="Plan Name" value={plan?.name || "N/A"} />
-                                <Item label="Slug" value={plan?.slug || "N/A"} />
-                                <Item label="Billing Interval" value={quote?.billingInterval === "yearly" ? "Yearly" : "Monthly"} />
-                                <Item label="Validity" value={`${quote?.validDays || 0} days`} />
-                                <Item label="Effective" value={quote?.takesEffectImmediately ? "Immediately" : "Next billing period"} />
-                                <Item label="Currency" value={quote?.currency || "INR"} />
+                                <Item label={t("plan.name", { defaultValue: "Plan Name" })} value={plan?.name || "N/A"} />
+                                <Item label={t("slug", { defaultValue: "Slug" })} value={plan?.slug || "N/A"} />
+                                <Item label={t("billing.interval", { defaultValue: "Billing Interval" })} value={quote?.billingInterval === "yearly" ? t("yearly", { defaultValue: "Yearly" }) : t("monthly", { defaultValue: "Monthly" })} />
+                                <Item label={t("validity", { defaultValue: "Validity" })} value={`${quote?.validDays || 0} ${t("days", { defaultValue: "days" })}`} />
+                                <Item label={t("effective", { defaultValue: "Effective" })} value={quote?.takesEffectImmediately ? t("immediately", { defaultValue: "Immediately" }) : t("next.billing.period", { defaultValue: "Next billing period" })} />
+                                <Item label={t("currency", { defaultValue: "Currency" })} value={quote?.currency || "INR"} />
                             </Space>
                         </Card>
                     </Col>
 
                     <Col xs={24} md={12}>
-                        <Card size="small" title={<Text strong>Plan Limits</Text>} style={{ height: "100%", ...cardStyle }}>
+                        <Card size="small" title={<Text strong>{t("plan.limits", { defaultValue: "Plan Limits" })}</Text>} style={{ height: "100%", ...cardStyle }}>
                             <Row gutter={[8, 10]}>
-                                <StatCard colors={colors} icon={<ProjectOutlined style={{ color: PRIMARY }} />} label="Projects" value={plan?.limits?.maxProjects} />
-                                <StatCard colors={colors} icon={<FileTextOutlined style={{ color: PRIMARY }} />} label="Templates" value={formatNumber(plan?.limits?.maxTemplates)} />
-                                <StatCard colors={colors} icon={<TeamOutlined style={{ color: PRIMARY }} />} label="Editor Users" value={formatNumber(plan?.limits?.maxEditorUsers)} />
-                                <StatCard colors={colors} icon={<DatabaseOutlined style={{ color: PRIMARY }} />} label="Storage" value={formatStorage(plan?.limits?.storageBytes)} />
-                                <StatCard colors={colors} icon={<DatabaseOutlined style={{ color: PRIMARY }} />} label="Monthly Sessions" value={formatNumber(plan?.limits?.maxMonthlySessions)} />
-                                <StatCard colors={colors} icon={<DatabaseOutlined style={{ color: PRIMARY }} />} label="AI Credits" value={formatNumber(plan?.limits?.maxMonthlyAiCredits)} />
+                                <StatCard colors={colors} icon={<ProjectOutlined style={{ color: PRIMARY }} />} label={t("projects", { defaultValue: "Projects" })} value={plan?.limits?.maxProjects} />
+                                <StatCard colors={colors} icon={<FileTextOutlined style={{ color: PRIMARY }} />} label={t("templates", { defaultValue: "Templates" })} value={formatNumber(plan?.limits?.maxTemplates)} />
+                                <StatCard colors={colors} icon={<TeamOutlined style={{ color: PRIMARY }} />} label={t("editor.users", { defaultValue: "Editor Users" })} value={formatNumber(plan?.limits?.maxEditorUsers)} />
+                                <StatCard colors={colors} icon={<DatabaseOutlined style={{ color: PRIMARY }} />} label={t("storage", { defaultValue: "Storage" })} value={formatStorage(plan?.limits?.storageBytes)} />
+                                <StatCard colors={colors} icon={<DatabaseOutlined style={{ color: PRIMARY }} />} label={t("monthly.sessions", { defaultValue: "Monthly Sessions" })} value={formatNumber(plan?.limits?.maxMonthlySessions)} />
+                                <StatCard colors={colors} icon={<DatabaseOutlined style={{ color: PRIMARY }} />} label={t("ai.credits", { defaultValue: "AI Credits" })} value={formatNumber(plan?.limits?.maxMonthlyAiCredits)} />
                             </Row>
                         </Card>
                     </Col>
@@ -185,9 +172,9 @@ function UpgradePlan({ open, onCancel, quote, theme, loading = false, onContinue
                         <Flex justify="space-between" align="center">
                             <Space size={8}>
                                 <CheckCircleFilled style={{ color: PRIMARY }} />
-                                <Text strong>Included Features</Text>
+                                <Text strong>{t("included.features", { defaultValue: "Included Features" })}</Text>
                             </Space>
-                            <Text type="secondary" style={{ fontSize: 12 }}>{enabledFeatures.length} included</Text>
+                            <Text type="secondary" style={{ fontSize: 12 }}>{enabledFeatures.length} {t("included", { defaultValue: "included" })}</Text>
                         </Flex>
                     }
                 >
@@ -212,19 +199,36 @@ function UpgradePlan({ open, onCancel, quote, theme, loading = false, onContinue
                 </Card>
 
                 {/* PAYMENT */}
-                <Card size="small" style={cardStyle} title={<Space size={8}><CreditCardOutlined style={{ color: PRIMARY }} /><Text strong>Payment Method</Text></Space>}>
+                <Card size="small" style={cardStyle} title={<Space size={8}><CreditCardOutlined style={{ color: PRIMARY }} /><Text strong>{t("payment.method", { defaultValue: "Payment Method" })}</Text></Space>}>
                     <Space wrap>
                         {quote?.allowedGateways?.map((gateway) => {
                             const selected = selectedGateway === gateway.name;
+
+                            const gatewayLabel =
+                                gateway.name === "razorpay"
+                                    ? "Razorpay"
+                                    : gateway.name === "paypal"
+                                        ? "PayPal"
+                                        : gateway.name;
+
                             return (
                                 <Button
                                     key={gateway.name}
                                     type={selected ? "primary" : "default"}
                                     onClick={() => setSelectedGateway(gateway.name)}
                                     icon={<CreditCardOutlined />}
-                                    style={{ height: 42, padding: "0 16px", ...(selected ? { background: PRIMARY, borderColor: PRIMARY } : {}) }}
+                                    style={{
+                                        height: 42,
+                                        padding: "0 16px",
+                                        ...(selected
+                                            ? {
+                                                background: PRIMARY,
+                                                borderColor: PRIMARY,
+                                            }
+                                            : {}),
+                                    }}
                                 >
-                                    {gateway.name?.charAt(0).toUpperCase() + gateway.name?.slice(1)}
+                                    {gatewayLabel}
                                     {gateway.charge > 0 && ` (${gateway.charge}%)`}
                                 </Button>
                             );
@@ -237,27 +241,26 @@ function UpgradePlan({ open, onCancel, quote, theme, loading = false, onContinue
                     <Flex justify="space-between" align="center" style={{ marginBottom: 14 }}>
                         <Space size={8}>
                             <CalendarOutlined style={{ color: PRIMARY }} />
-                            <Text strong>Payment Summary</Text>
+                            <Text strong>{t("payment.summary", { defaultValue: "Payment Summary" })}</Text>
                         </Space>
                         <Tag bordered={false} style={{ color: PRIMARY, background: `${PRIMARY}18` }}>
-                            {quote?.billingInterval === "yearly" ? "YEARLY" : "MONTHLY"}
+                            {quote?.billingInterval === "yearly" ? t("tearly", { defaultValue: "YEARLY" }) : t("monthly", { defaultValue: "MONTHLY" })}
                         </Tag>
                     </Flex>
 
-                    <Item label="Base plan amount" value={money(quote?.basePrice)} />
-                    <Item label="Discount" value={`- ${money(quote?.discount)}`} />
-                    <Item label="Prorated Credit" value={`- ${money(quote?.proratedCredit)}`} />
-                    <Item label="Gateway Fee" value={money(quote?.gatewayFee)} />
-                    <Item label="Tax" value={money(quote?.tax)} />
+                    <Item label={t("base.plan.amount", { defaultValue: "Base plan amount" })} value={`${CURRENCIES_SYMBOL[currency]} ${Number(quote?.basePrice || 0).toFixed(2)}`} />
+                    <Item label={t("discount", { defaultValue: "Discount" })} value={`- ${CURRENCIES_SYMBOL[currency]} ${Number(quote?.discount || 0).toFixed(2)}`} />
+                    <Item label={t("prorated.credit", { defaultValue: "Prorated Credit" })} value={`- ${CURRENCIES_SYMBOL[currency]} ${Number(quote?.proratedCredit || 0).toFixed(2)}`} />
+                    <Item label={t("gateway.fee", { defaultValue: "Gateway Fee" })} value={`${CURRENCIES_SYMBOL[currency]} ${Number(quote?.gatewayFee || 0).toFixed(2)}`} />
+                    <Item label={t("tax", { defaultValue: "Tax" })} value={`${CURRENCIES_SYMBOL[currency]} ${Number(quote?.tax || 0).toFixed(2)}`} />
 
                     <Divider style={{ margin: "10px 0" }} />
-
                     <Flex justify="space-between" align="center">
                         <div>
-                            <Text strong style={{ fontSize: 16 }}>Total</Text>
-                            <Text type="secondary" style={{ display: "block", fontSize: 11 }}>Amount payable</Text>
+                            <Text strong style={{ fontSize: 16 }}>{t("total", { defaultValue: "Total" })}</Text>
+                            <Text type="secondary" style={{ display: "block", fontSize: 11 }}>{t("amount.payable", { defaultValue: "Amount payable" })}</Text>
                         </div>
-                        <Title level={3} style={{ margin: 0, color: PRIMARY }}>{money(quote?.total)}</Title>
+                        <Title level={3} style={{ margin: 0, color: PRIMARY }}>{CURRENCIES_SYMBOL[currency]} {Number(quote?.total || 0).toFixed(2)}</Title>
                     </Flex>
                 </Card>
 
@@ -265,7 +268,7 @@ function UpgradePlan({ open, onCancel, quote, theme, loading = false, onContinue
                 {quote?.blocked && quote?.blockers?.length > 0 && (
                     <Card size="small" style={{ borderColor: "#ff4d4f", background: isDark ? "#291719" : "#fff2f0" }}>
                         <Space direction="vertical" size={4}>
-                            <Badge status="error" text="This plan cannot be selected" />
+                            <Badge status="error" text={t("this.plan.cannot.be.selected", { defaultValue: "This plan cannot be selected" })} />
                             {quote.blockers.map((blocker, i) => (
                                 <Text type="danger" key={i} style={{ fontSize: 12 }}>{blocker}</Text>
                             ))}
@@ -275,7 +278,7 @@ function UpgradePlan({ open, onCancel, quote, theme, loading = false, onContinue
 
                 {/* FOOTER */}
                 <Flex justify="space-between" align="center" gap={12} style={{ paddingTop: 2 }}>
-                    <Text type="secondary" style={{ fontSize: 11 }}>By continuing, you agree to the selected billing plan.</Text>
+                    <Text type="secondary" style={{ fontSize: 11 }}>{t("by.continuing.you.agree.to.the.selected.billing.plan", { defaultValue: "By continuing, you agree to the selected billing plan." })}</Text>
                     <Space size={8}>
                         <Button onClick={onCancel} style={{ minWidth: 90 }}>
                             {t("cancel", { defaultValue: "Cancel" })}

@@ -30,6 +30,7 @@ export const getSubscriptionPlans = async () => {
         console.error(error);
         message.error(error?.message);
     }
+}
 
 export const getSubscriptionQuote = async ({slug,billingInterval = "monthly",currency,gateway,}) => {
     try {
