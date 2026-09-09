@@ -259,7 +259,7 @@ export default function SelectProject() {
                                                                 <Text type="secondary">{t("environment", { defaultValue: "Environment" })}</Text>
                                                             </Space>
 
-                                                            <Text strong>{project?.environment || "Default"}</Text>
+                                                            <Text strong>{project?.environment || t("default", { defaultValue: "Default" })}</Text>
                                                         </Flex>
                                                     </Space>
                                                 </div>

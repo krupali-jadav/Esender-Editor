@@ -86,9 +86,7 @@ function ProjectCredential() {
                         message={t("one.time.reveal.policy", { defaultValue: "One-Time Reveal Policy" })}
                         description={
                             <Text type="secondary">
-                                {t("one.time.reveal.policy", {
-                                    defaultValue: "For your security, secret keys are only displayed once upon creation or rotation. If lost, you must rotate the key to generate a new one. We do not store plain-text keys.",
-                                })}
+                                {t("for.your.security,security.keys", {defaultValue: "For your security, secret keys are only displayed once upon creation or rotation. If lost, you must rotate the key to generate a new one. We do not store plain-text keys.",})}
                             </Text>
                         }
                     />
@@ -179,12 +177,11 @@ function ProjectCredential() {
                             </Card>
 
                             {/* Rotate Signing Secret */}
-                            <Alert type="error" title="Rotate Signing Secret"
+                            <Alert type="error" title={t("rotate.signing.secret", { defaultValue: "Rotate Signing Secret" })}
                                 description={
                                     <Text>
                                         {t("rotating.will.instantiate.current.secret.warning.any.webhooks.sent.with.old.signature.will.fail.verification.until.your.backend.is.updated", {
-                                            defaultValue:
-                                                "Rotating will immediately invalidate the current secret. Warning: any webhooks sent with the old signature will fail verification until your backend is updated.",
+                                            defaultValue:"Rotating will immediately invalidate the current secret. Warning: any webhooks sent with the old signature will fail verification until your backend is updated.",
                                         })}
                                     </Text>
                                 }
