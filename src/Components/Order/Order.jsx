@@ -7,12 +7,12 @@ import AppPageHeader from "../Styles/AppHeader";
 import { useEffect, useState } from "react";
 import { getOrders } from "./OrderApi";
 import EmptyState from "../Styles/EmptyState";
-import { useNavigate } from "react-router-dom";
-import { formatDate } from "../../util/commom.utils";
+import { Link } from "react-router-dom";
+import { CURRENCIES_SYMBOL, formatDate } from "../../util/commom.utils";
+import StatusBadge from "../Styles/StatusBadge";
 const { Text } = Typography;
 
 function Order() {
-    const navigate = useNavigate();
     const theme = useSelector((state) => state?.app?.theme);
     const [order, setOrder] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -47,29 +47,16 @@ function Order() {
         fetchOrders();
     }, []);
 
-    const orders = [
-        {
-            _id: "ORD-001",
-            planName: "Pro Plan",
-            billingInterval: "Monthly",
-            amount: 999,
-            status: "Paid",
-            paymentGateway: "Stripe",
-        },
-    ];
     const orderColumns = [
         {
             title: t("order.id", { defaultValue: "Order ID" }),
             dataIndex: "_id",
             key: "id",
             render: (id) => (
-                <Text
-                    underline
-                    strong
-                    style={{ cursor: "pointer" }}
-                    onClick={() => navigate(`/invoice/12345`)}
-                >
-                    {id}
+                <Text copyable={{ text: id }}>
+                    <Link to={`/invoice/${id}`}>
+                        {id}
+                    </Link>
                 </Text>
             ),
         },
@@ -86,19 +73,25 @@ function Order() {
         {
             title: t("billing.amount", { defaultValue: "Amount" }),
             dataIndex: "total",
-            key: "amount"
+            key: "amount",
+            render: (_, record) => (
+                <>
+                    {CURRENCIES_SYMBOL[record.currency]} {record.total}
+                </>
+            )
         },
         {
             title: t("status", { defaultValue: "Status" }),
             dataIndex: "status",
             key: "status",
-            render: (status) => <Tag color="success">{status}</Tag>,
+            render: (status) => (
+                <StatusBadge status={status === "paid" ? "completed" : "failed"} label={status} />
+            )
         },
         {
             title: t("payment.gateway", { defaultValue: "Payment Gateway" }),
             dataIndex: "gateway",
-            key: "gateway",
-            render: (gateway) => <Tag color="success">{gateway}</Tag>,
+            key: "gateway"
         },
         {
             title: t("created.at", { defaultValue: "Created At" }),
@@ -182,8 +175,7 @@ function Order() {
                 <Card styles={{ body: { padding: 0 } }}>
                     <Table
                         columns={orderColumns}
-                        dataSource={orders}
-                        // dataSource={order}
+                        dataSource={order}
                         loading={loading}
                         pagination={false}
                         scroll={{ x: "max-content" }}

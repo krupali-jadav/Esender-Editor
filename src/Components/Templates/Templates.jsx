@@ -18,13 +18,15 @@ export default function Templates() {
     const [templates, setTemplates] = useState([]);
     const [loading, setLoading] = useState(false);
     const [search, setSearch] = useState("");
-    const [sortBy, setSortBy] = useState("created-at");
     const [hoveredTemplate, setHoveredTemplate] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [statusLoading, setStatusLoading] = useState(null);
     const [previewTemplate, setPreviewTemplate] = useState(null);
     const [totalTemplates, setTotalTemplates] = useState(0);
+    const [sortBy, setSortBy] = useState("created-at");
+    const [status, setStatus] = useState("all");
+    const [isApplyFilter, setIsApplyFilter] = useState(false);
     const theme = useSelector((state) => state?.app?.theme);
     const debouncedSearch = useDebounce(search, 700);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -48,7 +50,10 @@ export default function Templates() {
             const payload = {
                 search: debouncedSearch,
                 sort_by: sortBy,
-                filter_by: {enable: true},
+                filter_by: {
+                    enable: true,
+                    ...(status !== "all" && { status }),
+                },
                 page: currentPage - 1,
                 limit: pageSize,
             };
@@ -71,7 +76,7 @@ export default function Templates() {
 
     useEffect(() => {
         fetchTemplates();
-    }, [debouncedSearch, sortBy, currentPage, pageSize]);
+    }, [debouncedSearch, sortBy, status, currentPage, pageSize]);
 
     const handleDeleteTemplate = (template) => {
         setDeleteTemplateRecord(template);
@@ -191,11 +196,25 @@ export default function Templates() {
                             <Space size={8}>
                                 <Text type="secondary">{t('status', { defaultValue: 'Status' })}:</Text>
                                 <Segmented
-                                    defaultValue="All"
+                                    value={status}
+                                    onChange={(value) => {
+                                        setStatus(value);
+                                        setIsApplyFilter(value !== "all");
+                                        setCurrentPage(1);
+                                    }}
                                     options={[
-                                        t('all', { defaultValue: 'All' }),
-                                        t('published', { defaultValue: 'Published' }),
-                                        t('draft', { defaultValue: 'Draft' })
+                                        {
+                                            label: t('all', { defaultValue: 'All' }),
+                                            value: "all",
+                                        },
+                                        {
+                                            label: t('published', { defaultValue: 'Published' }),
+                                            value: "published",
+                                        },
+                                        {
+                                            label: t('draft', { defaultValue: 'Draft' }),
+                                            value: "draft",
+                                        },
                                     ]}
                                 />
                             </Space>
@@ -357,8 +376,16 @@ export default function Templates() {
                     ) : (
                         <Col span={24}>
                             <EmptyState
-                                title={t('no.templates.found', { defaultValue: 'No templates found' })}
-                                description={t('create.first.template', { defaultValue: 'Create your first email template to get started.' })}
+                                title={
+                                    isApplyFilter || search
+                                        ? t("no.templates.match.filters", { defaultValue: "No templates match your filters", })
+                                        : t("no.templates.available", { defaultValue: "No templates available", })
+                                }
+                                description={
+                                    isApplyFilter || search
+                                        ? t("try.adjusting.or.clearing.your.search.and.filters", { defaultValue: "Try adjusting or clearing your search and filters.", })
+                                        : t("create.your.first.template.to.start.designing.campaigns", { defaultValue: "Create your first template to start designing campaigns.", })
+                                }
                                 action={
                                     <Button
                                         type="primary"

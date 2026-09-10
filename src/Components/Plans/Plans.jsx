@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import AppPageHeader from "../Styles/AppHeader";
 import { t } from "i18next";
 import { useEffect, useState } from "react";
-import { getPlans, getSubscriptionPlans, getSubscriptionQuote } from "./PlanApi";
+import { getAiCapabilities, getPlans, getSubscriptionPlans, getSubscriptionQuote } from "./PlanApi";
 import EmptyState from "../Styles/EmptyState";
 import UpgradePlan from "./UpgradePlan";
 import { PiClockClockwiseFill } from "react-icons/pi";
@@ -15,6 +15,8 @@ const { Title, Text, Paragraph } = Typography;
 
 export default function Plans() {
     const theme = useSelector((state) => state?.app?.theme);
+    const selectedProject = useSelector((state) => state?.app?.selectedProject);
+    const projectId = selectedProject?._id;
     const [plans, setPlans] = useState([]);
     const [plansLoading, setPlansLoading] = useState(false);
     const [subscription, setSubscription] = useState(null);
@@ -25,6 +27,8 @@ export default function Plans() {
     const [historyOpen, setHistoryOpen] = useState(false);
     const [quote, setQuote] = useState(null);
     const [billingCycle, setBillingCycle] = useState("monthly");
+    const [aiCredits, setAiCredits] = useState(null);
+    const [aiCreditsLoading, setAiCreditsLoading] = useState(false);
     const currency = useSelector((state) => state?.app?.currency || "INR");
     const gateway = "razorpay";
     const setCurrencyRates = useSelector((state) => state?.app?.currencyRates || {});
@@ -40,6 +44,27 @@ export default function Plans() {
         );
 
         return option?.price || 0;
+    };
+
+    const fetchAiCapabilities = async () => {
+        if (!projectId) return;
+
+        try {
+            setAiCreditsLoading(true);
+
+            const response = await getAiCapabilities(projectId);
+
+            if (response?.status) {
+                setAiCredits(response?.credits || null);
+            } else {
+                setAiCredits(null);
+            }
+        } catch (error) {
+            console.error(error);
+            setAiCredits(null);
+        } finally {
+            setAiCreditsLoading(false);
+        }
     };
 
     const fetchPlans = async () => {
@@ -99,33 +124,80 @@ export default function Plans() {
             setQuoteLoading(false);
         }
     };
+
     useEffect(() => {
         fetchPlans();
         fetchSubscription();
-    }, []);
+        fetchAiCapabilities();
+    }, [projectId]);
+
     const currentPlanSlug = subscription?.planSlug;
     const currentPlanName = subscription?.planName;
     return (
 
         <PageContainer title={false}>
-
             <Row gutter={[16, 16]} align="middle">
                 <Col xs={24} lg={14}>
                     <AppPageHeader
                         title={t("plans", { defaultValue: "Plans" })}
-                        description={t("plans.description", { defaultValue: "Manage your subscription, payment methods, and view your plans history." })}
+                        description={t("plans.description", {defaultValue:"Manage your subscription, payment methods, and view your plans history.",})}
                     />
                 </Col>
 
-                <Col xs={24} lg={10}>
-                    <Flex gap={8} justify="end" wrap>
+                <Col xs={24} lg={10} style={{ marginLeft: "auto", display: "flex", justifyContent: "flex-end" }}>
+                    <Flex gap={12} align="center">
+
+                        {/* AI Credits */}
+                        <Card
+                            size="small"
+                            style={{
+                                width: 190,
+                                height: 50,
+                                borderRadius: 10,
+                                border: "1px solid rgba(32, 166, 206, 0.25)",
+                                background: theme ? "rgba(32, 166, 206, 0.08)" : "#F0FAFD",
+                            }}
+                            styles={{ body: { padding: "5px 12px", height: "100%" } }}
+                        >
+                            <Flex align="center" gap={8} style={{ height: "100%" }}>
+                                <Avatar
+                                    size={28}
+                                    icon={<RobotOutlined />}
+                                    style={{ background: "rgba(32, 166, 206, 0.15)", color: "#20A6CE", }}
+                                />
+
+                                <Space direction="vertical" size={0}>
+                                    <Text type="secondary" style={{ fontSize: 13 }}>
+                                        AI Credits
+                                    </Text>
+
+                                    <div>
+                                        <Text strong style={{ fontSize: 16 }}>
+                                            {aiCredits?.used ?? 0}
+                                        </Text>
+
+                                        <Text type="secondary" style={{ fontSize: 13 }}>
+                                            {" / "}
+                                            {aiCredits?.limit ?? 0}
+                                        </Text>
+                                    </div>
+                                </Space>
+                            </Flex>
+                        </Card>
+
+                        {/* Subscription History */}
                         <Button
                             type="primary"
                             icon={<PiClockClockwiseFill />}
                             onClick={() => setHistoryOpen(true)}
+                            style={{
+                                height: 50,
+                                borderRadius: 10,
+                            }}
                         >
-                            {t('subscription.history', { defaultValue: 'Subscription History' })}
+                            {t("subscription.history", { defaultValue: "Subscription History" })}
                         </Button>
+
                     </Flex>
                 </Col>
             </Row>
@@ -264,7 +336,7 @@ export default function Plans() {
                             onChange={setBillingCycle}
                             options={[
                                 {
-                                    label: t("monthly", { defaultValue: "Monthly" } ),
+                                    label: t("monthly", { defaultValue: "Monthly" }),
                                     value: "monthly",
                                 },
                                 {
@@ -273,7 +345,7 @@ export default function Plans() {
                                 },
                             ]}
                         />
-                    </Flex> 
+                    </Flex>
 
                     {plansLoading ? (
                         <Flex justify="center" align="center" style={{ minHeight: 300 }}>

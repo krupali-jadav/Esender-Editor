@@ -48,3 +48,24 @@ export const getSubscriptionQuote = async ({ slug, billingInterval = "monthly", 
         throw error;
     }
 };
+
+export const getAiCapabilities = async (projectId) => {
+    try {
+        const response = await axiosInstance.get("/ai/capabilities", {
+            params: {
+                projectId,
+            },
+        });
+
+        if (response.data?.status) {
+            return response.data;
+        }
+
+        message.error(response.data?.message);
+        return null;
+    } catch (error) {
+        console.error(error);
+        message.error(error?.message);
+        return null;
+    }
+};
