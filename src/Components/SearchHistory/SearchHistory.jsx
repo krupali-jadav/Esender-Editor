@@ -21,12 +21,15 @@ function SearchHistory({ open, onCancel, }) {
             const response = await getsearchHistory(0, 20);
 
             if (response?.status) {
-                setSearchHistory(
-                    (response.items || []).map((items, index) => ({
-                        ...items,
-                        key: items._id || index,
+                const historyItems = (response.items || []).flatMap((item) =>
+                    (item.changes || []).map((change, changeIndex) => ({
+                        ...change,
+                        key: `${item._id}-${changeIndex}`,
+                        billingInterval: item.billingInterval,
                     }))
                 );
+
+                setSearchHistory(historyItems);
             } else {
                 setSearchHistory([]);
             }
@@ -46,62 +49,63 @@ function SearchHistory({ open, onCancel, }) {
 
     const columns = [
         {
-            title: t("plan.name", { defaultValue: "Plan Name" }),
-            dataIndex: "planName",
-            key: "planName",
+            title: t("from.plan", { defaultValue: "From Plan" }),
+            dataIndex: "fromPlanName",
+            key: "fromPlanName",
             render: (value) => (
-                <Text strong>{value || "N/A"}</Text>
+                <Text strong>
+                    {value || "-"}
+                </Text>
             ),
         },
         {
-            title: t("billing.cycle", { defaultValue: "Billing Cycle" }),
-            dataIndex: "billingInterval",
-            key: "billingCycle",
-            render: (value) =>
-                value
-                    ? value.charAt(0).toUpperCase() + value.slice(1)
-                    : "N/A",
+            title: t("to.plan", { defaultValue: "To Plan" }),
+            dataIndex: "toPlanName",
+            key: "toPlanName",
+            render: (value) => (
+                <Text strong>
+                    {value || "-"}
+                </Text>
+            ),
         },
         {
             title: t("amount", { defaultValue: "Amount" }),
-            dataIndex: "price",
+            dataIndex: "amount",
             key: "amount",
             render: (value, record) => {
                 const currency = record?.currency || "INR";
-                const symbol = CURRENCIES_SYMBOL?.[currency] || currency;
-                return `${symbol}${Number(value || 0).toFixed(2)}`;
+
+                return (
+                    <span>
+                        <span style={{ fontSize: 16, marginRight: 3 }}>
+                            {CURRENCIES_SYMBOL[currency]}
+                        </span>
+                        {Number(value || 0).toFixed(2)}
+                    </span>
+                );
             },
         },
         {
-            title: t("activated", { defaultValue: "Activated" }),
-            dataIndex: "activatedAt",
-            key: "activated",
-            render: (value) => value ? formatDate(value) : "-",
+            title: t("change.type", { defaultValue: "Change type" }),
+            dataIndex: "changeType",
+            key: "changeType",
+            render: (value) => {
+                const type = value?.toLowerCase();
+                return (
+                    <Tag
+                        color={type === "upgrade" ? "success" :  type === "downgrade" ? "warning" : type === "new" ? "blue" : "default"}
+                        bordered={false}
+                    >
+                        {value ? value.charAt(0).toUpperCase() + value.slice(1) : "N/A"}
+                    </Tag>
+                );
+            },
         },
         {
-            title: t("expiry.date", { defaultValue: "Expiry Date" }),
-            dataIndex: "usageCycleEndAt",
-            key: "expiryDate",
+            title: t("created.at", { defaultValue: "Created At" }),
+            dataIndex: "at",
+            key: "at",
             render: (value) => value ? formatDate(value) : "-",
-        },
-        {
-            title: t("status", { defaultValue: "Status" }),
-            dataIndex: "status",
-            key: "status",
-            render: (status) => (
-                <Tag
-                    color={
-                        status?.toLowerCase() === "active"
-                            ? "success"
-                            : status?.toLowerCase() === "pending"
-                                ? "warning"
-                                : "default"
-                    }
-                    bordered={false}
-                >
-                    {status || "N/A"}
-                </Tag>
-            ),
         },
     ];
 
@@ -111,7 +115,6 @@ function SearchHistory({ open, onCancel, }) {
             onCancel={onCancel}
             footer={null}
             width={860}
-            // destroyOnClose
             closeIcon={null}
             styles={{
                 content: { padding: 0, borderRadius: 10, overflow: "hidden", },

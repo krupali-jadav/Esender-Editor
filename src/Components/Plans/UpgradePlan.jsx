@@ -1,9 +1,10 @@
 import { Modal, Row, Col, Card, Typography, Flex, Divider, Button, Space, Tag, Badge } from "antd";
 import { useEffect, useState } from "react";
 import { t } from "i18next";
-import {CheckCircleFilled, CloseCircleFilled, CreditCardOutlined, ThunderboltFilled, ProjectOutlined,FileTextOutlined, TeamOutlined, DatabaseOutlined, CalendarOutlined,} from "@ant-design/icons";
+import { CheckCircleFilled, CloseCircleFilled, CreditCardOutlined, ThunderboltFilled, ProjectOutlined, FileTextOutlined, TeamOutlined, DatabaseOutlined, CalendarOutlined, } from "@ant-design/icons";
 import { useSelector } from "react-redux";
 import { CURRENCIES_SYMBOL } from "../../util/commom.utils";
+import { chekoutSubscription } from "./PlanApi";
 
 const { Title, Text } = Typography;
 const PRIMARY = "#20A6CE";
@@ -29,8 +30,10 @@ const StatCard = ({ icon, label, value, colors }) => (
     </Col>
 );
 
-function UpgradePlan({ open, onCancel, quote, theme, loading = false, onContinue }) {
+function UpgradePlan({ open, onCancel, quote, theme, }) {
     const [selectedGateway, setSelectedGateway] = useState(null);
+    const [loading, setLoading] = useState(false);
+
     const isDark = !!theme;
     const currency = useSelector((state) => state.app.currency);
 
@@ -44,8 +47,36 @@ function UpgradePlan({ open, onCancel, quote, theme, loading = false, onContinue
         muted: isDark ? "#6F8495" : "#98A2B3",
     };
 
+    const handleContinueToPayment = async () => {
+        if (!selectedGateway) return;
+
+        try {
+            setLoading(true);
+            const payload = {
+                slug: quote?.plan?.slug,
+                billingInterval: quote?.billingInterval,
+                mode: "immediate",
+                currency,
+                gateway: selectedGateway,
+            };
+            const response = await chekoutSubscription(payload);
+            if (response?.status && response?.paymentUrl) {
+                window.open(
+                    response.paymentUrl,
+                    "_blank",
+                    "noopener,noreferrer"
+                );
+            }
+        } catch (error) {
+            console.error(error);
+
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        setSelectedGateway(open ? quote?.defaultMode || quote?.allowedGateways?.[0]?.name || null : null);
+        setSelectedGateway(null);
     }, [open, quote]);
 
     if (!quote) return null;
@@ -62,8 +93,9 @@ function UpgradePlan({ open, onCancel, quote, theme, loading = false, onContinue
     const enabledFeatures = features.filter((f) => f.enabled);
     const disabledFeatures = features.filter((f) => !f.enabled);
 
-    const handleContinue = () => selectedGateway && onContinue?.({ quote, gateway: selectedGateway });
-
+    const handleContinue = () => {
+        handleContinueToPayment();
+    };
     const cardStyle = { background: colors.card, borderColor: colors.border };
 
     return (
@@ -229,7 +261,6 @@ function UpgradePlan({ open, onCancel, quote, theme, loading = false, onContinue
                                     }}
                                 >
                                     {gatewayLabel}
-                                    {gateway.charge > 0 && ` (${gateway.charge}%)`}
                                 </Button>
                             );
                         })}
@@ -244,14 +275,14 @@ function UpgradePlan({ open, onCancel, quote, theme, loading = false, onContinue
                             <Text strong>{t("payment.summary", { defaultValue: "Payment Summary" })}</Text>
                         </Space>
                         <Tag bordered={false} style={{ color: PRIMARY, background: `${PRIMARY}18` }}>
-                            {quote?.billingInterval === "yearly" ? t("tearly", { defaultValue: "YEARLY" }) : t("monthly", { defaultValue: "MONTHLY" })}
+                            {quote?.billingInterval === "yearly" ? t("yearly", { defaultValue: "YEARLY" }) : t("monthly", { defaultValue: "MONTHLY" })}
                         </Tag>
                     </Flex>
 
                     <Item label={t("base.plan.amount", { defaultValue: "Base plan amount" })} value={`${CURRENCIES_SYMBOL[currency]} ${Number(quote?.basePrice || 0).toFixed(2)}`} />
-                    <Item label={t("discount", { defaultValue: "Discount" })} value={`- ${CURRENCIES_SYMBOL[currency]} ${Number(quote?.discount || 0).toFixed(2)}`} />
-                    <Item label={t("prorated.credit", { defaultValue: "Prorated Credit" })} value={`- ${CURRENCIES_SYMBOL[currency]} ${Number(quote?.proratedCredit || 0).toFixed(2)}`} />
-                    <Item label={t("gateway.fee", { defaultValue: "Gateway Fee" })} value={`${CURRENCIES_SYMBOL[currency]} ${Number(quote?.gatewayFee || 0).toFixed(2)}`} />
+                    <Item label={t("gateway.charge", { defaultValue: "Gateway Charge" })} value={`${CURRENCIES_SYMBOL[currency]} ${Number(quote?.gatewayFee || 0).toFixed(2)}`} />
+                    <Item label={t("discount", { defaultValue: "Discount" })} value={`${CURRENCIES_SYMBOL[currency]} ${Number(quote?.discount || 0).toFixed(2)}`} />
+                    <Item label={t("prorated.credit", { defaultValue: "Prorated Credit" })} value={`${CURRENCIES_SYMBOL[currency]} ${Number(quote?.proratedCredit || 0).toFixed(2)}`} />
                     <Item label={t("tax", { defaultValue: "Tax" })} value={`${CURRENCIES_SYMBOL[currency]} ${Number(quote?.tax || 0).toFixed(2)}`} />
 
                     <Divider style={{ margin: "10px 0" }} />
@@ -288,7 +319,6 @@ function UpgradePlan({ open, onCancel, quote, theme, loading = false, onContinue
                             loading={loading}
                             disabled={!selectedGateway || quote?.blocked}
                             onClick={handleContinue}
-                            style={{ minWidth: 170, background: PRIMARY, borderColor: PRIMARY, fontWeight: 600 }}
                         >
                             {t("continue.to.payment", { defaultValue: "Continue to Payment" })}
                         </Button>

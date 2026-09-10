@@ -16,9 +16,10 @@ export const getPlans = async () => {
         message.error(error?.message);
     }
 };
-export const getSubscriptionPlans = async () => {
+
+export const getCurrentSubscription = async () => {
     try {
-        const response = await axiosInstance.get("subscription");
+        const response = await axiosInstance.get("/subscription/current");
 
         if (response.data?.status) {
             return response.data;
@@ -27,10 +28,11 @@ export const getSubscriptionPlans = async () => {
         message.error(response.data?.message);
         return null;
     } catch (error) {
-        console.error(error);
+        console.error("GET CURRENT SUBSCRIPTION ERROR:", error);
         message.error(error?.message);
+        return null;
     }
-}
+};
 export const getSubscriptionQuote = async ({ slug, billingInterval = "monthly", currency, gateway, }) => {
     try {
         const response = await axiosInstance.get("/subscription/quote", {
@@ -48,3 +50,17 @@ export const getSubscriptionQuote = async ({ slug, billingInterval = "monthly", 
         throw error;
     }
 };
+export const chekoutSubscription = async (payload) => {
+    try {
+        const response = await axiosInstance.post("/billing/checkout", payload);
+
+        if (response.data?.status) {
+            return response.data;
+        }
+        message.error(response.data?.message);
+        return null;
+    } catch (error) {
+        console.error(error);
+        message.error(error?.message);
+    }
+}
