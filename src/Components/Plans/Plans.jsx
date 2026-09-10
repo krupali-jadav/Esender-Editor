@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import AppPageHeader from "../Styles/AppHeader";
 import { t } from "i18next";
 import { useEffect, useState } from "react";
-import { getCurrentSubscription, getPlans, getSubscriptionQuote } from "./PlanApi";
+import { getCurrentSubscription,getAiCapabilities, getPlans, getSubscriptionQuote } from "./PlanApi";
 import EmptyState from "../Styles/EmptyState";
 import UpgradePlan from "./UpgradePlan";
 import { PiClockClockwiseFill } from "react-icons/pi";
@@ -15,6 +15,8 @@ const { Title, Text, Paragraph } = Typography;
 
 export default function Plans() {
     const theme = useSelector((state) => state?.app?.theme);
+    const selectedProject = useSelector((state) => state?.app?.selectedProject);
+    const projectId = selectedProject?._id;
     const [plans, setPlans] = useState([]);
     const [plansLoading, setPlansLoading] = useState(false);
     const [currentSubscription, setCurrentSubscription] = useState(null);
@@ -24,6 +26,8 @@ export default function Plans() {
     const [historyOpen, setHistoryOpen] = useState(false);
     const [quote, setQuote] = useState(null);
     const [billingCycle, setBillingCycle] = useState("monthly");
+    const [aiCredits, setAiCredits] = useState(null);
+    const [aiCreditsLoading, setAiCreditsLoading] = useState(false);
     const currency = useSelector((state) => state?.app?.currency || "INR");
     const gateway = "razorpay";
     const setCurrencyRates = useSelector((state) => state?.app?.currencyRates || {});
@@ -38,6 +42,27 @@ export default function Plans() {
     const getPlanPrice = (plan) => {
         const option = plan?.billingOptions?.find((item) => item.interval === billingCycle);
         return option?.price || 0;
+    };
+
+    const fetchAiCapabilities = async () => {
+        if (!projectId) return;
+
+        try {
+            setAiCreditsLoading(true);
+
+            const response = await getAiCapabilities(projectId);
+
+            if (response?.status) {
+                setAiCredits(response?.credits || null);
+            } else {
+                setAiCredits(null);
+            }
+        } catch (error) {
+            console.error(error);
+            setAiCredits(null);
+        } finally {
+            setAiCreditsLoading(false);
+        }
     };
 
     const fetchPlans = async () => {
@@ -93,6 +118,7 @@ export default function Plans() {
             setQuoteLoading(false);
         }
     };
+
     useEffect(() => {
         fetchPlans();
         fetchCurrentSubscription();
