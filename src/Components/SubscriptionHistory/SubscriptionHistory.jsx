@@ -2,23 +2,25 @@ import { Modal, Table, Tag, Typography, Button, Flex, message, } from "antd";
 import { CloseOutlined, FileTextOutlined } from "@ant-design/icons";
 import { t } from "i18next";
 import { useEffect, useState } from "react";
-import { getsearchHistory } from "./SearchHistoryApi";
+import { getSubscriptionHistory } from "./SearchHistoryApi";
 import EmptyState from "../Styles/EmptyState";
 import { useSelector } from "react-redux";
 import { CURRENCIES_SYMBOL, formatDate } from "../../util/commom.utils";
 
 const { Text } = Typography;
 
-function SearchHistory({ open, onCancel, }) {
+function SubscriptionHistory({ open, onCancel, }) {
     const [searchHistory, setSearchHistory] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
     const theme = useSelector((state) => state?.app?.theme);
 
     const fetchSearchHistory = async () => {
         try {
             setLoading(true);
 
-            const response = await getsearchHistory(0, 20);
+            const response = await getSubscriptionHistory(0, 20);
 
             if (response?.status) {
                 const historyItems = (response.items || []).flatMap((item) =>
@@ -48,6 +50,12 @@ function SearchHistory({ open, onCancel, }) {
     }, [open]);
 
     const columns = [
+        {
+            title: t("sn", { defaultValue: "SN" }),
+            key: "sn",
+            render: (_, __, index) => (page - 1) * pageSize + (index + 1),
+            width: 100,
+        },
         {
             title: t("from.plan", { defaultValue: "From Plan" }),
             dataIndex: "fromPlanName",
@@ -91,15 +99,23 @@ function SearchHistory({ open, onCancel, }) {
             key: "changeType",
             render: (value) => {
                 const type = value?.toLowerCase();
-                return (
-                    <Tag
-                        color={type === "upgrade" ? "success" :  type === "downgrade" ? "warning" : type === "new" ? "blue" : "default"}
-                        bordered={false}
-                    >
-                        {value ? value.charAt(0).toUpperCase() + value.slice(1) : "N/A"}
-                    </Tag>
-                );
+                return type
+                    ? value.charAt(0).toUpperCase() + value.slice(1)
+                    : "N/A";
             },
+        },
+        {
+            title: t("status", { defaultValue: "Status" }),
+            dataIndex: "mode",
+            key: "mode",
+            render: (value) => (
+                <Tag
+                    bordered={false}
+                    color={value === "immediate" ? "success" : value === "start_on_expiry" ? "warning" : "default"}
+                >
+                    {value === "immediate" ? "Immediate" : value === "start_on_expiry" ? "Start on Expiry" : value || "-"}
+                </Tag>
+            ),
         },
         {
             title: t("created.at", { defaultValue: "Created At" }),
@@ -145,8 +161,16 @@ function SearchHistory({ open, onCancel, }) {
                 columns={columns}
                 dataSource={searchHistory}
                 loading={loading}
-                pagination={false}
                 scroll={{ x: "max-content" }}
+                pagination={{
+                    current: page,
+                    pageSize: pageSize,
+                    showSizeChanger: false,
+                    onChange: (newPage, pageSize) => {
+                        setPage(newPage);
+                        setPageSize(pageSize)
+                    },
+                }}
                 locale={{
                     emptyText: (
                         <EmptyState
@@ -174,4 +198,4 @@ function SearchHistory({ open, onCancel, }) {
     );
 }
 
-export default SearchHistory;
+export default SubscriptionHistory;

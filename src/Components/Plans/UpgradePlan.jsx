@@ -32,6 +32,7 @@ const StatCard = ({ icon, label, value, colors }) => (
 
 function UpgradePlan({ open, onCancel, quote, theme, }) {
     const [selectedGateway, setSelectedGateway] = useState(null);
+    const [selectedMode, setSelectedMode] = useState(null);
     const [loading, setLoading] = useState(false);
 
     const isDark = !!theme;
@@ -55,9 +56,11 @@ function UpgradePlan({ open, onCancel, quote, theme, }) {
             const payload = {
                 slug: quote?.plan?.slug,
                 billingInterval: quote?.billingInterval,
-                mode: "immediate",
                 currency,
                 gateway: selectedGateway,
+                ...(selectedMode && {
+                    mode: selectedMode,
+                }),
             };
             const response = await chekoutSubscription(payload);
             if (response?.status && response?.paymentUrl) {
@@ -77,6 +80,7 @@ function UpgradePlan({ open, onCancel, quote, theme, }) {
 
     useEffect(() => {
         setSelectedGateway(null);
+        setSelectedMode(quote?.modes || null);
     }, [open, quote]);
 
     if (!quote) return null;

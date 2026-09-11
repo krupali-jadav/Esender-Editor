@@ -11,11 +11,14 @@ import EmptyState from "../Styles/EmptyState";
 import { formatDate } from "../../util/commom.utils";
 import { useDebounce } from "../../util/useDebounce";
 import DeleteModal from "../Styles/DeleteModel";
+import { listProjects } from "../SelectProject/SelectProjectApi";
 const { Text } = Typography;
 
 export default function Templates() {
     const navigate = useNavigate();
     const [templates, setTemplates] = useState([]);
+    const [project, setProject] = useState([]);
+    const [selectedProject, setSelectedProject] = useState(null);
     const [loading, setLoading] = useState(false);
     const [search, setSearch] = useState("");
     const [hoveredTemplate, setHoveredTemplate] = useState(null);
@@ -41,7 +44,7 @@ export default function Templates() {
     const isEmptyEditorHtml = (html) =>
         !html ||
         html.trim() === "" ||
-        html.includes("Drag Content Block Here");
+        html.includes(t("drap.content.block.here", { "defaultValue": "Drag Content Block Here" }));
 
     const fetchTemplates = async () => {
         try {
@@ -74,7 +77,24 @@ export default function Templates() {
         }
     };
 
+    const fetchProjects = async () => {
+        try {
+            const response = await listProjects();
+
+            if (response?.status) {
+                setProject(response?.projects)
+            }
+            else {
+                setProject([]);
+            }
+        } catch (error) {
+            console.log(error);
+            message.error(error?.message);
+        }
+    }
+
     useEffect(() => {
+        fetchProjects();
         fetchTemplates();
     }, [debouncedSearch, sortBy, status, currentPage, pageSize]);
 
@@ -95,7 +115,6 @@ export default function Templates() {
             if (data?.status) {
                 setTemplates((prev) => prev.filter((item) => item._id !== deleteTemplateRecord._id));
                 message.success(data?.message);
-
                 setDeleteModalOpen(false);
                 setDeleteTemplateRecord(null);
             } else {
@@ -120,7 +139,7 @@ export default function Templates() {
 
             if (data?.status) {
                 setTemplates((prev) => prev.map((item) => item._id === template._id ? { ...item, enable, } : item));
-                message.success(enable ? "Template enabled successfully" : "Template disabled successfully");
+                message.success(enable ? t("template.enabled.successfully", { defaultValue: "Template enabled successfully" }) : t("template.disabled.successfully", { defaultValue: "Template disabled successfully" }));
             } else {
                 message.error(data?.message);
             }
@@ -161,7 +180,7 @@ export default function Templates() {
                     <Flex gap={24} justify="space-between" align="center" wrap="wrap" >
                         {/* Search */}
                         <Input
-                            placeholder="Search templates..."
+                            placeholder={t("search.templates", { defaultValue: "Search templates..." })}
                             prefix={<SearchOutlined />}
                             allowClear
                             value={search}
@@ -175,15 +194,25 @@ export default function Templates() {
                                 <Text type="secondary">{t('project', { defaultValue: 'Project' })}:</Text>
 
                                 <Select
-                                    defaultValue="all"
+                                    value={selectedProject}
+                                    onChange={(value) => setSelectedProject(value)}
                                     variant="borderless"
                                     suffixIcon={<DownOutlined />}
-                                    style={{ width: 130, background: theme ? "#0A1622" : "#F5F8FA", borderRadius: 8, }}
+                                    placeholder={t('select.project', { defaultValue: 'Select Project' })}
+                                    style={{
+                                        width: 180,
+                                        background: theme ? "#0A1622" : "#F5F8FA",
+                                        borderRadius: 8,
+                                    }}
                                     options={[
-                                        { value: "all", label: t('all.projects', { defaultValue: 'All Projects' }) },
-                                        { value: "marketing", label: t('marketing.hub', { defaultValue: 'Marketing Hub' }) },
-                                        { value: "internal", label: t('internal.comms', { defaultValue: 'Internal Comms' }) },
-                                        { value: "transactional", label: t('transactional', { defaultValue: 'Transactional' }) },
+                                        {
+                                            value: "all",
+                                            label: t('all', { defaultValue: 'All' }),
+                                        },
+                                        ...project.map((project) => ({
+                                            value: project._id,
+                                            label: project.name,
+                                        }))
                                     ]}
                                 />
                             </Space>

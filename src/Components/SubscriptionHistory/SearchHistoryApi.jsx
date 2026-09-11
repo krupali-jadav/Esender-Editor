@@ -1,7 +1,7 @@
 import { message } from "antd";
 import axiosInstance from "../../util/axiosInstance";
 
-export const getsearchHistory = async (page = 0, limit = 20) => {
+export const getSubscriptionHistory = async (page = 0, limit = 20) => {
     try {
         const response = await axiosInstance.get(`subscription/history?page=${page}&limit=${limit}`);
 

@@ -1,6 +1,6 @@
 import { DownloadOutlined, DownOutlined, FileTextOutlined, FilterOutlined, SearchOutlined } from "@ant-design/icons";
 import { PageContainer } from "@ant-design/pro-components";
-import { Button, Card, Flex, Input, Segmented, Select, Space, Table, Tag, Typography } from "antd"
+import { Button, Card, Flex, Input, Segmented, Select, Space, Table, Typography } from "antd"
 import { t } from "i18next";
 import { useSelector } from "react-redux";
 import AppPageHeader from "../Styles/AppHeader";
@@ -17,6 +17,8 @@ function Order() {
     const [order, setOrder] = useState([]);
     const [loading, setLoading] = useState(false);
     const [search, setSearch] = useState("");
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
     const [sortBy, setSortBy] = useState("created-at");
 
     const fetchOrders = async () => {
@@ -48,6 +50,12 @@ function Order() {
     }, []);
 
     const orderColumns = [
+        {
+            title: t("sn", { defaultValue: "SN" }),
+            key: "sn",
+            render: (_, __, index) => (page - 1) * pageSize + (index + 1),
+            width: 100,
+        },
         {
             title: t("order.id", { defaultValue: "Order ID" }),
             dataIndex: "_id",
@@ -177,8 +185,16 @@ function Order() {
                         columns={orderColumns}
                         dataSource={order}
                         loading={loading}
-                        pagination={false}
                         scroll={{ x: "max-content" }}
+                        pagination={{
+                            current: page,
+                            pageSize: pageSize,
+                            showSizeChanger: false,
+                            onChange: (newPage, pageSize) => {
+                                setPage(newPage);
+                                setPageSize(pageSize)
+                            },
+                        }}
                         locale={{
                             emptyText: (
                                 <EmptyState

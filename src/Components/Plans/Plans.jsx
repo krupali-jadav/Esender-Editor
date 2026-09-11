@@ -5,12 +5,12 @@ import { useSelector } from "react-redux";
 import AppPageHeader from "../Styles/AppHeader";
 import { t } from "i18next";
 import { useEffect, useState } from "react";
-import { getCurrentSubscription,getAiCapabilities, getPlans, getSubscriptionQuote } from "./PlanApi";
+import { getCurrentSubscription, getAiCapabilities, getPlans, getSubscriptionQuote } from "./PlanApi";
 import EmptyState from "../Styles/EmptyState";
 import UpgradePlan from "./UpgradePlan";
 import { PiClockClockwiseFill } from "react-icons/pi";
-import SearchHistory from "../SearchHistory/SearchHistory";
 import { CURRENCIES_SYMBOL, formatDate } from "../../util/commom.utils";
+import SubscriptionHistory from "../SubscriptionHistory/SubscriptionHistory";
 const { Title, Text, Paragraph } = Typography;
 
 export default function Plans() {
@@ -504,7 +504,6 @@ export default function Plans() {
                                                             <Button
                                                                 // type="primary"
                                                                 type={isCurrentPlan ? "default" : "primary"}
-                                                                bordered={isCurrentPlan ? true : false}
                                                                 block
                                                                 loading={quoteLoading && selectedPlan?.slug === plan.slug}
                                                                 onClick={() => handleChoosePlan(plan)}
@@ -513,6 +512,7 @@ export default function Plans() {
                                                                     marginBottom: 18,
                                                                     borderRadius: 8,
                                                                     background: isCurrentPlan ? undefined : `linear-gradient(90deg,${color.start},${color.end})`,
+                                                                    border: isCurrentPlan ? `1px solid ${color.end}` : "none",
                                                                     fontSize: 12,
                                                                     fontWeight: 600,
                                                                     boxShadow: theme ? "0 5px 15px rgba(0,0,0,0.35)" : "0 5px 12px rgba(0,0,0,0.12)",
@@ -541,7 +541,7 @@ export default function Plans() {
                             theme={theme}
                             loading={quoteLoading}
                         />
-                        <SearchHistory
+                        <SubscriptionHistory
                             open={historyOpen}
                             onCancel={() => setHistoryOpen(false)}
                         />
