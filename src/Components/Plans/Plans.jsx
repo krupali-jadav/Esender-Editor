@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import AppPageHeader from "../Styles/AppHeader";
 import { t } from "i18next";
 import { useEffect, useState } from "react";
-import { getCurrentSubscription,getAiCapabilities, getPlans, getSubscriptionQuote } from "./PlanApi";
+import { getCurrentSubscription, getAiCapabilities, getPlans, getSubscriptionQuote } from "./PlanApi";
 import EmptyState from "../Styles/EmptyState";
 import UpgradePlan from "./UpgradePlan";
 import { PiClockClockwiseFill } from "react-icons/pi";
@@ -27,7 +27,6 @@ export default function Plans() {
     const [quote, setQuote] = useState(null);
     const [billingCycle, setBillingCycle] = useState("monthly");
     const [aiCredits, setAiCredits] = useState(null);
-    const [aiCreditsLoading, setAiCreditsLoading] = useState(false);
     const currency = useSelector((state) => state?.app?.currency || "INR");
     const gateway = "razorpay";
     const setCurrencyRates = useSelector((state) => state?.app?.currencyRates || {});
@@ -48,8 +47,6 @@ export default function Plans() {
         if (!projectId) return;
 
         try {
-            setAiCreditsLoading(true);
-
             const response = await getAiCapabilities(projectId);
 
             if (response?.status) {
@@ -60,8 +57,6 @@ export default function Plans() {
         } catch (error) {
             console.error(error);
             setAiCredits(null);
-        } finally {
-            setAiCreditsLoading(false);
         }
     };
 
@@ -122,6 +117,7 @@ export default function Plans() {
     useEffect(() => {
         fetchPlans();
         fetchCurrentSubscription();
+        fetchAiCapabilities();
     }, []);
     return (
 
@@ -140,11 +136,57 @@ export default function Plans() {
                             />
                         </Col>
 
-                        <Col xs={24} lg={10}>
-                            <Flex gap={8} justify="end" wrap>
-                                <Button type="primary" icon={<PiClockClockwiseFill />} onClick={() => setHistoryOpen(true)}>
-                                    {t('subscription.history', { defaultValue: 'Subscription History' })}
+                        <Col xs={24} lg={10} style={{ marginLeft: "auto", display: "flex", justifyContent: "flex-end" }}>
+                            <Flex gap={12} align="center">
+
+                                {/* AI Credits */}
+                                <Card
+                                    size="small"
+                                    style={{
+                                        width: 190,
+                                        height: 50,
+                                        borderRadius: 10,
+                                        border: "1px solid rgba(32, 166, 206, 0.25)",
+                                        background: theme ? "rgba(32, 166, 206, 0.08)" : "#F0FAFD",
+                                    }}
+                                    styles={{ body: { padding: "5px 12px", height: "100%" } }}
+                                >
+                                    <Flex align="center" gap={8} style={{ height: "100%" }}>
+                                        <Avatar
+                                            size={28}
+                                            icon={<RobotOutlined />}
+                                            style={{ background: "rgba(32, 166, 206, 0.15)", color: "#20A6CE", }}
+                                        />
+
+                                        <Space direction="vertical" size={0}>
+                                            <Text type="secondary" style={{ fontSize: 13 }}>
+                                                AI Credits
+                                            </Text>
+
+                                            <div>
+                                                <Text strong style={{ fontSize: 16 }}>
+                                                    {aiCredits?.used ?? 0}
+                                                </Text>
+
+                                                <Text type="secondary" style={{ fontSize: 13 }}>
+                                                    {" / "}
+                                                    {aiCredits?.limit ?? 0}
+                                                </Text>
+                                            </div>
+                                        </Space>
+                                    </Flex>
+                                </Card>
+
+                                {/* Subscription History */}
+                                <Button
+                                    type="primary"
+                                    icon={<PiClockClockwiseFill />}
+                                    onClick={() => setHistoryOpen(true)}
+                                    style={{ height: 50, borderRadius: 10, }}
+                                >
+                                    {t("subscription.history", { defaultValue: "Subscription History" })}
                                 </Button>
+
                             </Flex>
                         </Col>
                     </Row>

@@ -1,19 +1,6 @@
 import { PageContainer } from "@ant-design/pro-components";
-import {
-    Button,
-    Col,
-    Flex,
-    Form,
-    Input,
-    Row,
-    Space,
-    Spin,
-    Typography,
-    message,
-} from "antd";
-import {
-    ArrowLeftOutlined,
-} from "@ant-design/icons";
+import { Button, Col, Flex, Form, Input, Row, Space, Spin, Typography, message, } from "antd";
+import { ArrowLeftOutlined, } from "@ant-design/icons";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Package from "esender-email-editor";
@@ -132,11 +119,13 @@ function CreateTemplates() {
                 data = await createTemplate({
                     projectId: projectId,
                     ...payload,
+                    status: "published",
+                    enable: true,
                 });
             }
 
             if (data?.status) {
-                message.success(data?.message);
+                message.success(data?.message || templateId ? "Template updated successfully" : "Template created successfully");
                 form.resetFields();
                 navigate("/templates");
             } else {

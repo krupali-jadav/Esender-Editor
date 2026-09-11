@@ -109,18 +109,31 @@ export default function Templates() {
         }
     };
 
-    const handleChangeStatus = async (template, enable) => {
+    const handleChangeStatus = async (template, checked) => {
         try {
             setStatusLoading(template._id);
 
+            const status = checked ? "published" : "draft";
+
             const data = await changeTemplateStatus(
                 template._id,
-                enable
+                status
             );
 
             if (data?.status) {
-                setTemplates((prev) => prev.map((item) => item._id === template._id ? { ...item, enable, } : item));
-                message.success(enable ? "Template enabled successfully" : "Template disabled successfully");
+                setTemplates((prev) =>
+                    prev.map((item) =>
+                        item._id === template._id
+                            ? {
+                                ...item,
+                                status,
+                                enable: checked,
+                            }
+                            : item
+                    )
+                );
+
+                message.success(data?.message);
             } else {
                 message.error(data?.message);
             }
@@ -359,7 +372,7 @@ export default function Templates() {
                                             <Row>
                                                 <Switch
                                                     size="small"
-                                                    checked={tpl.enable}
+                                                    checked={tpl.status === "published"}
                                                     loading={statusLoading === tpl._id}
                                                     onChange={(checked) => handleChangeStatus(tpl, checked)}
                                                     style={{ marginRight: 4, transform: "scale(0.85)", }}
