@@ -36,12 +36,13 @@ export const deleteTemplate = async (payload) => {
     }
 };
 
-export const changeTemplateStatus = async (templateId, enable) => {
+export const changeTemplateStatus = async (templateId, status) => {
     try {
         const response = await axiosInstance.post(
             `templates/${templateId}/change-status`,
             {
-                enable,
+                enable: true,
+                status,
             }
         );
 

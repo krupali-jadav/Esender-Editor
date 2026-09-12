@@ -1,14 +1,15 @@
 import { DownloadOutlined, DownOutlined, FileTextOutlined, FilterOutlined, SearchOutlined } from "@ant-design/icons";
 import { PageContainer } from "@ant-design/pro-components";
-import { Button, Card, Flex, Input, Segmented, Select, Space, Table, Typography } from "antd"
+import { Button, Card, Flex, Input, message, Segmented, Select, Space, Table, Typography } from "antd"
 import { t } from "i18next";
+import { exportToExcel } from "react-json-to-excel";
 import { useSelector } from "react-redux";
 import AppPageHeader from "../Styles/AppHeader";
 import { useEffect, useState } from "react";
 import { getOrders } from "./OrderApi";
 import EmptyState from "../Styles/EmptyState";
 import { Link } from "react-router-dom";
-import { CURRENCIES_SYMBOL, formatDate } from "../../util/commom.utils";
+import { CURRENCIES_SYMBOL, formatDate, getCurrentTime } from "../../util/commom.utils";
 import StatusBadge from "../Styles/StatusBadge";
 const { Text } = Typography;
 
@@ -20,6 +21,7 @@ function Order() {
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [sortBy, setSortBy] = useState("created-at");
+    const [exporting, setExporting] = useState(false);
 
     const fetchOrders = async () => {
         try {
@@ -42,6 +44,36 @@ function Order() {
             setOrder([]);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const onExport = async () => {
+        try {
+            setExporting(true);
+
+            const data = await getOrders(0, 1000);
+
+            if (data?.status) {
+                const allOrders = data?.orders || [];
+
+                const exportData = allOrders.map((ord) => ({
+                    orderId: ord?._id,
+                    PlanName: ord?.planName,
+                    BiilingInterval: ord?.billingInterval,
+                    Amount: ord?.total,
+                    Status: ord?.status,
+                    PaymentGateway: ord?.gateway,
+                    createdAt: ord?.createdAt,
+                }));
+
+                exportToExcel(exportData, `all_Orders_${getCurrentTime()}`);
+            } else {
+                message.error(data?.message);
+            }
+        } catch (error) {
+            message.error(error?.message);
+        } finally {
+            setExporting(false);
         }
     };
 
@@ -172,7 +204,7 @@ function Order() {
                             </Space>
 
                             <Space>
-                                <Button type="primary" style={{ minWidth: "18%" }} icon={<DownloadOutlined />}>
+                                <Button type="primary" style={{ minWidth: "18%" }} icon={<DownloadOutlined />} onClick={onExport} loading={exporting}>
                                     {t("export", { defaultValue: "Export", })}
                                 </Button>
                             </Space>
