@@ -144,16 +144,7 @@ function SubscriptionHistory({ open, onCancel, }) {
                         {t("subscription.history", { defaultValue: "Subscription History", })}
                     </Text>
 
-                    <Button
-                        type="text"
-                        icon={<CloseOutlined />}
-                        onClick={onCancel}
-                        style={{
-                            width: 42,
-                            height: 42,
-                            fontSize: 18,
-                        }}
-                    />
+                    <Button type="text" icon={<CloseOutlined />} onClick={onCancel} />
                 </Flex>
             }
         >
