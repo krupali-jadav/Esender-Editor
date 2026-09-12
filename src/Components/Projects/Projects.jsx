@@ -14,7 +14,6 @@ function Projects() {
     const navigate = useNavigate()
     const [activeTab, setActiveTab] = useState('overview');
     const selectedProject = useSelector((state) => state?.app?.selectedProject);
-
     const TAB_ITEMS = [
         { key: 'overview', label: t('overview', { defaultValue: 'Overview' }) },
         { key: 'templates', label: t('templates', { defaultValue: 'Templates' }) },
@@ -25,14 +24,14 @@ function Projects() {
 
     return (
         <div>
-            <div style={{ margin: 0 }}>
+            <div>
                 <div style={{ padding: '24px 0 0 24px' }}>
                     {/* Breadcrumb */}
                     <Text type="secondary">{t('project', { defaultValue: 'Project' })}</Text>
 
                     <Flex wrap="wrap" justify="space-between" align="center" gap={12}>
                         <Flex wrap="wrap" align="center" gap={8} style={{ minWidth: 0, flex: 1 }}>
-                            <Title level={3} ellipsis style={{ margin: 0, minWidth: 0, }}>
+                            <Title level={3} ellipsis style={{ margin: 0 }}>
                                 {selectedProject?.name || t('project', { defaultValue: 'Project' })}
                             </Title>
 
@@ -44,8 +43,8 @@ function Projects() {
                             </Tag>
                         </Flex>
                         <div>
-                            <Space direction='horizontal' size={8} wrap="wrap" >
-                                <Button type="primary" style={{ marginRight: 10 }} onClick={() => navigate('/select-project')}>
+                            <Space direction='horizontal' size={15} wrap="wrap">
+                                <Button type="primary" onClick={() => navigate('/select-project')}>
                                     {t('switch.project', { defaultValue: 'Switch Project' })}
                                 </Button>
                                 <Button type="primary" style={{ marginRight: 10 }} onClick={() => navigate('/workflow')}>
@@ -56,7 +55,7 @@ function Projects() {
                     </Flex>
 
                     <ConfigProvider theme={{ token: { colorPrimary: '#20A6CE', }, }}>
-                        <Tabs 
+                        <Tabs
                             activeKey={activeTab}
                             onChange={setActiveTab}
                             items={TAB_ITEMS}

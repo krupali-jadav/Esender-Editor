@@ -1,32 +1,5 @@
-import {
-    Row,
-    Col,
-    Card,
-    Progress,
-    Tag,
-    Typography,
-    Table,
-    List,
-    Space,
-    Avatar,
-    Button,
-    Select,
-    Badge,
-    Flex,
-} from "antd";
-
-import {
-    CreditCardOutlined,
-    FolderOpenOutlined,
-    TeamOutlined,
-    ThunderboltOutlined,
-    FileTextOutlined,
-    CodeOutlined,
-    CustomerServiceOutlined,
-    DownOutlined,
-    ArrowRightOutlined,
-} from "@ant-design/icons";
-
+import { Row, Col, Card, Progress, Tag, Typography, Table, List, Space, Avatar, Button, Select, Badge, Flex, } from "antd";
+import { CreditCardOutlined, FolderOpenOutlined, TeamOutlined, ThunderboltOutlined, FileTextOutlined, CodeOutlined, CustomerServiceOutlined, DownOutlined, ArrowRightOutlined, } from "@ant-design/icons";
 import { PageContainer } from "@ant-design/pro-components";
 import AppPageHeader from "../Styles/AppHeader";
 import { t } from "i18next";
@@ -293,7 +266,6 @@ export default function Overview() {
                                     ]}
                                 />
                             }
-                            style={{ height: "100%" }}
                         >
                             <div>
                                 <Column
@@ -308,12 +280,7 @@ export default function Overview() {
                                     xField="day"
                                     yField="sessions"
                                     height={230}
-                                    style={{
-                                        maxWidth: 50,
-                                        fill: "#adc6ff",
-                                        radiusTopLeft: 4,
-                                        radiusTopRight: 4,
-                                    }}
+                                    style={{ maxWidth: 50, fill: "#adc6ff", radiusTopLeft: 4, radiusTopRight: 4, }}
                                     theme={{
                                         type: theme ? "dark" : "light",
                                         axis: {
@@ -326,19 +293,10 @@ export default function Overview() {
                                         },
                                     }}
                                     axis={{
-                                        x: {
-                                            line: false,
-                                            tickLine: false,
-                                        },
+                                        x: { line: false, tickLine: false, },
                                         y: {
                                             label: false,
-                                            grid: {
-                                                line: {
-                                                    style: {
-                                                        stroke: theme ? "#243746" : "#f0f0f0",
-                                                    },
-                                                },
-                                            },
+                                            grid: { line: { style: { stroke: theme ? "#243746" : "#f0f0f0", }, }, },
                                         },
                                     }}
                                     tooltip={{

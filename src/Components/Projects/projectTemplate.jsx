@@ -5,6 +5,7 @@ import {
     Col,
     Flex,
     Input,
+    message,
     Modal,
     Pagination,
     Row,
@@ -12,6 +13,7 @@ import {
     Select,
     Space,
     Spin,
+    Switch,
     Tag,
     Typography,
 } from 'antd'
@@ -27,7 +29,7 @@ import {
     FilterOutlined,
 } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
-import { getAllTemplates } from "../Templates/TemplateApi";
+import { changeTemplateStatus, getAllTemplates } from "../Templates/TemplateApi";
 import EmptyState from '../Styles/EmptyState';
 import { useDebounce } from '../../util/useDebounce';
 import { useSelector } from 'react-redux';
@@ -52,6 +54,7 @@ function ProjectTemplate() {
     const [status, setStatus] = useState("all");
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
+    const [statusLoading, setStatusLoading] = useState(null);
     const [isApplyFilter, setIsApplyFilter] = useState(false);
     const [search, setSearch] = useState("");
     const debouncedSearch = useDebounce(search, 700);
@@ -98,6 +101,40 @@ function ProjectTemplate() {
             console.error(error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleChangeStatus = async (template, checked) => {
+        try {
+            setStatusLoading(template._id);
+
+            const status = checked ? "published" : "draft";
+
+            const data = await changeTemplateStatus(
+                template._id,
+                status
+            );
+
+            if (data?.status) {
+                setTemplates((prev) =>
+                    prev.map((item) =>
+                        item._id === template._id
+                            ? {
+                                ...item,
+                                status,
+                                enable: checked,
+                            } : item
+                    )
+                );
+                message.success(data?.message);
+            } else {
+                message.error(data?.message);
+            }
+        } catch (error) {
+            console.error(error);
+            message.error(error?.message);
+        } finally {
+            setStatusLoading(null);
         }
     };
 
@@ -301,6 +338,13 @@ function ProjectTemplate() {
                                         </Space>
 
                                         <Row>
+                                            <Switch
+                                                size="small"
+                                                checked={template.status === "published"}
+                                                loading={statusLoading === template._id}
+                                                onChange={(checked) => handleChangeStatus(template, checked)}
+                                                style={{ marginRight: 4, transform: "scale(0.85)", }}
+                                            />
                                             <Tag variant="filled" style={{ background: theme ? "#0A1622" : "#F5F8FA", }} >
                                                 {template.HTML?.trim() ? t('html', { defaultValue: 'HTML' }) : t('text', { defaultValue: 'TEXT' })}
                                             </Tag>
