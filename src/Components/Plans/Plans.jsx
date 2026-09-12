@@ -128,74 +128,68 @@ export default function Plans() {
                 </Flex >
             ) : (
                 <>
-                    <Row gutter={[16, 16]} align="middle">
-                        <Col xs={24} lg={14}>
-                            <AppPageHeader
-                                title={t("plans", { defaultValue: "Plans" })}
-                                description={t("plans.description", { defaultValue: "Manage your subscription, payment methods, and view your plans history." })}
-                            />
-                        </Col>
-
-                        <Col xs={24} lg={10} style={{ marginLeft: "auto", display: "flex", justifyContent: "flex-end" }}>
-                            <Flex gap={12} align="center">
-
-                                {/* AI Credits */}
-                                <Card
-                                    size="small"
-                                    style={{
-                                        width: 190,
-                                        height: 50,
-                                        borderRadius: 10,
-                                        border: "1px solid rgba(32, 166, 206, 0.25)",
-                                        background: theme ? "rgba(32, 166, 206, 0.08)" : "#F0FAFD",
-                                    }}
-                                    styles={{ body: { padding: "5px 12px", height: "100%" } }}
-                                >
-                                    <Flex align="center" gap={8} style={{ height: "100%" }}>
-                                        <Avatar
-                                            size={28}
-                                            icon={<RobotOutlined />}
-                                            style={{ background: "rgba(32, 166, 206, 0.15)", color: "#20A6CE", }}
-                                        />
-
-                                        <Space direction="vertical" size={0}>
-                                            <Text type="secondary" style={{ fontSize: 13 }}>
-                                                AI Credits
-                                            </Text>
-
-                                            <div>
-                                                <Text strong style={{ fontSize: 16 }}>
-                                                    {aiCredits?.used ?? 0}
-                                                </Text>
-
-                                                <Text type="secondary" style={{ fontSize: 13 }}>
-                                                    {" / "}
-                                                    {aiCredits?.limit ?? 0}
-                                                </Text>
-                                            </div>
-                                        </Space>
-                                    </Flex>
-                                </Card>
-
-                                {/* Subscription History */}
-                                <Button
-                                    type="primary"
-                                    icon={<PiClockClockwiseFill />}
-                                    onClick={() => setHistoryOpen(true)}
-                                    style={{ height: 50, borderRadius: 10, }}
-                                >
-                                    {t("subscription.history", { defaultValue: "Subscription History" })}
-                                </Button>
-
-                            </Flex>
-                        </Col>
-                    </Row>
                     <Space direction="vertical" size={16} style={{ width: "100%" }}>
+                        <Row gutter={[16, 16]} align="middle" >
+                            <Col xs={24} lg={10}>
+                                <AppPageHeader title={t("plans", { defaultValue: "Plans", })}
+                                    description={t("plans.description", { defaultValue: "Manage your subscription, payment methods, and view your plans history.", })}
+                                />
+                            </Col>
+
+                            <Col xs={24} lg={14} style={{ display: "flex", justifyContent: "flex-end", minWidth: 0, }}>
+                                <Flex gap={12} align="center" justify="flex-end" wrap="wrap" style={{ width: "100%", minWidth: 0, }}>
+                                    {/* AI Credits */}
+                                    <Card
+                                        size="small"
+                                        style={{
+                                            width: 190,
+                                            height: 50,
+                                            borderRadius: 10,
+                                            border: "1px solid rgba(32, 166, 206, 0.25)",
+                                            background: theme ? "rgba(32, 166, 206, 0.08)" : "#F0FAFD",
+                                            flexShrink: 0,
+                                        }}
+                                        styles={{ body: { padding: "5px 12px", height: "100%", }, }}
+                                    >
+                                        <Flex align="center" gap={8} style={{ height: "100%" }}>
+                                            <Avatar size={28} icon={<RobotOutlined />} style={{ background: "rgba(32, 166, 206, 0.15)", color: "#20A6CE", }} />
+
+                                            <Space direction="vertical" size={0}>
+                                                <Text type="secondary" style={{ fontSize: 13 }}>
+                                                    {t("ai.credits", { defaultValue: "AI Credits", })}
+                                                </Text>
+
+                                                <div>
+                                                    <Text strong style={{ fontSize: 16 }}>
+                                                        {aiCredits?.used ?? 0}
+                                                    </Text>
+
+                                                    <Text type="secondary" style={{ fontSize: 13 }}>
+                                                        {" / "}
+                                                        {aiCredits?.limit ?? 0}
+                                                    </Text>
+                                                </div>
+                                            </Space>
+                                        </Flex>
+                                    </Card>
+
+                                    {/* Subscription History */}
+                                    <Button
+                                        type="primary"
+                                        icon={<PiClockClockwiseFill />}
+                                        onClick={() => setHistoryOpen(true)}
+                                        style={{ height: 50, borderRadius: 10, flexShrink: 0, }}
+                                    >
+                                        {t("subscription.history", { defaultValue: "Subscription History", })}
+                                    </Button>
+                                </Flex>
+                            </Col>
+                        </Row>
+
                         {/* Current Subscription */}
                         <Row gutter={[16, 16]}>
                             <Col xs={24}>
                                 <Card
-                                    // loading={subscriptionLoading}
                                     styles={{ body: { padding: 24 }, }}>
                                     {/* Header */}
                                     <Flex justify="space-between" align="center" wrap="wrap" gap={12}>
@@ -269,7 +263,6 @@ export default function Plans() {
                                                 <Space direction="vertical" size={4}>
                                                     <Space size={6}>
                                                         <CreditCardOutlined style={{ color: "#20A6CE", }} />
-
                                                         <Text type="secondary">
                                                             {t("paymentMethod", { defaultValue: "Payment Method", })}
                                                         </Text>
@@ -341,7 +334,7 @@ export default function Plans() {
                                     description={t('no.plans.description', { defaultValue: 'There are no plans available.' })}
                                 />
                             ) : (
-                                <Row gutter={[32, 60]} justify="center">
+                                <Row gutter={[24, 28]} justify="center">
                                     {plans.map((plan, index) => {
                                         const isCurrentPlan =
                                             plan.slug === currentPlanSlug ||
@@ -401,7 +394,7 @@ export default function Plans() {
                                         );
 
                                         return (
-                                            <Col xs={24} sm={12} md={8} lg={6} key={plan._id}>
+                                            <Col xs={24} sm={12} md={12} xl={10} xxl={6} key={plan._id}>
                                                 <div style={{ position: "relative", paddingTop: 42, }}>
                                                     {/* PRICE CIRCLE */}
                                                     <div
@@ -589,7 +582,8 @@ export default function Plans() {
                         />
                     </Space>
                 </>
-            )}
+            )
+            }
         </PageContainer >
 
     );
