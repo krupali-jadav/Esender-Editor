@@ -24,8 +24,8 @@ const StatCard = ({ icon, label, value }) => (
     <Col span={12}>
         <Card size="small">
             <Space>
-                <span style={{color: PRIMARY }}>
-                {icon}
+                <span style={{ color: PRIMARY }}>
+                    {icon}
                 </span>
                 <Flex vertical>
                     <Text type="secondary" >
@@ -130,41 +130,49 @@ function UpgradePlan({ open, onCancel, quote, theme }) {
             <Space direction="vertical" size={14} >
                 {/* PLAN HERO */}
                 <Card size="small" styles={{ body: { padding: 20, }, }}>
-                    <Row gutter={[20, 16]} align="middle">
-                        <Col flex="1">
-                            <Space direction="vertical" size={8}>
-                                <Space size={8}>
-                                    <Title level={3} style={{ margin: 0, }}>{plan?.name || "Plan"}</Title>
+                    <Row gutter={[16, 16]} align="middle">
+                        {/* Plan Information */}
+                        <Col xs={24} md={16}>
+                            <Flex vertical gap={8}>
+                                <Flex align="center" gap={8} wrap="wrap">
+                                    <Title level={3} style={{ margin: 0 }}>
+                                        {plan?.name || "Plan"}
+                                    </Title>
 
-                                    {plan?.isRecommended && (
-                                        <Tag color={PRIMARY} bordered={false} >{t("recommended", { defaultValue: "RECOMMENDED", })}</Tag>
-                                    )}
-                                </Space>
+                                    {plan?.isRecommended && (<Tag color={PRIMARY} bordered={false}>{t("recommended", { defaultValue: "RECOMMENDED", })}</Tag>)}
+                                </Flex>
 
-                                <Text type="secondary">
-                                    {plan?.description || t("upgrade.your.subscription.to.unlock.more.features.and.limits", { defaultValue: "Upgrade your subscription to unlock more features and limits.", })}
-                                </Text>
-
-                                <Space size={6} wrap>
+                                <Text type="secondary">{plan?.description}</Text>
+                                <Flex gap={6} wrap="wrap">
                                     <Tag bordered={false} style={{ color: PRIMARY, }}>
                                         {quote?.billingInterval === "yearly" ? t("yearly", { defaultValue: "Yearly", }) : t("monthly", { defaultValue: "Monthly", })}
                                     </Tag>
                                     <Tag bordered={false}>
                                         {quote?.validDays || 30}{" "}{t("days", { defaultValue: "days", })}
                                     </Tag>
-
-                                    {quote?.takesEffectImmediately && (<Tag bordered={false} color="success">{t("starts.immediately", { defaultValue: "Starts immediately", })}</Tag>)}
-                                </Space>
-                            </Space>
+                                    {quote?.takesEffectImmediately && (<Tag bordered={false} color="success">{t("starts.immediately", { defaultValue: "Starts immediately", })}
+                                    </Tag>
+                                    )}
+                                </Flex>
+                            </Flex>
                         </Col>
 
-                        <Col>
-                            <Flex vertical align="end" gap={2}>
-                                <Text type="secondary" style={{ fontSize: 12, }}>{t("total", { defaultValue: "Total", })}</Text>
+                        {/* Total */}
+                        <Col xs={24} md={8}>
+                            <Flex vertical gap={2} align="end" style={{ width: "100%", }}>
+                                <Text type="secondary" style={{ fontSize: 12 }}>
+                                    {t("total", { defaultValue: "Total", })}
+                                </Text>
+
                                 <Title level={2} style={{ margin: 0, color: PRIMARY, }}>
-                                    {CURRENCIES_SYMBOL[currency]}{" "}{Number(quote?.total || 0).toFixed(2)}
+                                    {CURRENCIES_SYMBOL[currency]}{" "}
+                                    {Number(quote?.total || 0).toFixed(2)}
                                 </Title>
-                                <Text type="secondary" style={{ fontSize: 12, }}>{t("per", { defaultValue: "per", })}{" "}{quote?.billingInterval === "yearly" ? t("year", { defaultValue: "year", }) : t("month", { defaultValue: "month", })}</Text>
+
+                                <Text type="secondary" style={{ fontSize: 12 }}>
+                                    {t("per", { defaultValue: "per", })}{" "}
+                                    {quote?.billingInterval === "yearly" ? t("year", { defaultValue: "year", }) : t("month", { defaultValue: "month", })}
+                                </Text>
                             </Flex>
                         </Col>
                     </Row>
@@ -189,11 +197,11 @@ function UpgradePlan({ open, onCancel, quote, theme }) {
                         <Card size="small" title={<Text strong>{t("plan.limits", { defaultValue: "Plan Limits", })}</Text>} style={{ height: "100%", }}>
                             <Row gutter={[8, 10]}>
                                 <StatCard icon={<ProjectOutlined />} label={t("projects", { defaultValue: "Projects", })} value={plan?.limits?.maxProjects} />
-                                <StatCard icon={<FileTextOutlined/>} label={t("templates", { defaultValue: "Templates", })} value={formatNumber(plan?.limits?.maxTemplates)} />
-                                <StatCard icon={<TeamOutlined/>} label={t("editor.users", { defaultValue: "Editor Users", })} value={formatNumber(plan?.limits?.maxEditorUsers)} />
-                                <StatCard icon={<DatabaseOutlined/>} label={t("storage", { defaultValue: "Storage", })} value={formatStorage(plan?.limits?.storageBytes)} />
-                                <StatCard icon={<DatabaseOutlined/>} label={t("monthly.sessions", { defaultValue: "Monthly Sessions", })} value={formatNumber(plan?.limits?.maxMonthlySessions)} />
-                                <StatCard icon={<DatabaseOutlined/>} label={t("ai.credits", { defaultValue: "AI Credits", })} value={formatNumber(plan?.limits?.maxMonthlyAiCredits)} />
+                                <StatCard icon={<FileTextOutlined />} label={t("templates", { defaultValue: "Templates", })} value={formatNumber(plan?.limits?.maxTemplates)} />
+                                <StatCard icon={<TeamOutlined />} label={t("editor.users", { defaultValue: "Editor Users", })} value={formatNumber(plan?.limits?.maxEditorUsers)} />
+                                <StatCard icon={<DatabaseOutlined />} label={t("storage", { defaultValue: "Storage", })} value={formatStorage(plan?.limits?.storageBytes)} />
+                                <StatCard icon={<DatabaseOutlined />} label={t("monthly.sessions", { defaultValue: "Monthly Sessions", })} value={formatNumber(plan?.limits?.maxMonthlySessions)} />
+                                <StatCard icon={<DatabaseOutlined />} label={t("ai.credits", { defaultValue: "AI Credits", })} value={formatNumber(plan?.limits?.maxMonthlyAiCredits)} />
                             </Row>
                         </Card>
                     </Col>
@@ -291,7 +299,8 @@ function UpgradePlan({ open, onCancel, quote, theme }) {
                 )}
 
                 {/* FOOTER */}
-                <Flex justify="space-between" align="center" gap={12} >
+                <Flex justify="space-between" align="center" gap={12} wrap="wrap" >
+                    {/* <Col xs={24} sm={12} md={8} xl={24} xxl={24} > */}
                     <Text type="secondary" style={{ fontSize: 11, }}>{t("by.continuing.you.agree.to.the.selected.billing.plan", { defaultValue: "By continuing, you agree to the selected billing plan.", })}</Text>
                     <Space size={8}>
                         <Button onClick={onCancel} >
@@ -301,9 +310,10 @@ function UpgradePlan({ open, onCancel, quote, theme }) {
                             {t("continue.to.payment", { defaultValue: "Continue to Payment", })}
                         </Button>
                     </Space>
+                    {/* </Col> */}
                 </Flex>
             </Space>
-        </Modal>
+        </Modal >
     );
 }
 

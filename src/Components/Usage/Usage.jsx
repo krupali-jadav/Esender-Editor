@@ -1,29 +1,5 @@
-import {
-    Row,
-    Col,
-    Card,
-    Progress,
-    Typography,
-    Space,
-    Select,
-    Table,
-    Avatar,
-    Flex,
-    Spin,
-    Badge,
-    Button,
-} from "antd";
-import {
-    TeamOutlined,
-    ClockCircleOutlined,
-    FolderOutlined,
-    StarOutlined,
-    WarningOutlined,
-    DownOutlined,
-    MailOutlined,
-    ArrowRightOutlined,
-    FileTextOutlined,
-} from "@ant-design/icons";
+import { Row, Col, Card, Progress, Typography, Space, Select, Table, Avatar, Flex, Spin, Badge, Button, } from "antd";
+import { TeamOutlined, ClockCircleOutlined, FolderOutlined, StarOutlined, WarningOutlined, DownOutlined, MailOutlined, ArrowRightOutlined, FileTextOutlined, } from "@ant-design/icons";
 import { Column } from "@ant-design/plots";
 import { PageContainer } from "@ant-design/pro-components";
 import { useSelector } from "react-redux";
@@ -285,9 +261,7 @@ export default function Usage() {
                                         value={String(trendRange)}
                                         onChange={(value) => setTrendRange(Number(value))}
                                         suffixIcon={<DownOutlined />}
-                                        options={[
-                                            { value: "7", label: t('last.7.days', { defaultValue: 'Last 7 Days' }) },
-                                        ]}
+                                        options={[{ value: "7", label: t('last.7.days', { defaultValue: 'Last 7 Days' }) },]}
                                     />
                                 }
                                 style={{ height: "100%" }}
@@ -319,9 +293,7 @@ export default function Usage() {
                                         x: { line: false, tickLine: false, },
                                         y: {
                                             label: false,
-                                            grid: {
-                                                line: { style: { stroke: theme ? "#243746" : "#f0f0f0", }, },
-                                            },
+                                            grid: { line: { style: { stroke: theme ? "#243746" : "#f0f0f0", }, }, },
                                         },
                                     }}
                                     tooltip={false}

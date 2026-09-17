@@ -18,7 +18,7 @@ export default function Plans() {
     const selectedProject = useSelector((state) => state?.app?.selectedProject);
     const projectId = selectedProject?._id;
     const [plans, setPlans] = useState([]);
-    const [plansLoading, setPlansLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [currentSubscription, setCurrentSubscription] = useState(null);
     const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
     const [selectedPlan, setSelectedPlan] = useState(null);
@@ -62,7 +62,7 @@ export default function Plans() {
 
     const fetchPlans = async () => {
         try {
-            setPlansLoading(true);
+            setLoading(true);
             const response = await getPlans();
 
             if (response?.status) {
@@ -74,7 +74,7 @@ export default function Plans() {
             console.error(error);
             setPlans([]);
         } finally {
-            setPlansLoading(false);
+            setLoading(false);
         }
     };
     const fetchCurrentSubscription = async () => {
@@ -115,14 +115,32 @@ export default function Plans() {
     };
 
     useEffect(() => {
-        fetchPlans();
-        fetchCurrentSubscription();
-        fetchAiCapabilities();
+        const loadPage = async () => {
+            try {
+                setLoading(true);
+                const subscriptionResponse =
+                    await getCurrentSubscription();
+                if (subscriptionResponse?.status) {
+                    setCurrentSubscription(subscriptionResponse);
+                }
+
+                const plansResponse = await getPlans();
+                if (plansResponse?.status) {
+                    setPlans(plansResponse?.plans || []);
+                }
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadPage();
     }, []);
     return (
 
         <PageContainer title={false}>
-            {plansLoading ? (
+            {loading ? (
                 <Flex justify="center" align="center" style={{ minHeight: 300 }} >
                     <Spin size="middle" />
                 </Flex >
@@ -385,16 +403,13 @@ export default function Plans() {
                                         ];
                                         const color = planColors[index % planColors.length];
 
-                                        const features = Object.entries(plan.features || {}).map(
-                                            ([key, enabled]) => ({
-                                                key, label: key
-                                                    .replace(/([A-Z])/g, " $1").replace(/^./, (char) => char.toUpperCase()),
-                                                enabled,
-                                            })
+                                        const features = Object.entries(plan.features || {}).map(([key, enabled]) => ({
+                                            key, label: key.replace(/([A-Z])/g, " $1").replace(/^./, (char) => char.toUpperCase()), enabled,
+                                        })
                                         );
 
                                         return (
-                                            <Col xs={24} sm={12} md={12} xl={10} xxl={6} key={plan._id}>
+                                            <Col xs={24} sm={12} md={11} xl={8} xxl={6} key={plan._id}>
                                                 <div style={{ position: "relative", paddingTop: 42, }}>
                                                     {/* PRICE CIRCLE */}
                                                     <div

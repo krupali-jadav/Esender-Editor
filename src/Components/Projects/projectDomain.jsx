@@ -177,31 +177,35 @@ function ProjectDomain() {
                         <Card styles={{ header: { padding: "18px", }, body: { padding: 0, } }}
 
                             title={
-                                <Flex vertical gap={4}>
-                                    <Title level={5}>
-                                        {t('allowed.domains', { defaultValue: 'Allowed Domains' })}
-                                    </Title>
+                                <Row gutter={[16, 12]} align="middle" style={{ width: "100%" }}>
+                                    {/* Header Content */}
+                                    <Col xs={24} sm={18}>
+                                        <Flex verticalgap={4} style={{ width: "100%" }}>
+                                            <Title level={5} style={{ margin: 0 }}>
+                                                {t("allowed.domains", { defaultValue: "Allowed Domains", })}
+                                            </Title>
 
-                                    <Text type="secondary" style={{ whiteSpace: "normal", }}>
-                                        {t('manage.origins.permitted.to.send.requests.accepts.patterns.like', { defaultValue: 'Manage origins permitted to send requests. Accepts patterns like' })}{" "}
-                                        <Text code>{t('app.example.com', { defaultValue: 'app.example.com' })}</Text>,{" "}
-                                        <Text code>{t('*.example.com', { defaultValue: '*.example.com' })}</Text>, and{" "}
-                                        <Text code>{t('localhost', { defaultValue: 'localhost' })}</Text>.
-                                    </Text>
-                                </Flex>
-                            }
-                            extra={
-                                <Button
-                                    type="primary"
-                                    icon={<PlusOutlined />}
-                                    onClick={() => {
-                                        setEditingDomain(null);
-                                        setAddDomainOpen(true);
-                                    }}
-                                    style={{ background: "#20A6CE", }}
-                                >
-                                    {t('Add.Domain', { defaultValue: 'Add Domain' })}
-                                </Button>
+                                            <Text type="secondary" style={{ whiteSpace: "normal", display: "block", }}>
+                                                {t("manage.origins.permitted.to.send.requests.accepts.patterns.like", { defaultValue: "Manage origins permitted to send requests. Accepts patterns like", })}{" "}
+                                                <Text code>{t("app.example.com", { defaultValue: "app.example.com", })}</Text>,{" "}
+                                                <Text code>{t("*.example.com", { defaultValue: "*.example.com", })}</Text>, and{" "}
+                                                <Text code>{t("localhost", { defaultValue: "localhost", })}</Text>.
+                                            </Text>
+                                        </Flex>
+                                    </Col>
+
+                                    {/* Add Domain */}
+                                    <Col xs={24} sm={6} style={{ display: "flex", justifyContent: "flex-end", }}>
+                                        <Button
+                                            type="primary"
+                                            icon={<PlusOutlined />}
+                                            onClick={() => { setEditingDomain(null); setAddDomainOpen(true); }}
+                                            style={{ background: "#20A6CE", }}
+                                        >
+                                            {t("Add.Domain", { defaultValue: "Add Domain", })}
+                                        </Button>
+                                    </Col>
+                                </Row>
                             }
                         />
 
