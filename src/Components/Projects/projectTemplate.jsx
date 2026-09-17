@@ -1,33 +1,6 @@
 import { useEffect, useState } from 'react'
-import {
-    Button,
-    Card,
-    Col,
-    Flex,
-    Input,
-    message,
-    Modal,
-    Pagination,
-    Row,
-    Segmented,
-    Select,
-    Space,
-    Spin,
-    Switch,
-    Tag,
-    Typography,
-} from 'antd'
-
-import {
-    SearchOutlined,
-    PlusOutlined,
-    FileTextOutlined,
-    EyeOutlined,
-    ClockCircleOutlined,
-    FolderOutlined,
-    DownOutlined,
-    FilterOutlined,
-} from '@ant-design/icons'
+import { Button, Card, Col, Flex, Input, message, Modal, Pagination, Row, Segmented, Select, Space, Spin, Switch, Tag, Typography, } from 'antd'
+import { SearchOutlined, PlusOutlined, FileTextOutlined, EyeOutlined, ClockCircleOutlined, FolderOutlined, DownOutlined, FilterOutlined, } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import { changeTemplateStatus, getAllTemplates } from "../Templates/TemplateApi";
 import EmptyState from '../Styles/EmptyState';
@@ -58,9 +31,7 @@ function ProjectTemplate() {
     const [isApplyFilter, setIsApplyFilter] = useState(false);
     const [search, setSearch] = useState("");
     const debouncedSearch = useDebounce(search, 700);
-    const selectedProject = useSelector(
-        (state) => state?.app?.selectedProject
-    );
+    const selectedProject = useSelector((state) => state?.app?.selectedProject);
     const theme = useSelector((state) => state?.app?.theme);
     const projectId = selectedProject?._id;
 
@@ -249,7 +220,7 @@ function ProjectTemplate() {
                     </Col>
                 ) : (
                     templates.map((template) => (
-                        <Col key={template._id} xs={22} sm={12} md={8} lg={8} xl={6}>
+                        <Col key={template._id} xs={24} sm={12} md={8} lg={8} xl={6}>
                             <Card size="small" hoverable
                                 style={{ background: theme ? "#0F2233" : "#e1e4e6", }}
                                 cover={
@@ -271,13 +242,7 @@ function ProjectTemplate() {
                                                 title={`template-${template._id}`}
                                                 srcDoc={template.HTML}
                                                 scrolling="no"
-                                                style={{
-                                                    width: "100%",
-                                                    height: "100%",
-                                                    border: "none",
-                                                    pointerEvents: "none",
-                                                    background: "#fff",
-                                                }}
+                                                style={{ width: "100%", height: "100%", border: "none", pointerEvents: "none", background: "#fff", }}
                                             />
                                         ) : template.text?.trim() ? (
                                             <Flex align="center" justify="center" style={{ height: "100%", padding: 16, }}>

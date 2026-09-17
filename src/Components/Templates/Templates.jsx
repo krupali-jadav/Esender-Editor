@@ -211,11 +211,7 @@ export default function Templates() {
                                     variant="borderless"
                                     suffixIcon={<DownOutlined />}
                                     placeholder={t('select.project', { defaultValue: 'Select Project' })}
-                                    style={{
-                                        width: 180,
-                                        background: theme ? "#0A1622" : "#F5F8FA",
-                                        borderRadius: 8,
-                                    }}
+                                    style={{ width: 180, background: theme ? "#0A1622" : "#F5F8FA", borderRadius: 8, }}
                                     options={[
                                         {
                                             value: "all",
@@ -293,34 +289,26 @@ export default function Templates() {
                             </Flex>
                         </Col>
                     ) : templates.length > 0 ? (
-                        templates.map((tpl) => (
-                            <Col key={tpl._id} xs={24} sm={12} lg={6}>
-                                <Card
-                                    hoverable
-                                    style={{ background: theme ? "#0F2233" : "#e1e4e6", }}
+                        templates.map((template) => (
+                            <Col key={template._id} xs={24} sm={12} md={8} lg={8} xl={6}>
+                                <Card hoverable style={{ background: theme ? "#0F2233" : "#e1e4e6", }}
                                     cover={
                                         <div
                                             style={{ position: "relative", height: 200, background: "#dcdfe4", borderBottom: "1px solid #f0f0f0", overflow: "hidden", }}
-                                            onMouseEnter={() => setHoveredTemplate(tpl._id)}
+                                            onMouseEnter={() => setHoveredTemplate(template._id)}
                                             onMouseLeave={() => setHoveredTemplate(null)}
                                         >
-                                            {!isEmptyEditorHtml(tpl.HTML) ? (
+                                            {!isEmptyEditorHtml(template.HTML) ? (
                                                 <iframe
-                                                    title={`template-${tpl._id}`}
-                                                    srcDoc={tpl.HTML}
+                                                    title={`template-${template._id}`}
+                                                    srcDoc={template.HTML}
                                                     scrolling="no"
-                                                    style={{
-                                                        width: "100%",
-                                                        height: "100%",
-                                                        border: "none",
-                                                        pointerEvents: "none",
-                                                        background: "#fff",
-                                                    }}
+                                                    style={{ width: "100%", height: "100%", border: "none", pointerEvents: "none", background: "#fff", }}
                                                 />
-                                            ) : tpl.text?.trim() ? (
+                                            ) : template.text?.trim() ? (
                                                 <Flex align="center" justify="center" style={{ height: "100%", padding: 16, background: "#fff", }}>
                                                     <Text style={{ color: "#000" }}>
-                                                        {tpl.text.replace(/{{\s*[^}]+\s*}}/g, "{{name}}")}
+                                                        {template.text.replace(/{{\s*[^}]+\s*}}/g, "{{name}}")}
                                                     </Text>
                                                 </Flex>
                                             ) : (
@@ -332,7 +320,7 @@ export default function Templates() {
                                             )}
 
                                             {/* Delete button */}
-                                            {hoveredTemplate === tpl._id && (
+                                            {hoveredTemplate === template._id && (
                                                 <Flex justify="center" align="center" gap={10}
                                                     style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.4)", }}
                                                 >
@@ -341,7 +329,7 @@ export default function Templates() {
                                                         icon={<EyeOutlined />}
                                                         onClick={(e) => {
                                                             e.stopPropagation();
-                                                            setPreviewTemplate(tpl);
+                                                            setPreviewTemplate(template);
                                                         }}
                                                     />
                                                     <Button
@@ -349,7 +337,7 @@ export default function Templates() {
                                                         icon={<EditOutlined />}
                                                         onClick={(e) => {
                                                             e.stopPropagation();
-                                                            navigate(`/templates/edit-template/${tpl._id}`);
+                                                            navigate(`/templates/edit-template/${template._id}`);
                                                         }}
                                                     />
 
@@ -359,7 +347,7 @@ export default function Templates() {
                                                         icon={<DeleteOutlined />}
                                                         onClick={(e) => {
                                                             e.stopPropagation();
-                                                            handleDeleteTemplate(tpl);
+                                                            handleDeleteTemplate(template);
                                                         }}
                                                     />
                                                 </Flex>
@@ -371,12 +359,12 @@ export default function Templates() {
                                         <Space style={{ width: "100%", justifyContent: "space-between", }} align="start">
                                             <Space>
                                                 <Text strong ellipsis style={{ maxWidth: 130 }}>
-                                                    {tpl.name}
+                                                    {template.name}
                                                 </Text>
                                             </Space>
 
-                                            <Tag color={statusColors[tpl.status]}>
-                                                {tpl.status}
+                                            <Tag color={statusColors[template.status]}>
+                                                {template.status}
                                             </Tag>
                                         </Space>
 
@@ -384,7 +372,7 @@ export default function Templates() {
                                             <Space size={6}>
                                                 <FolderOutlined style={{ color: "#20A6CE", fontSize: 17 }} />
                                                 <Text style={{ color: "#8c8e91", fontWeight: 600 }}>
-                                                    {tpl.project}
+                                                    {template.project}
                                                 </Text>
                                             </Space>
                                         </Space>
@@ -393,20 +381,20 @@ export default function Templates() {
                                             <Space size={6}>
                                                 <ClockCircleOutlined style={{ color: "#20A6CE" }} />
                                                 <Text style={{ color: "#8c8e91", fontWeight: 600 }}>
-                                                    {formatDate(tpl.updatedAt)}
+                                                    {formatDate(template.updatedAt)}
                                                 </Text>
                                             </Space>
 
                                             <Row>
                                                 <Switch
                                                     size="small"
-                                                    checked={tpl.status === "published"}
-                                                    loading={statusLoading === tpl._id}
-                                                    onChange={(checked) => handleChangeStatus(tpl, checked)}
+                                                    checked={template.status === "published"}
+                                                    loading={statusLoading === template._id}
+                                                    onChange={(checked) => handleChangeStatus(template, checked)}
                                                     style={{ marginRight: 4, transform: "scale(0.85)", }}
                                                 />
                                                 <Tag variant="filled" style={{ background: theme ? "#0A1622" : "#F5F8FA", }} >
-                                                    {tpl.HTML?.trim() ? "HTML" : "TEXT"}
+                                                    {template.HTML?.trim() ? "HTML" : "TEXT"}
                                                 </Tag>
                                             </Row>
                                         </Row>

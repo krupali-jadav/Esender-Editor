@@ -2,7 +2,7 @@ import { Modal, Table, Tag, Typography, Button, Flex, message, } from "antd";
 import { CloseOutlined, FileTextOutlined } from "@ant-design/icons";
 import { t } from "i18next";
 import { useEffect, useState } from "react";
-import { getSubscriptionHistory } from "./SearchHistoryApi";
+import { getSubscriptionHistory } from "./SubscriptionHistoryApi";
 import EmptyState from "../Styles/EmptyState";
 import { useSelector } from "react-redux";
 import { CURRENCIES_SYMBOL, formatDate } from "../../util/commom.utils";
