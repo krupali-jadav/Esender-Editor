@@ -113,29 +113,19 @@ export default function Plans() {
             setQuoteLoading(false);
         }
     };
-
     useEffect(() => {
-        const loadPage = async () => {
+        const loadPlansPage = async () => {
             try {
-                setLoading(true);
-                const subscriptionResponse =
-                    await getCurrentSubscription();
-                if (subscriptionResponse?.status) {
-                    setCurrentSubscription(subscriptionResponse);
-                }
-
-                const plansResponse = await getPlans();
-                if (plansResponse?.status) {
-                    setPlans(plansResponse?.plans || []);
-                }
+                // Start all APIs while the page is loading
+                fetchCurrentSubscription();
+                fetchAiCapabilities();
+                fetchPlans();
             } catch (error) {
                 console.error(error);
-            } finally {
-                setLoading(false);
             }
         };
 
-        loadPage();
+        loadPlansPage();
     }, []);
     return (
 
@@ -348,7 +338,7 @@ export default function Plans() {
                             {plans.length === 0 ? (
                                 <EmptyState
                                     icon={<FileTextOutlined />}
-                                    title={t('no.plans.found', { defaultValue: 'No Plans found' })}
+                                    title={t('no.plans.found', { defaultValue: 'No Plans Found' })}
                                     description={t('no.plans.description', { defaultValue: 'There are no plans available.' })}
                                 />
                             ) : (
