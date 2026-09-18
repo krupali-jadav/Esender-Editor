@@ -78,9 +78,7 @@ function ProjectTemplate() {
     const handleChangeStatus = async (template, checked) => {
         try {
             setStatusLoading(template._id);
-
             const status = checked ? "published" : "draft";
-
             const data = await changeTemplateStatus(
                 template._id,
                 status
@@ -225,14 +223,7 @@ function ProjectTemplate() {
                                 style={{ background: theme ? "#0F2233" : "#e1e4e6", }}
                                 cover={
                                     <div
-                                        style={{
-                                            position: "relative",
-                                            height: 200,
-                                            background: "#dcdfe4",
-                                            borderBottom: "1px solid #f0f0f0",
-                                            overflow: "hidden",
-
-                                        }}
+                                        style={{ position: "relative", height: 200, background: "#dcdfe4", borderBottom: "1px solid #f0f0f0", overflow: "hidden", }}
                                         onMouseEnter={() => setHoveredTemplate(template._id)}
                                         onMouseLeave={() => setHoveredTemplate(null)}
                                     >
@@ -289,7 +280,7 @@ function ProjectTemplate() {
                                         <Space size={6}>
                                             <FolderOutlined style={{ color: "#20A6CE", fontSize: 17 }} />
                                             <Text style={{ color: "#8c8e91", fontWeight: 600 }}>
-                                                {template.project}
+                                                {template.projectName}
                                             </Text>
                                         </Space>
                                     </div>

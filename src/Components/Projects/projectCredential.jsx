@@ -1,214 +1,160 @@
-import { Alert, Button, Card, Flex, Popconfirm, Space, Tag, Typography, message, } from 'antd'
-import { SafetyCertificateOutlined, ReloadOutlined, } from '@ant-design/icons'
-import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { getCredentials, rotateLicense, rotateSecrets } from './ProjectsApi';
-import { t } from 'i18next';
-const { Text, Title } = Typography
+import React, { useEffect, useState } from "react";
+import { PageContainer } from "@ant-design/pro-components";
+import {
+    Button,
+    Card,
+    Flex,
+    Table,
+    Typography,
+    message,
+} from "antd";
+import { KeyOutlined, PlusOutlined } from "@ant-design/icons";
+import { useNavigate, useParams } from "react-router-dom";
+import { t } from "i18next";
+import { useSelector } from "react-redux";
+import EmptyState from "../Styles/EmptyState";
+import { getEditorApiKeys } from "./ProjectsApi";
+
+const { Text } = Typography;
 
 function ProjectCredential() {
-    const [credentials, setCredentials] = useState(null);
-    const [credentialsLoading, setCredentialsLoading] = useState(false);
-    const selectedProject = useSelector((state) => state?.app?.selectedProject);
+    const navigate = useNavigate();
+    const { projectId } = useParams();
+    const theme = useSelector((state) => state?.app?.theme);
 
-    const fetchCredentials = async () => {
-        if (!selectedProject?._id) return;
+    const [apiKeys, setApiKeys] = useState([]);
+    const [loading, setLoading] = useState(false);
 
+    const fetchEditorApiKeys = async () => {
         try {
-            setCredentialsLoading(true);
+            setLoading(true);
 
-            const response = await getCredentials(selectedProject._id);
+            const response = await getEditorApiKeys(projectId);
 
             if (response?.status) {
-                setCredentials(response?.credentials);
+                setApiKeys(
+                    (response?.editor_keys || response?.data || []).map(
+                        (item, index) => ({
+                            ...item,
+                            key: item?._id || item?.id || index,
+                        })
+                    )
+                );
             } else {
-                setCredentials();
+                setApiKeys([]);
             }
         } catch (error) {
-            console.error(error);
-            setCredentials(null);
-            message.error(error?.message);
+            console.log(error);
+            setApiKeys([]);
+
+            message.error(
+                error?.response?.data?.message ||
+                error?.message ||
+                "Failed to fetch Editor API keys"
+            );
         } finally {
-            setCredentialsLoading(false);
+            setLoading(false);
         }
     };
+
     useEffect(() => {
-        fetchCredentials();
-    }, [selectedProject?._id]);
-    const handleRotateLicense = async () => {
-        if (!selectedProject?._id) return;
-
-        try {
-            const response = await rotateLicense(selectedProject._id);
-
-            if (response?.status) {
-                setCredentials((prev) => ({
-                    ...prev,
-                    ...response.credentials,
-                }));
-
-                message.success(response.message);
-            }
-        } catch (error) {
-            console.log(error);
-            message.error(error?.message);
+        if (projectId) {
+            fetchEditorApiKeys();
         }
-    };
-    const handleRotateSecret = async () => {
-        if (!selectedProject?._id) return;
+    }, [projectId]);
 
-        try {
-            const response = await rotateSecrets(selectedProject._id);
-
-            if (response?.status) {
-                setCredentials((prev) => ({
-                    ...prev,
-                    ...response.credentials,
-                }));
-
-                message.success(response.message);
-            }
-        } catch (error) {
-            console.log(error);
-            message.error(error?.message);
-        }
-    };
+    const columns = [
+        {
+            title: t("sn", { defaultValue: "SN" }),
+            key: "sn",
+            render: (_, __, index) => index + 1,
+            width: 80,
+        },
+        {
+            title: t("name", { defaultValue: "Name" }),
+            dataIndex: "name",
+            key: "name",
+            render: (name) => name || "-",
+        },
+        {
+            title: t("editor.api.key", { defaultValue: "Editor API Key" }),
+            dataIndex: "key",
+            key: "apiKey",
+            render: (key) => (
+                <Text copyable={{ text: key }}>
+                    {key || "-"}
+                </Text>
+            ),
+        },
+        {
+            title: t("created.at", { defaultValue: "Created At" }),
+            dataIndex: "createdAt",
+            key: "createdAt",
+            render: (date) =>
+                date ? new Date(date).toLocaleString() : "-",
+        },
+    ];
 
     return (
-        <>
-            <div style={{ padding: 24, width: '100%' }}>
-                <Space direction="vertical" size="large" style={{ width: '100%', }}>
-
-                    <Alert
-                        type="info"
-                        showIcon
-                        icon={<SafetyCertificateOutlined />}
-                        message={t("one.time.reveal.policy", { defaultValue: "One-Time Reveal Policy" })}
-                        description={
-                            <Text type="secondary">
-                                {t("for.your.security,security.keys", {defaultValue: "For your security, secret keys are only displayed once upon creation or rotation. If lost, you must rotate the key to generate a new one. We do not store plain-text keys.",})}
-                            </Text>
-                        }
-                    />
-
-                    <Card
-                        loading={credentialsLoading}
-                        title={
-                            <Space direction="vertical" size={0}>
-                                <Title level={5} style={{ margin: 0 }}>{t("api.keys", { defaultValue: "API Keys" })}</Title>
-                                <Text type="secondary">
-                                    {t("manage.api.keys", { defaultValue: "Manage your project's API keys for authentication." })}
-                                </Text>
-                            </Space>
-                        }
-                    >
-                        <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-                            <Card size="small" loading={credentialsLoading}>
-                                <Text type="secondary">{t("public.project.id", { defaultValue: "Public Project ID:" })}{" "}
-                                    <Flex justify="space-between" align="center">
-                                        <Text code>
-                                            {credentials?.publicProjectId || "N/A"}
-                                        </Text>
-                                        <Text copyable={{ text: credentials?.publicProjectId || "", }} />
-                                    </Flex>
-                                </Text>
-                            </Card>
-
-                            {/* License Key */}
-                            <Card size="small" loading={credentialsLoading} >
-                                {/* <Loading/> */}
-                                <Text type="secondary">{t("license.key", { defaultValue: "License Key:" })}{" "}</Text>
-                                <Flex justify="space-between" align="center">
-                                    <Text code>
-                                        {credentials?.licenseKeyPrefix || "N/A"}
-                                    </Text>
-                                    <Flex gap="middle" align="center">
-                                        <Button icon={<ReloadOutlined />} onClick={handleRotateLicense}>
-                                            {t("rotate.license", { defaultValue: "Rotate License" })}
-                                        </Button>
-                                        <Text copyable={{ text: credentials?.licenseKeyPrefix }} />
-                                    </Flex>
-                                </Flex>
-                            </Card>
-                        </Space>
-                    </Card>
-
-                    {/* Signing Secrets */}
-                    <Card
-                        title={
-                            <Space direction="vertical" size={0}>
-                                <Title level={5} style={{ margin: 0 }}>
-                                    {t("signing.secrets", { defaultValue: "Signing Secrets" })}
-                                </Title>
-
-                                <Text type="secondary">
-                                    {t("used.to.verify.webhook.payloads", { defaultValue: "Used to cryptographically verify webhook payloads sent to your endpoints.", })}
-                                </Text>
-                            </Space>
-                        }
-                    >
-                        <Space direction="vertical" size="large" style={{ width: '100%', }}>
-
-                            <Card size="small">
-                                <Flex vertical gap="small">
-                                    <Space size="small">
-                                        <Text type="secondary">
-                                            {t("primary.secret", { defaultValue: "Primary Secret", })}
-                                        </Text>
-
-                                        <Tag color="blue">
-                                            {credentials?.signingSecretVersion || "N/A"}
-                                        </Tag>
-                                    </Space>
-
-                                    <Flex justify="space-between" align="center" gap="large" style={{ width: "100%" }}>
-                                        <Text code>
-                                            {credentials?.Secrets || "N/A"}
-                                        </Text>
-
-                                        <Space size="middle">
-                                            <Button icon={<ReloadOutlined />} onClick={handleRotateSecret}>
-                                                {t("rotate.signing.secret", { defaultValue: "Rotate Signing Secret" })}
-                                            </Button>
-                                            <Text copyable={{ text: credentials?.Secrets || "", }} />
-                                        </Space>
-                                    </Flex>
-                                </Flex>
-                            </Card>
-
-                            {/* Rotate Signing Secret */}
-                            <Alert type="error" title={t("rotate.signing.secret", { defaultValue: "Rotate Signing Secret" })}
-                                description={
-                                    <Text>
-                                        {t("rotating.will.instantiate.current.secret.warning.any.webhooks.sent.with.old.signature.will.fail.verification.until.your.backend.is.updated", {
-                                            defaultValue:"Rotating will immediately invalidate the current secret. Warning: any webhooks sent with the old signature will fail verification until your backend is updated.",
-                                        })}
-                                    </Text>
-                                }
-                                action={
-                                    <Popconfirm
-                                        title={t("rotate.signing.secret", { defaultValue: "Rotate Signing Secret?" })}
-                                        description={t("current.signing.secret.will.be.invalidated.immediately", { defaultValue: "The current signing secret will be invalidated immediately." })}
-                                        okText={t("rotate", { defaultValue: "Rotate" })}
-                                        cancelText={t("cancel", { defaultValue: "Cancel" })}
-                                        okButtonProps={{ danger: true, }}
-                                        onConfirm={handleRotateSecret}
-                                    >
-                                        <Button
-                                            danger
-                                            type="primary"
-                                            icon={<ReloadOutlined />}
-                                        >
-                                            {t("confirm.and.rotate.secret", { defaultValue: "Confirm & Rotate Secret" })}
-                                        </Button>
-                                    </Popconfirm>
-                                }
+        <div style={{ padding: "5px 24px" }}>
+            <Flex justify="end" style={{ marginBottom: 16 }}>
+                <Button
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    // onClick={() =>
+                    //     navigate(`/projects/${projectId}/credentials/create`)
+                    // }
+                >
+                    {t("create.editor.key", {defaultValue: "Create Editor Key"})}
+                </Button>
+            </Flex>
+            <Card styles={{ body: { padding: 0 } }}>
+                <Table
+                    columns={columns}
+                    dataSource={apiKeys}
+                    loading={loading}
+                    scroll={{ x: "max-content" }}
+                    pagination={false}
+                    locale={{
+                        emptyText: (
+                            <EmptyState
+                                icon={<KeyOutlined />}
+                                title={t(
+                                    "no.editor.api.keys",
+                                    {
+                                        defaultValue:
+                                            "No Editor API Keys Found",
+                                    }
+                                )}
+                                description={t(
+                                    "no.editor.api.keys.description",
+                                    {
+                                        defaultValue:
+                                            "There are no Editor API keys available.",
+                                    }
+                                )}
                             />
-                        </Space>
-                    </Card>
-                </Space>
-            </div >
-        </>
-    )
+                        ),
+                    }}
+                    components={{
+                        header: {
+                            cell: (props) => (
+                                <th
+                                    {...props}
+                                    style={{
+                                        ...props.style,
+                                        background: theme
+                                            ? "#0e1c29"
+                                            : "#f0f0f0",
+                                    }}
+                                />
+                            ),
+                        },
+                    }}
+                />
+            </Card>
+        </div>
+    );
 }
-export default ProjectCredential
+
+export default ProjectCredential;

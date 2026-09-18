@@ -79,6 +79,16 @@ export default function Usage() {
                 color: "#20A6CE",
             },
             {
+                title: t('templates', { defaultValue: 'TEMPLATES' }),
+                value: usageSummary.templatesUsed,
+                total: usageSummary.templatesLimit,
+                percent: usageSummary.templatesLimit
+                    ? Math.round((usageSummary.templatesUsed / usageSummary.templatesLimit) * 100)
+                    : 0,
+                icon: <FolderOutlined />,
+                color: "#20A6CE",
+            },
+            {
                 title: t('monthly.editor.users', { defaultValue: 'MONTHLY EDITOR USERS' }),
                 value: usageSummary.monthlyEditorUsersUsed,
                 total: usageSummary.monthlyEditorUsersLimit,
