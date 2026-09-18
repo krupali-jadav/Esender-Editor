@@ -124,3 +124,44 @@ export const updateDomain = async (projectId, payload) => {
         return null;
     }
 };
+
+export const getEditorApiKeys = async (projectId) => {
+    try {
+        const response = await axiosInstance.get(`/projects/${projectId}/editor-keys`);
+
+        if (response.data?.status) {
+            return response.data;
+        }
+
+        message.error(response.data?.message);
+        return null;
+    } catch (error) {
+        console.log(error);
+        message.error(error?.message);
+        return null;
+    }
+};
+
+export const createEditorApiKey = async (projectId, payload) => {
+    try {
+        const response = await axiosInstance.post(
+            `/projects/${projectId}/editor-keys`,
+            payload
+        );
+
+        if (response.data?.status) {
+            return response.data;
+        }
+
+        message.error(response.data?.message);
+        return null;
+    } catch (error) {
+        console.log(error);
+        message.error(
+            error?.response?.data?.message ||
+            error?.message ||
+            "Failed to create Editor API key"
+        );
+        return null;
+    }
+};

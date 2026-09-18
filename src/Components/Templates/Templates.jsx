@@ -131,9 +131,7 @@ export default function Templates() {
     const handleChangeStatus = async (template, checked) => {
         try {
             setStatusLoading(template._id);
-
             const status = checked ? "published" : "draft";
-
             const data = await changeTemplateStatus(
                 template._id,
                 status
@@ -147,8 +145,7 @@ export default function Templates() {
                                 ...item,
                                 status,
                                 enable: checked,
-                            }
-                            : item
+                            } : item
                     )
                 );
                 message.success(data?.message);
@@ -176,11 +173,7 @@ export default function Templates() {
 
                     <Col xs={24} lg={10}>
                         <Flex gap={8} justify="end" wrap>
-                            <Button
-                                type="primary"
-                                icon={<PlusOutlined />}
-                                onClick={() => navigate("/templates/create-template")}
-                            >
+                            <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate("/templates/create-template")}>
                                 {t('new.template', { defaultValue: 'New Template' })}
                             </Button>
                         </Flex>
@@ -313,17 +306,13 @@ export default function Templates() {
                                                 </Flex>
                                             ) : (
                                                 <Flex align="center" justify="center" style={{ height: "100%", }}>
-                                                    <FileImageOutlined
-                                                        style={{ fontSize: 28, color: "#bfbfbf", }}
-                                                    />
+                                                    <FileImageOutlined style={{ fontSize: 28, color: "#bfbfbf", }} />
                                                 </Flex>
                                             )}
 
                                             {/* Delete button */}
                                             {hoveredTemplate === template._id && (
-                                                <Flex justify="center" align="center" gap={10}
-                                                    style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.4)", }}
-                                                >
+                                                <Flex justify="center" align="center" gap={10} style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.4)", }}>
                                                     <Button
                                                         shape="circle"
                                                         icon={<EyeOutlined />}
@@ -372,7 +361,7 @@ export default function Templates() {
                                             <Space size={6}>
                                                 <FolderOutlined style={{ color: "#20A6CE", fontSize: 17 }} />
                                                 <Text style={{ color: "#8c8e91", fontWeight: 600 }}>
-                                                    {template.project}
+                                                    {template.projectName}
                                                 </Text>
                                             </Space>
                                         </Space>
@@ -416,11 +405,7 @@ export default function Templates() {
                                         : t("create.your.first.template.to.start.designing.campaigns", { defaultValue: "Create your first template to start designing campaigns.", })
                                 }
                                 action={
-                                    <Button
-                                        type="primary"
-                                        icon={<PlusOutlined />}
-                                        onClick={() => navigate("/templates/create-template")}
-                                    >
+                                    <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate("/templates/create-template")}>
                                         {t('create.template', { defaultValue: 'Create Template' })}
                                     </Button>
                                 }
