@@ -144,10 +144,10 @@ export default function Overview() {
                             value: "7",
                             label: t("last7Days", { defaultValue: "Last 7 Days" }),
                         },
-                        {
-                            value: "15",
-                            label: t("last15Days", { defaultValue: "Last 15 Days" }),
-                        },
+                        // {
+                        //     value: "15",
+                        //     label: t("last15Days", { defaultValue: "Last 15 Days" }),
+                        // },
                     ]}
                 />
             </Flex>
@@ -262,7 +262,7 @@ export default function Overview() {
                                     suffixIcon={<DownOutlined />}
                                     options={[
                                         { value: "7", label: t("last.7.Days", { defaultValue: "Last 7 Days" }) },
-                                        { value: "15", label: t("last.15.Days", { defaultValue: "Last 15 Days" }) },
+                                        // { value: "15", label: t("last.15.Days", { defaultValue: "Last 15 Days" }) },
                                     ]}
                                 />
                             }

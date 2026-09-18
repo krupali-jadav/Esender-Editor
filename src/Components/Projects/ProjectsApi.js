@@ -66,9 +66,57 @@ export const validateProjectDomain = async (projectId, payload) => {
         if (response.data?.status) {
             return response.data;
         }
-
         message.error(response.data?.message);
+        return null;
+    } catch (error) {
+        console.error(error);
+        message.error(error?.message);
+        return null;
+    }
+};
+export const addProjectDomain = async (projectId, payload) => {
+    try {
+        const response = await axiosInstance.post(
+            `projects/${projectId}/domains`,
+            payload
+        );
 
+        if (response.data?.status) {
+            return response.data;
+        }
+        message.error(response.data?.message);
+        return null;
+    } catch (error) {
+        console.error(error);
+        message.error(error?.message);
+        return null;
+    }
+};
+    export const deleteProjectDomain = async (projectId, payload) => {
+        try {
+            const response = await axiosInstance.delete(`projects/${projectId}/domains`,{
+                data: payload,
+            });
+
+            if (response.data?.status) {
+                return response.data;
+            }
+            message.error(response.data?.message);
+            return null;
+        } catch (error) {
+            console.error(error);
+            message.error(error?.message);
+            return null;
+        }
+    };
+export const updateDomain = async (projectId, payload) => {
+    try {
+        const response = await axiosInstance.patch(`projects/${projectId}/domains`, payload);
+
+        if (response.data?.status) {
+            return response.data;
+        }
+        message.error(response.data?.message);
         return null;
     } catch (error) {
         console.error(error);

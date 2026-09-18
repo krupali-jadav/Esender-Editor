@@ -12,6 +12,7 @@ import {
     Dropdown,
     Flex,
     Badge,
+    message,
 } from 'antd'
 import {
     GlobalOutlined,
@@ -22,8 +23,9 @@ import {
 } from '@ant-design/icons'
 import { useSelector } from 'react-redux'
 import AddDomain from './AddDomain'
-import { getDomains, validateProjectDomain } from './ProjectsApi'
+import { deleteProjectDomain, getDomains, validateProjectDomain } from './ProjectsApi'
 import { t } from 'i18next'
+import DeleteModal from '../Styles/DeleteModel'
 
 const { Title, Text, Paragraph } = Typography
 
@@ -35,6 +37,9 @@ function ProjectDomain() {
     const [editingDomain, setEditingDomain] = useState(null);
     const [domains, setDomains] = useState([]);
     const [domainsLoading, setDomainsLoading] = useState(false);
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [deleteRecord, setDeleteRecord] = useState(null);
+    const [deleteLoading, setDeleteLoading] = useState(false);
     const theme = useSelector((state) => state?.app?.theme);
     const selectedProject = useSelector((state) => state?.app?.selectedProject);
 
@@ -90,6 +95,37 @@ function ProjectDomain() {
         }
     };
 
+    const handleDeleteContacts = (record = null) => {
+        setDeleteRecord(record);
+        setDeleteModalOpen(true);
+    };
+    const handleConfirmDelete = async () => {
+        if (!deleteRecord?.domain || !selectedProject?._id) {
+            message.warning("Domain is required");
+            return;
+        }
+
+        try {
+            setDeleteLoading(true);
+
+            const payload = {
+                domain: deleteRecord.domain,
+            };
+
+            const response = await deleteProjectDomain(selectedProject._id, payload);
+
+            if (response?.status) {
+                setDeleteModalOpen(false);
+                setDeleteRecord(null);
+                await fetchDomains();
+                message.success(response?.message);
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setDeleteLoading(false);
+        }
+    };
     useEffect(() => {
         fetchDomains();
     }, [selectedProject?._id]);
@@ -147,23 +183,28 @@ function ProjectDomain() {
                             {
                                 key: "edit",
                                 label: t("edit", { defaultValue: "Edit" }),
+                                onClick: () => {
+                                    setEditingDomain(record);
+                                    setAddDomainOpen(true);
+                                    setDeleteLoading(false)
+                                },
                             },
                             {
                                 key: "delete",
                                 label: t("delete", { defaultValue: "Delete" }),
                                 danger: true,
+                                onClick: () => handleDeleteContacts(record),
                             },
                         ],
-                        onClick: ({ key }) => {
-                            if (key === "edit") {
-                                setEditingDomain(record);
-                                setAddDomainOpen(true);
-                            }
-                        },
                     }}
                     trigger={["click"]}
+                    placement="bottomLeft"
                 >
-                    <Button type="text" icon={<MoreOutlined />} />
+                    <Button
+                        type="text"
+                        icon={<MoreOutlined />}
+                        onClick={(e) => e.stopPropagation()}
+                    />
                 </Dropdown>
             ),
         },
@@ -180,12 +221,12 @@ function ProjectDomain() {
                                 <Row gutter={[16, 12]} align="middle" style={{ width: "100%" }}>
                                     {/* Header Content */}
                                     <Col xs={24} sm={18}>
-                                        <Flex verticalgap={4} style={{ width: "100%" }}>
+                                        <Flex vertical gap={4} style={{ width: "100%" }}>
                                             <Title level={5} style={{ margin: 0 }}>
                                                 {t("allowed.domains", { defaultValue: "Allowed Domains", })}
                                             </Title>
 
-                                            <Text type="secondary" style={{ whiteSpace: "normal", display: "block", }}>
+                                            <Text type="secondary" size="small" style={{ whiteSpace: "normal", display: "block", }}>
                                                 {t("manage.origins.permitted.to.send.requests.accepts.patterns.like", { defaultValue: "Manage origins permitted to send requests. Accepts patterns like", })}{" "}
                                                 <Text code>{t("app.example.com", { defaultValue: "app.example.com", })}</Text>,{" "}
                                                 <Text code>{t("*.example.com", { defaultValue: "*.example.com", })}</Text>, and{" "}
@@ -326,6 +367,16 @@ function ProjectDomain() {
                     setEditingDomain(null);
                 }}
                 onSuccess={fetchDomains}
+            />
+            <DeleteModal
+                open={deleteModalOpen}
+                record={deleteRecord}
+                loading={deleteLoading}
+                onCancel={() => {
+                    setDeleteModalOpen(false);
+                    setDeleteRecord(null);
+                }}
+                onConfirm={handleConfirmDelete}
             />
         </div>
     )

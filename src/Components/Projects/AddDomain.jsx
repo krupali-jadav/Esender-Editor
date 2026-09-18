@@ -1,8 +1,8 @@
 import { Button, Form, Input, Modal, message } from "antd";
 import { useEffect, useState } from "react";
 import { t } from "i18next";
-import { updateProjectDomains } from "../WorkFlow/WorkFlowApi";
 import AppPageHeader from "../Styles/AppHeader";
+import { addProjectDomain, updateDomain } from "./ProjectsApi";
 
 function AddDomain({ open, onClose, projectId, onSuccess, editingDomain }) {
     const [loading, setLoading] = useState(false);
@@ -12,7 +12,7 @@ function AddDomain({ open, onClose, projectId, onSuccess, editingDomain }) {
         if (open) {
             if (editingDomain) {
                 form.setFieldsValue({
-                    name: editingDomain.domain,
+                    currentDomain: editingDomain.domain,
                 });
             } else {
                 form.resetFields();
@@ -23,7 +23,7 @@ function AddDomain({ open, onClose, projectId, onSuccess, editingDomain }) {
     const handleUpdate = async () => {
         try {
             const values = await form.validateFields();
-            const domain = values.name?.trim();
+            const domain = editingDomain ? values.newDomain?.trim() : values.domain?.trim();
 
             if (!domain) {
                 message.warning(t("please.enter.domain", { defaultValue: "Please enter a domain", }));
@@ -36,19 +36,18 @@ function AddDomain({ open, onClose, projectId, onSuccess, editingDomain }) {
 
             if (editingDomain) {
                 // EDIT / UPDATE DOMAIN
-                const payload = { allowedDomains: [domain], };
-
-                data = await updateProjectDomains(
+                const payload = {
+                    currentDomain: values.currentDomain?.trim(),
+                    newDomain: values.newDomain?.trim(),
+                };
+                data = await updateDomain(projectId, payload);
+            } else {
+                // ADD DOMAIN
+                const payload = { domain: domain, };
+                data = await addProjectDomain(
                     projectId,
                     payload
                 );
-            } else {
-                // ADD DOMAIN
-                // const payload = { domain: domain, };
-                // data = await addProjectDomain(
-                //     projectId,
-                //     payload
-                // );
             }
             if (data?.status) {
                 message.success(data?.message);
@@ -82,18 +81,48 @@ function AddDomain({ open, onClose, projectId, onSuccess, editingDomain }) {
                 title={editingDomain ? t("update.domain", { defaultValue: "Update Domain" }) : t("add.domain", { defaultValue: "Add Domain" })}
             />
             <Form form={form} layout="vertical">
-                <Form.Item
-                    label={t("domain.name", { defaultValue: "Domain Name", })}
-                    name="name"
-                    rules={[
-                        {
-                            required: true,
-                            message: t("please.enter.domain.name", { defaultValue: "Please enter domain name", }),
-                        },
-                    ]}
-                >
-                    <Input placeholder={t("enter.domain.name", { defaultValue: "Enter Domain Name", })} />
-                </Form.Item>
+                {editingDomain ? (
+                    <>
+                        <Form.Item
+                            label={t("current.domain.name", { defaultValue: "Current Domain Name", })}
+                            name="currentDomain"
+                        >
+                            <Input disabled />
+                        </Form.Item>
+
+                        <Form.Item
+                            label={t("new.domain.name", { defaultValue: "New Domain Name", })}
+                            name="newDomain"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: t("please.enter.domain.name", { defaultValue: "Please enter domain name", }),
+                                },
+                            ]}
+                        >
+                            <Input
+                                placeholder={t("enter.domain.name", { defaultValue: "Enter Domain Name", })}
+                            />
+                        </Form.Item>
+                    </>
+                ) : (
+                    <Form.Item
+                        label={t("domain.name", {
+                            defaultValue: "Domain Name",
+                        })}
+                        name="domain"
+                        rules={[
+                            {
+                                required: true,
+                                message: t("please.enter.domain.name", { defaultValue: "Please enter domain name", }),
+                            },
+                        ]}
+                    >
+                        <Input
+                            placeholder={t("enter.domain.name", { defaultValue: "Enter Domain Name", })}
+                        />
+                    </Form.Item>
+                )}
             </Form>
         </Modal>
     );
