@@ -1,4 +1,4 @@
-import { Row, Col, Card, Progress, Typography, Space, Select, Table, Avatar, Flex, Spin, Badge, Button, } from "antd";
+import { Row, Col, Card, Progress, Typography, Space, Select, Table, Avatar, Flex, Spin, Badge, Button, Divider, Tag, } from "antd";
 import { TeamOutlined, ClockCircleOutlined, FolderOutlined, StarOutlined, WarningOutlined, DownOutlined, MailOutlined, ArrowRightOutlined, FileTextOutlined, } from "@ant-design/icons";
 import { Column } from "@ant-design/plots";
 import { PageContainer } from "@ant-design/pro-components";
@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { t } from "i18next";
 import { formatDate } from "../../util/commom.utils";
 import EmptyState from "../Styles/EmptyState";
+import { getAiCapabilities } from "../Plans/PlanApi";
 const { Title, Text, Link } = Typography;
 
 export default function Usage() {
@@ -18,6 +19,7 @@ export default function Usage() {
     const [trendRange, setTrendRange] = useState(7);
     const [trendLoading, setTrendLoading] = useState(false);
     const [usageSummary, setUsageSummary] = useState(null);
+    const [aiCredits, setAiCredits] = useState(null);
     const [summaryLoading, setSummaryLoading] = useState(false);
     const [alerts, setAlerts] = useState([]);
     const [alertsLoading, setAlertsLoading] = useState(false);
@@ -66,22 +68,30 @@ export default function Usage() {
         },
 
     ];
+    const aiUsed = aiCredits ? [
+        {
+            limit: aiCredits?.limit || 0,
+            used: aiCredits?.used || 0,
+            reserved: aiCredits?.reserved || 0,
+            remaining: aiCredits?.remaining || 0,
+            ExpiresAt: aiCredits?.cycleEndAt || null,
+            Status: aiCredits?.available || "active",
+        }
+    ] : [];
     const usageStats = usageSummary
         ? [
             {
                 title: t('projects', { defaultValue: 'PROJECTS' }),
                 value: usageSummary.projectsUsed,
-                total: usageSummary.projectsLimit,
-                percent: usageSummary.projectsLimit
-                    ? Math.round((usageSummary.projectsUsed / usageSummary.projectsLimit) * 100)
-                    : 0,
+                total: usageSummary.projectsLimit === -1 ? "Unlimited" : "-",
+                percent: usageSummary.projectsLimit ? Math.round((usageSummary.projectsUsed / usageSummary.projectsLimit) * 100) : 0,
                 icon: <FolderOutlined />,
                 color: "#20A6CE",
             },
             {
                 title: t('templates', { defaultValue: 'TEMPLATES' }),
                 value: usageSummary.templatesUsed,
-                total: usageSummary.templatesLimit,
+                total: usageSummary.templatesLimit === -1 ? "Unlimited" : "-",
                 percent: usageSummary.templatesLimit
                     ? Math.round((usageSummary.templatesUsed / usageSummary.templatesLimit) * 100)
                     : 0,
@@ -91,7 +101,7 @@ export default function Usage() {
             {
                 title: t('monthly.editor.users', { defaultValue: 'MONTHLY EDITOR USERS' }),
                 value: usageSummary.monthlyEditorUsersUsed,
-                total: usageSummary.monthlyEditorUsersLimit,
+                total: usageSummary.monthlyEditorUsersLimit === -1 ? "Unlimited" : "-",
                 percent: usageSummary.monthlyEditorUsersLimit
                     ? Math.round((usageSummary.monthlyEditorUsersUsed / usageSummary.monthlyEditorUsersLimit) * 100)
                     : 0,
@@ -101,7 +111,7 @@ export default function Usage() {
             {
                 title: t('monthly.sessions', { defaultValue: 'MONTHLY SESSIONS' }),
                 value: usageSummary.monthlySessionsUsed,
-                total: usageSummary.monthlySessionsLimit,
+                total: usageSummary.monthlySessionsLimit === -1 ? "Unlimited" : "-",
                 percent: usageSummary.monthlySessionsLimit
                     ? Math.round((usageSummary.monthlySessionsUsed / usageSummary.monthlySessionsLimit) * 100)
                     : 0,
@@ -207,10 +217,20 @@ export default function Usage() {
             setSummaryLoading(false);
         }
     };
+    const aiCreditsAvailable = async () => {
+        try {
+            const response = await getAiCapabilities()
+            setAiCredits(response?.credits || 0);
+        } catch (error) {
+            console.error(error);
+            setAiCredits(0);
+        }
+    };
     useEffect(() => {
         fetchUsageTrend();
         fetchUsageAlerts();
         fetchUsageSummary();
+        aiCreditsAvailable();
     }, [selectedProject?._id, trendRange]);
 
     return (
@@ -227,6 +247,142 @@ export default function Usage() {
                 </Col>
             ) : (
                 <Space direction="vertical" size={16} style={{ width: "100%" }}>
+                    {aiUsed.map((credits) => {
+                        const usagePercent =
+                            credits?.limit > 0 ? Math.min(Math.round((credits.used / credits.limit) * 100), 100) : 0;
+
+                        return (
+                            <Card key="ai-usage" >
+                                <Flex justify="space-between" align="flex-start" wrap="wrap" gap={16}>
+                                    {/* Left */}
+                                    <Flex vertical gap={4}>
+                                        <Text type="secondary">
+                                            {t("ai.credits.remaining", { defaultValue: "AI Credits Remaining" })}
+                                        </Text>
+
+                                        <Flex align="baseline" gap={8}>
+                                            <Title level={2} style={{ margin: 0, color: "#20A6CE", }}>
+                                                {credits.used?.toLocaleString("en-IN") ?? 0}
+                                            </Title>
+
+                                            <Text type="secondary">
+                                                / {credits.limit?.toLocaleString("en-IN") ?? 0}
+                                            </Text>
+                                        </Flex>
+
+                                        <Text type="secondary">
+                                            {usagePercent}% {t("used.this.cycle", { defaultValue: "used this cycle" })}
+                                        </Text>
+                                    </Flex>
+
+                                    {/* Status */}
+                                    <Tag color={credits.Status ? "success" : "error"}>
+                                        {credits.Status ? t("available", { defaultValue: "Available" }) : t("unavailable", { defaultValue: "Unavailable" })}
+                                    </Tag>
+
+                                </Flex>
+
+                                <Divider style={{ margin: "20px 0" }} />
+
+                                {/* Usage */}
+                                <Flex vertical gap={8}>
+                                    <Flex justify="space-between">
+                                        <Text type="secondary">
+                                            {t("ai.usage", { defaultValue: "AI Usage" })}
+                                        </Text>
+
+                                        <Text strong>
+                                            {credits.used?.toLocaleString("en-IN") ?? 0} {t("used", { defaultValue: "used" })}
+                                        </Text>
+                                    </Flex>
+
+                                    <div
+                                        style={{
+                                            height: 8,
+                                            width: "100%",
+                                            background: theme ? "#24384A" : "#EAF0F4",
+                                            borderRadius: 20,
+                                            overflow: "hidden",
+                                        }}
+                                    >
+                                        <div
+                                            style={{
+                                                width: `${usagePercent}%`,
+                                                height: "100%",
+                                                background: "#20A6CE",
+                                                borderRadius: 20,
+                                            }}
+                                        />
+                                    </div>
+                                </Flex>
+
+                                <Divider style={{ margin: "20px 0" }} />
+
+                                {/* Details */}
+                                <Row gutter={[24, 16]}>
+                                    <Col xs={24} sm={5}>
+                                        <Flex vertical gap={3}>
+                                            <Text type="secondary">
+                                                {t("used", { defaultValue: "Used" })}
+                                            </Text>
+
+                                            <Text strong>
+                                                {credits.used?.toLocaleString("en-IN") ?? 0}
+                                            </Text>
+                                        </Flex>
+                                    </Col>
+                                    <Col xs={24} sm={5}>
+                                        <Flex vertical gap={3}>
+                                            <Text type="secondary">
+                                                {t("reserved", { defaultValue: "Reserved" })}
+                                            </Text>
+
+                                            <Text strong>
+                                                {credits.reserved?.toLocaleString("en-IN") ?? 0}
+                                            </Text>
+                                        </Flex>
+                                    </Col>
+
+                                    <Col xs={24} sm={5}>
+                                        <Flex vertical gap={3}>
+                                            <Text type="secondary">
+                                                {t("remaining", { defaultValue: "Remaining" })}
+                                            </Text>
+
+                                            <Text
+                                                strong
+                                                style={{ color: "#20A6CE" }}
+                                            >
+                                                {credits.remaining?.toLocaleString("en-IN") ?? 0}
+                                            </Text>
+                                        </Flex>
+                                    </Col>
+                                    <Col xs={24} sm={5}>
+                                        <Flex vertical gap={3}>
+                                            <Text type="secondary">
+                                                {t("credit.limit", { defaultValue: "Credit Limit" })}
+                                            </Text>
+
+                                            <Text strong>
+                                                {credits.limit?.toLocaleString("en-IN") ?? 0}
+                                            </Text>
+                                        </Flex>
+                                    </Col>
+                                    <Col xs={24} sm={4}>
+                                        <Flex vertical gap={3}>
+                                            <Text type="secondary">
+                                                {t("expires.at", { defaultValue: "Expires At" })}
+                                            </Text>
+
+                                            <Text strong>
+                                                {credits.ExpiresAt ? formatDate(credits?.ExpiresAt) : "N/A"}
+                                            </Text>
+                                        </Flex>
+                                    </Col>
+                                </Row>
+                            </Card>
+                        );
+                    })}
                     {/* Stat Cards */}
                     <Flex gap={16} wrap style={{ width: "100%" }}>
                         {usageStats.map((stat) => (
@@ -361,7 +517,6 @@ export default function Usage() {
                             </Card>
                         </Col>
                     </Row>
-
 
                     {/* Recently updated templates */}
                     <Card

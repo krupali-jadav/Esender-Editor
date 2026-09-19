@@ -297,10 +297,6 @@ export default function Plans() {
                                                 {t("manage.your.plan.and.payment.details", { defaultValue: "Manage your plan and payment details." })}
                                             </Text>
                                         </Space>
-
-                                        <Button type="primary" icon={<CreditCardOutlined />}>
-                                            {t("manage.Billing", { defaultValue: "Manage Billing", })}
-                                        </Button>
                                     </Flex>
                                 </Card>
                             </Col>
@@ -464,22 +460,22 @@ export default function Plans() {
                                                             {[
                                                                 {
                                                                     label: t("projects", { defaultValue: "Projects" }),
-                                                                    value: plan.limits?.maxProjects ?? 0,
+                                                                    value: plan.limits?.maxProjects === -1 ? "Unlimited" : plan.limits?.maxProjects ?? 0,
                                                                     icon: <ProjectOutlined />,
                                                                 },
                                                                 {
                                                                     label: t("templates", { defaultValue: "Templates" }),
-                                                                    value: plan.limits?.maxTemplates ?? 0,
+                                                                    value: plan.limits?.maxTemplates === -1 ? "Unlimited" : plan.limits?.maxTemplates ?? 0,
                                                                     icon: <FileTextOutlined />,
                                                                 },
                                                                 {
                                                                     label: t("editor.Users", { defaultValue: "Editor Users" }),
-                                                                    value: plan.limits?.maxEditorUsers ?? 0,
+                                                                    value: plan.limits?.maxEditorUsers === -1 ? "Unlimited" : plan.limits?.maxEditorUsers ?? 0,
                                                                     icon: <TeamOutlined />,
                                                                 },
                                                                 {
                                                                     label: t("monthly.Sessions", { defaultValue: "Monthly Sessions" }),
-                                                                    value: plan.limits?.maxMonthlySessions?.toLocaleString() ?? 0,
+                                                                    value: plan.limits?.maxMonthlySessions === -1 ? "Unlimited" : plan.limits?.maxMonthlySessions?.toLocaleString() ?? 0,
                                                                     icon: <ThunderboltOutlined />,
                                                                 },
                                                                 {

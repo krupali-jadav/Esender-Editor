@@ -83,7 +83,6 @@ function UpgradePlan({ open, onCancel, quote, theme }) {
     if (!quote) return null;
 
     const plan = quote?.plan;
-    const formatNumber = (v) => Number(v || 0).toLocaleString("en-IN");
     const formatStorage = (bytes) => bytes ? `${(bytes / 1024 ** 3).toFixed(0)} GB` : "0 GB";
 
     const features = Object.entries(plan?.features || {}).map(([key, enabled]) => ({
@@ -196,12 +195,12 @@ function UpgradePlan({ open, onCancel, quote, theme }) {
                     <Col xs={24} md={12}>
                         <Card size="small" title={<Text strong>{t("plan.limits", { defaultValue: "Plan Limits", })}</Text>} style={{ height: "100%", }}>
                             <Row gutter={[8, 10]}>
-                                <StatCard icon={<ProjectOutlined />} label={t("projects", { defaultValue: "Projects", })} value={plan?.limits?.maxProjects} />
-                                <StatCard icon={<FileTextOutlined />} label={t("templates", { defaultValue: "Templates", })} value={formatNumber(plan?.limits?.maxTemplates)} />
-                                <StatCard icon={<TeamOutlined />} label={t("editor.users", { defaultValue: "Editor Users", })} value={formatNumber(plan?.limits?.maxEditorUsers)} />
+                                <StatCard icon={<ProjectOutlined />} label={t("projects", { defaultValue: "Projects", })} value={plan?.limits?.maxProjects === -1 ? "Unlimited" : plan.limits?.maxProjects ?? 0} />
+                                <StatCard icon={<FileTextOutlined />} label={t("templates", { defaultValue: "Templates", })} value={plan?.limits?.maxTemplates === -1 ? "Unlimited" : plan.limits?.maxTemplates ?? 0} />
+                                <StatCard icon={<TeamOutlined />} label={t("editor.users", { defaultValue: "Editor Users", })} value={plan?.limits?.maxEditorUsers === -1 ? "Unlimited" : plan?.limits?.maxEditorUsers ?? 0} />
                                 <StatCard icon={<DatabaseOutlined />} label={t("storage", { defaultValue: "Storage", })} value={formatStorage(plan?.limits?.storageBytes)} />
-                                <StatCard icon={<DatabaseOutlined />} label={t("monthly.sessions", { defaultValue: "Monthly Sessions", })} value={formatNumber(plan?.limits?.maxMonthlySessions)} />
-                                <StatCard icon={<DatabaseOutlined />} label={t("ai.credits", { defaultValue: "AI Credits", })} value={formatNumber(plan?.limits?.maxMonthlyAiCredits)} />
+                                <StatCard icon={<DatabaseOutlined />} label={t("monthly.sessions", { defaultValue: "Monthly Sessions", })} value={plan?.limits?.maxMonthlySessions === -1 ? "Unlimited" : plan.limits?.maxMonthlySessions ?? 0} />
+                                <StatCard icon={<DatabaseOutlined />} label={t("ai.credits", { defaultValue: "AI Credits", })} value={plan?.limits?.maxMonthlyAiCredits.toLocaleString("en-IN")} />
                             </Row>
                         </Card>
                     </Col>
