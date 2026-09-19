@@ -188,7 +188,15 @@ export default function Overview() {
                             </Space>
 
                             <Title level={3} style={{ margin: "8px 0" }}>
-                                {stats ? `${stats.projectsUsed} / ${stats.projectsLimit}` : "-"}
+                                {stats ? (
+                                    <>
+                                        <span>{stats.projectsUsed}</span> /{" "}<Text style={{ fontSize: 16, }} type="secondary">
+                                            {stats.projectsLimit === -1 ? "Unlimited" : stats.projectsLimit}
+                                        </Text>
+                                    </>
+                                ) : (
+                                    "-"
+                                )}
                             </Title>
 
                             <Progress
@@ -212,7 +220,16 @@ export default function Overview() {
                             </Space>
 
                             <Title level={3} style={{ margin: "8px 0" }}>
-                                {stats ? `${stats.monthlyEditorUsersUsed} / ${stats.monthlyEditorUsersLimit}` : "-"}
+                                {stats ? (
+                                    <>
+                                        <span>{stats.monthlyEditorUsersUsed}</span> /{" "}
+                                        <Text style={{ fontSize: 16, }} type="secondary">
+                                            {stats.monthlyEditorUsersLimit === -1 ? "Unlimited" : stats.monthlyEditorUsersLimit}
+                                        </Text>
+                                    </>
+                                ) : (
+                                    "-"
+                                )}
                             </Title>
 
                             <Progress
@@ -235,7 +252,12 @@ export default function Overview() {
                             </Space>
 
                             <Title level={3} style={{ margin: "8px 0" }}>
-                                {stats ? `${stats.monthlySessionsUsed} / ${stats.monthlySessionsLimit}` : "-"}
+                                {stats ? (<>
+                                    <span>{stats.monthlySessionsUsed}</span> /{" "}
+                                    <Text style={{ fontSize: 16, }} type="secondary">
+                                        {stats.monthlySessionsLimit === -1 ? "Unlimited" : stats.monthlySessionsLimit}
+                                    </Text>
+                                </>) : ("-")}
                             </Title>
 
                             <Progress

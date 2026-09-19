@@ -56,6 +56,9 @@ export default function Templates() {
                 filter_by: {
                     enable: true,
                     ...(status !== "all" && { status }),
+                    ...(selectedProject && selectedProject !== "all" && {
+                        projectId: selectedProject,
+                    }),
                 },
                 page: currentPage - 1,
                 limit: pageSize,
@@ -64,14 +67,25 @@ export default function Templates() {
             const data = await getAllTemplates(payload);
 
             if (data?.status) {
-                setTemplates(data?.templates || []);
-                setTotalTemplates(data?.total || 0);
+                let templateList = data?.templates || [];
+                if (selectedProject && selectedProject !== "all") {
+                    templateList = templateList.filter((template) => template.projectId === selectedProject);
+                }
+
+                setTemplates(templateList);
+                setTotalTemplates(
+                    selectedProject && selectedProject !== "all"
+                        ? templateList.length
+                        : data?.total || 0
+                );
             } else {
                 setTemplates([]);
                 setTotalTemplates(0);
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
+            setTemplates([]);
+            setTotalTemplates(0);
         } finally {
             setLoading(false);
         }
@@ -96,7 +110,7 @@ export default function Templates() {
     useEffect(() => {
         fetchProjects();
         fetchTemplates();
-    }, [debouncedSearch, sortBy, status, currentPage, pageSize]);
+    }, [debouncedSearch, sortBy, status, currentPage, pageSize, selectedProject]);
 
     const handleDeleteTemplate = (template) => {
         setDeleteTemplateRecord(template);
@@ -200,7 +214,7 @@ export default function Templates() {
 
                                 <Select
                                     value={selectedProject}
-                                    onChange={(value) => setSelectedProject(value)}
+                                    onChange={(value) => { setSelectedProject(value); setCurrentPage(1); setIsApplyFilter(value !== "all"); }}
                                     variant="borderless"
                                     suffixIcon={<DownOutlined />}
                                     placeholder={t('select.project', { defaultValue: 'Select Project' })}
