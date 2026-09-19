@@ -20,12 +20,14 @@ import {
     MoreOutlined,
     SafetyCertificateOutlined,
     PlusOutlined,
+    KeyOutlined,
 } from '@ant-design/icons'
 import { useSelector } from 'react-redux'
 import AddDomain from './AddDomain'
 import { deleteProjectDomain, getDomains, validateProjectDomain } from './ProjectsApi'
 import { t } from 'i18next'
 import DeleteModal from '../Styles/DeleteModel'
+import EmptyState from '../Styles/EmptyState'
 
 const { Title, Text, Paragraph } = Typography
 
@@ -95,10 +97,17 @@ function ProjectDomain() {
         }
     };
 
-    const handleDeleteContacts = (record = null) => {
-        setDeleteRecord(record);
+    const handleDeleteDomain = (record = null) => {
+        setDeleteRecord(
+            record
+                ? {
+                    ...record,
+                    name: record.domain,
+                } : null
+        );
         setDeleteModalOpen(true);
     };
+
     const handleConfirmDelete = async () => {
         if (!deleteRecord?.domain || !selectedProject?._id) {
             message.warning("Domain is required");
@@ -193,7 +202,7 @@ function ProjectDomain() {
                                 key: "delete",
                                 label: t("delete", { defaultValue: "Delete" }),
                                 danger: true,
-                                onClick: () => handleDeleteContacts(record),
+                                onClick: () => handleDeleteDomain(record),
                             },
                         ],
                     }}
@@ -259,6 +268,15 @@ function ProjectDomain() {
                                 pagination={false}
                                 size="middle"
                                 scroll={{ x: "max-content" }}
+                                locale={{
+                                    emptyText: (
+                                        <EmptyState
+                                            icon={<KeyOutlined />}
+                                            title={t("no.editor.api.keys", { defaultValue: "No Domains Found", })}
+                                            description={t("no.editor.api.keys.description", { defaultValue: "There are no Domains available.", })}
+                                        />
+                                    ),
+                                }}
                                 components={{
                                     header: {
                                         cell: (props) => (
@@ -266,9 +284,7 @@ function ProjectDomain() {
                                                 {...props}
                                                 style={{
                                                     ...props.style,
-                                                    background: theme
-                                                        ? "#0E1C29"
-                                                        : "#F0F0F0",
+                                                    background: theme ? "#0E1C29" : "#F0F0F0",
                                                 }}
                                             />
                                         ),
@@ -371,7 +387,10 @@ function ProjectDomain() {
             <DeleteModal
                 open={deleteModalOpen}
                 record={deleteRecord}
+                selectedRowKeys={[]}
                 loading={deleteLoading}
+                itemName="Domain"
+                itemNamePlural="Domains"
                 onCancel={() => {
                     setDeleteModalOpen(false);
                     setDeleteRecord(null);

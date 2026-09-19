@@ -1,40 +1,14 @@
-import React, { useState } from "react";
-import { PageContainer } from "@ant-design/pro-components";
-import {
-    Button,
-    Card,
-    Col,
-    Divider,
-    Flex,
-    Form,
-    Input,
-    Radio,
-    Row,
-    Select,
-    Typography,
-    message,
-} from "antd";
-import {
-    ArrowLeftOutlined,
-    CheckOutlined,
-    FileTextOutlined,
-    RocketOutlined,
-    SafetyOutlined,
-} from "@ant-design/icons";
-import { useNavigate, useParams } from "react-router-dom";
+import { useState } from "react";
+import { Button, Card, Col, Divider, Flex, Form, Input, Modal, Radio, Row, Select, Space, Typography, message, } from "antd";
+import { FileTextOutlined, RocketOutlined, SafetyOutlined, } from "@ant-design/icons";
 import { t } from "i18next";
 import { createEditorApiKey } from "./ProjectsApi";
+const { Text } = Typography;
 
-const { Title, Text } = Typography;
-
-function CreateEditorKey() {
-    const { projectId } = useParams();
-    const navigate = useNavigate();
-
+function CreateEditorKey({ open, onClose, projectId, onSuccess, }) {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
-
-    const environment = Form.useWatch("environment", form);
+    const [environment, setEnvironment] = useState("test");
 
     const handleSubmit = async (values) => {
         try {
@@ -42,7 +16,7 @@ function CreateEditorKey() {
 
             const payload = {
                 name: values.name,
-                environment: values.environment,
+                environment: environment,
                 expiresInDays: values.expiresInDays,
             };
 
@@ -52,339 +26,205 @@ function CreateEditorKey() {
             );
 
             if (response?.status) {
-                message.success(
-                    t("editor.key.created", {
-                        defaultValue: "Editor API key created successfully",
-                    })
-                );
-
-                navigate(`/projects/${projectId}/credentials`);
+                message.success(response?.message || t("editor.key.created", { defaultValue: "Editor API key created successfully", }));
+                form.resetFields();
+                onClose();
+                onSuccess?.();
             }
         } catch (error) {
             console.log(error);
+            message.error(error?.message || "Failed to create Editor API key");
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <PageContainer title={false}>
-            <Card>
-                <div style={{ maxWidth: 900, margin: "0 auto" }}>
-                    <Text type="secondary">
-                        {t("credentials", {
-                            defaultValue: "PROJECT CREDENTIALS",
-                        })}
-                    </Text>
+        <Modal
+            open={open}
+            onCancel={onClose}
+            width={700}
+            centered
+            title={t("create.editor.key", { defaultValue: "Create Editor API Key", })}
+            footer={[
+                <Button key="cancel" onClick={onClose}>
+                    {t("cancel", { defaultValue: "Cancel", })}
+                </Button>,
 
-                    <Title level={2} style={{ marginTop: 8 }}>
-                        {t("create.editor.key", {
-                            defaultValue: "Create Editor API Key",
-                        })}
-                    </Title>
+                <Button key="create" type="primary" loading={loading} onClick={() => form.submit()}>
+                    {t("create", { defaultValue: "Create Editor Key", })}
+                </Button>,
+            ]}
+        >
+            <Text type="secondary">
+                {t("create.editor.key.description", { defaultValue: "Create an API key to authenticate your Editor integrations.", })}
+            </Text>
 
-                    <Text type="secondary">
-                        {t("create.editor.key.description", {
-                            defaultValue:
-                                "Create an API key to authenticate your Editor integration.",
-                        })}
-                    </Text>
+            <Divider />
 
-                    <Divider />
+            <Form form={form} layout="vertical" onFinish={handleSubmit}>
+                <Form.Item
+                    label={t("key.name", { defaultValue: "Key Name", })}
+                    name="name"
+                    rules={[
+                        {
+                            required: true,
+                            message: t("key.name.required", { defaultValue: "Please enter a key name", }),
+                        },
+                    ]}
+                >
+                    <Input
+                        size="middle"
+                        prefix={<FileTextOutlined />}
+                        placeholder={t("key.name.placeholder", { defaultValue: "e.g., Website Widget", })}
+                    />
+                </Form.Item>
 
-                    <Form
-                        form={form}
-                        layout="vertical"
-                        initialValues={{
-                            environment: "test",
-                            expiresInDays: 365,
+                <Form.Item
+                    label={t("environment", { defaultValue: "Environment", })}
+                    name="environment"
+                    rules={[
+                        {
+                            required: true,
+                            message: t("environment.required", { defaultValue: "Please select an environment", }),
+                        },
+                    ]}
+                >
+                    <Radio.Group
+                        value={environment}
+                        onChange={(e) => {
+                            setEnvironment(e.target.value);
+                            form.setFieldValue("environment", e.target.value);
                         }}
-                        onFinish={handleSubmit}
                     >
-                        <Form.Item
-                            label={t("key.name", {
-                                defaultValue: "KEY NAME",
-                            })}
-                            name="name"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: t("key.name.required", {
-                                        defaultValue:
-                                            "Please enter a key name",
-                                    }),
-                                },
-                            ]}
-                        >
-                            <Input
-                                size="large"
-                                prefix={<FileTextOutlined />}
-                                placeholder={t("key.name.placeholder", {
-                                    defaultValue:
-                                        "e.g., Website Widget",
-                                })}
-                            />
-                        </Form.Item>
+                        <Row gutter={[16, 16]}>
+                            <Col xs={24} md={12}>
+                                <Card
+                                    size="small"
+                                    hoverable
+                                    onClick={() => {
+                                        setEnvironment("test");
+                                        form.setFieldValue("environment", "test");
+                                    }}
+                                    style={{ height: "100%", border: environment === "test" ? "2px solid #1677ff" : undefined, }}
+                                >
+                                    <Flex justify="space-between" align="start">
+                                        <Flex gap={12}>
+                                            <FileTextOutlined style={{ fontSize: 18, }} />
 
-                        <Form.Item
-                            label={t("environment", {
-                                defaultValue: "ENVIRONMENT",
-                            })}
-                            name="environment"
-                            rules={[
-                                {
-                                    required: true,
-                                    message:
-                                        "Please select an environment",
-                                },
-                            ]}
-                        >
-                            <Radio.Group style={{ width: "100%" }}>
-                                <Row gutter={[16, 16]}>
-                                    <Col xs={24} md={12}>
-                                        <Card
-                                            size="small"
-                                            hoverable
-                                            onClick={() =>
-                                                form.setFieldValue(
-                                                    "environment",
-                                                    "test"
-                                                )
-                                            }
-                                            style={{
-                                                height: "100%",
-                                                border:
-                                                    environment === "test"
-                                                        ? "2px solid #1677ff"
-                                                        : undefined,
-                                            }}
-                                        >
-                                            <Flex
-                                                justify="space-between"
-                                                align="start"
-                                            >
-                                                <Flex gap={12}>
-                                                    <FileTextOutlined
-                                                        style={{
-                                                            fontSize: 18,
-                                                        }}
-                                                    />
+                                            <Space direction="vertical" size="small">
+                                                <Text strong>
+                                                    {t("test", { defaultValue: "Test", })}
+                                                </Text>
 
-                                                    <div>
-                                                        <Text strong>
-                                                            {t("test", {
-                                                                defaultValue:
-                                                                    "Test",
-                                                            })}
-                                                        </Text>
+                                                <Text type="secondary">
+                                                    {t("test.environment.description", { defaultValue: "Use this key for testing and development.", })}
+                                                </Text>
+                                            </Space>
+                                        </Flex>
 
-                                                        <div
-                                                            style={{
-                                                                marginTop: 8,
-                                                            }}
-                                                        >
-                                                            <Text type="secondary">
-                                                                {t(
-                                                                    "test.environment.description",
-                                                                    {
-                                                                        defaultValue:
-                                                                            "Use this key for testing and development.",
-                                                                    }
-                                                                )}
-                                                            </Text>
-                                                        </div>
-                                                    </div>
-                                                </Flex>
+                                        <Radio value="test" />
+                                    </Flex>
+                                </Card>
+                            </Col>
 
-                                                <Radio value="test" />
-                                            </Flex>
-                                        </Card>
-                                    </Col>
+                            <Col xs={24} md={12}>
+                                <Card
+                                    size="small"
+                                    hoverable
+                                    onClick={() => {
+                                        setEnvironment("live");
+                                        form.setFieldValue("environment", "live");
+                                    }}
+                                    style={{ height: "100%", border: environment === "live" ? "2px solid #1677ff" : undefined, }}>
+                                    <Flex justify="space-between" align="start">
+                                        <Flex gap={12}>
+                                            <RocketOutlined style={{ fontSize: 18, }} />
 
-                                    <Col xs={24} md={12}>
-                                        <Card
-                                            size="small"
-                                            hoverable
-                                            onClick={() =>
-                                                form.setFieldValue(
-                                                    "environment",
-                                                    "live"
-                                                )
-                                            }
-                                            style={{
-                                                height: "100%",
-                                                border:
-                                                    environment === "live"
-                                                        ? "2px solid #1677ff"
-                                                        : undefined,
-                                            }}
-                                        >
-                                            <Flex
-                                                justify="space-between"
-                                                align="start"
-                                            >
-                                                <Flex gap={12}>
-                                                    <RocketOutlined
-                                                        style={{
-                                                            fontSize: 18,
-                                                        }}
-                                                    />
+                                            <Space direction="vertical" size="small">
+                                                <Text strong>
+                                                    {t("live", { defaultValue: "Live", })}
+                                                </Text>
 
-                                                    <div>
-                                                        <Text strong>
-                                                            {t("live", {
-                                                                defaultValue:
-                                                                    "Live",
-                                                            })}
-                                                        </Text>
+                                                <Text type="secondary">
+                                                    {t("live.environment.description", { defaultValue: "Use this key for your production environment.", })}
+                                                </Text>
+                                            </Space>
+                                        </Flex>
 
-                                                        <div
-                                                            style={{
-                                                                marginTop: 8,
-                                                            }}
-                                                        >
-                                                            <Text type="secondary">
-                                                                {t(
-                                                                    "live.environment.description",
-                                                                    {
-                                                                        defaultValue:
-                                                                            "Use this key for your production environment.",
-                                                                    }
-                                                                )}
-                                                            </Text>
-                                                        </div>
-                                                    </div>
-                                                </Flex>
+                                        <Radio value="live" />
+                                    </Flex>
+                                </Card>
+                            </Col>
+                        </Row>
+                    </Radio.Group>
+                </Form.Item>
 
-                                                <Radio value="live" />
-                                            </Flex>
-                                        </Card>
-                                    </Col>
-                                </Row>
-                            </Radio.Group>
-                        </Form.Item>
+                <Form.Item
+                    label={t("expiration", { defaultValue: "Expiration", })}
+                    name="expiresInDays"
+                    rules={[
+                        {
+                            required: true,
+                            message: t("expiration.required", { defaultValue: "Please select an expiration period", }),
+                        },
+                    ]}
+                >
+                    <Select
+                        size="large"
+                        options={[
+                            {
+                                value: 30,
+                                label: "30 Days",
+                            },
+                            {
+                                value: 90,
+                                label: "90 Days",
+                            },
+                            {
+                                value: 180,
+                                label: "180 Days",
+                            },
+                            {
+                                value: 365,
+                                label: "1 Year",
+                            },
+                            {
+                                value: 730,
+                                label: "2 Years",
+                            },
+                        ]}
+                    />
+                </Form.Item>
 
-                        <Form.Item
-                            label={t("expiration", {
-                                defaultValue: "EXPIRATION",
-                            })}
-                            name="expiresInDays"
-                            rules={[
-                                {
-                                    required: true,
-                                    message:
-                                        "Please select an expiration period",
-                                },
-                            ]}
-                        >
-                            <Select
-                                size="large"
-                                options={[
-                                    {
-                                        value: 30,
-                                        label: "30 Days",
-                                    },
-                                    {
-                                        value: 90,
-                                        label: "90 Days",
-                                    },
-                                    {
-                                        value: 180,
-                                        label: "180 Days",
-                                    },
-                                    {
-                                        value: 365,
-                                        label: "1 Year",
-                                    },
-                                    {
-                                        value: 730,
-                                        label: "2 Years",
-                                    },
-                                ]}
-                            />
-                        </Form.Item>
+                <Card size="small" style={{ marginTop: 24 }}>
+                    <Flex gap={12} align="start">
+                        <SafetyOutlined style={{ fontSize: 18 }} />
 
-                        <Card
-                            size="small"
-                            style={{ marginTop: 24 }}
-                        >
-                            <Flex gap={12} align="start">
-                                <SafetyOutlined
-                                    style={{ fontSize: 18 }}
-                                />
-
-                                <div>
-                                    <Text strong>
-                                        {t("api.key.security", {
-                                            defaultValue:
-                                                "Keep your API key secure",
-                                        })}
-                                    </Text>
-
-                                    <div style={{ marginTop: 4 }}>
-                                        <Text type="secondary">
-                                            {t(
-                                                "api.key.security.description",
-                                                {
-                                                    defaultValue:
-                                                        "Do not expose your API key in public repositories or client-side code.",
-                                                }
-                                            )}
-                                        </Text>
-                                    </div>
-                                </div>
-                            </Flex>
-                        </Card>
-
-                        <Divider />
-
-                        <Flex
-                            justify="space-between"
-                            align="center"
-                            wrap="wrap"
-                            gap={16}
-                        >
-                            <Button
-                                icon={<ArrowLeftOutlined />}
-                                onClick={() =>
-                                    navigate(
-                                        `/projects/${projectId}/credentials`
-                                    )
-                                }
-                            >
-                                {t("back", {
-                                    defaultValue: "Back",
-                                })}
-                            </Button>
-
-                            <Button
-                                type="primary"
-                                htmlType="submit"
-                                loading={loading}
-                                icon={<CheckOutlined />}
-                            >
-                                {t("create", {
-                                    defaultValue: "Create Editor Key",
-                                })}
-                            </Button>
-                        </Flex>
-
-                        <Flex
-                            justify="center"
-                            style={{ marginTop: 24 }}
-                        >
-                            <Text type="secondary">
-                                <SafetyOutlined />{" "}
-                                {t("data.secure", {
-                                    defaultValue:
-                                        "Your data is secure and encrypted.",
-                                })}
+                        <div>
+                            <Text strong>
+                                {t("api.key.security", { defaultValue: "Keep your API key secure", })}
                             </Text>
-                        </Flex>
-                    </Form>
-                </div>
-            </Card>
-        </PageContainer>
+
+                            <div style={{ marginTop: 4 }}>
+                                <Text type="secondary">
+                                    {t("api.key.security.description", { defaultValue: "Do not expose your API key in public repositories or client-side code.", })}
+                                </Text>
+                            </div>
+                        </div>
+                    </Flex>
+                </Card>
+
+                <Divider />
+
+                <Flex justify="center">
+                    <Text type="secondary">
+                        <SafetyOutlined />{" "}
+                        {t("data.secure", { defaultValue: "Your data is secure and encrypted.", })}
+                    </Text>
+                </Flex>
+            </Form>
+        </Modal>
     );
 }
 
