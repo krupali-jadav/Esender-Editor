@@ -114,18 +114,9 @@ export default function Plans() {
         }
     };
     useEffect(() => {
-        const loadPlansPage = async () => {
-            try {
-                // Start all APIs while the page is loading
-                fetchCurrentSubscription();
-                fetchAiCapabilities();
-                fetchPlans();
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
-        loadPlansPage();
+        fetchCurrentSubscription();
+        fetchAiCapabilities();
+        fetchPlans();
     }, []);
     return (
 

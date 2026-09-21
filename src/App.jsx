@@ -31,17 +31,35 @@ import Order from "./Components/Order/Order";
 import Plans from "./Components/Plans/Plans";
 import Invoice from "./Components/Order/Invoice";
 import { setPanel } from "./Components/Redux/Reducer/reducer.app";
+import PolicyPage from "./Components/PrivacyPolicy/PolicyPage";
+import PolicyProLayout from "./Components/PrivacyPolicy/PolicyProLayout";
 
-const ProtectedRoute = ({ component: Component, isAuthenticated, selectedProject }) => {
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+const ProtectedRoute = ({
+  component: Component,
+  publicRoute,
+  isPolicyRoute,
+  isAuthenticated,
+  props,
+}) => {
+  if (!isAuthenticated && !publicRoute) {
+    return <Navigate to="/" replace />;
   }
-  if (!selectedProject) {
-    return <Navigate to="/select-project" replace />;
+
+  if (isPolicyRoute) {
+    return (
+      <PolicyProLayout>
+        <Component {...props} />
+      </PolicyProLayout>
+    );
   }
+
+  if (publicRoute) {
+    return <Component {...props} />;
+  }
+
   return (
     <ProLayouts>
-      <Component />
+      <Component {...props} />
     </ProLayouts>
   );
 };
@@ -99,6 +117,27 @@ function App() {
     { path: "/Plans", component: Plans },
     { path: "/settings", component: Settings },
     { path: "/invoice/:id", component: Invoice },
+    {
+      path: "/privacy-policy",
+      component: PolicyPage,
+      publicRoute: true,
+      isPolicyRoute: true,
+      props: { type: "privacyPolicy" },
+    },
+    {
+      path: "/terms-and-conditions",
+      component: PolicyPage,
+      publicRoute: true,
+      isPolicyRoute: true,
+      props: { type: "termsAndConditions" },
+    },
+    {
+      path: "/refund-policy",
+      component: PolicyPage,
+      publicRoute: true,
+      isPolicyRoute: true,
+      props: { type: "refundPolicy" },
+    },
   ];
 
   return (
@@ -143,7 +182,6 @@ function App() {
               }
             />
 
-
             {/* Application Routes */}
             {routes.map((route) => (
               <Route
@@ -152,8 +190,11 @@ function App() {
                 element={
                   <ProtectedRoute
                     component={route.component}
+                    publicRoute={route.publicRoute}
+                    isPolicyRoute={route.isPolicyRoute}
                     isAuthenticated={isAuthenticated}
                     selectedProject={selectedProject}
+                    props={route.props}
                   />
                 }
               />

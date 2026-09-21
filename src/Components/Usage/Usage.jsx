@@ -70,6 +70,7 @@ export default function Usage() {
     ];
     const aiUsed = aiCredits ? [
         {
+            planSlug: aiCredits?.planSlug || null,
             limit: aiCredits?.limit || 0,
             used: aiCredits?.used || 0,
             reserved: aiCredits?.reserved || 0,
@@ -220,7 +221,10 @@ export default function Usage() {
     const aiCreditsAvailable = async () => {
         try {
             const response = await getAiCapabilities()
-            setAiCredits(response?.credits || 0);
+            setAiCredits({
+                ...(response?.credits || {}),
+                planSlug: response?.planSlug
+            });
         } catch (error) {
             console.error(error);
             setAiCredits(0);
@@ -247,9 +251,9 @@ export default function Usage() {
                 </Col>
             ) : (
                 <Space direction="vertical" size={16} style={{ width: "100%" }}>
-                    {aiUsed.map((credits) => {
+                    {aiUsed.map((credit) => {
                         const usagePercent =
-                            credits?.limit > 0 ? Math.min(Math.round((credits.used / credits.limit) * 100), 100) : 0;
+                            credit?.limit > 0 ? Math.min(Math.round((credit.used / credit.limit) * 100), 100) : 0;
 
                         return (
                             <Card key="ai-usage" >
@@ -257,16 +261,16 @@ export default function Usage() {
                                     {/* Left */}
                                     <Flex vertical gap={4}>
                                         <Text type="secondary">
-                                            {t("ai.credits.remaining", { defaultValue: "AI Credits Remaining" })}
+                                            {t("ai.credit.remaining", { defaultValue: "AI Credit Remaining" })}
                                         </Text>
 
                                         <Flex align="baseline" gap={8}>
                                             <Title level={2} style={{ margin: 0, color: "#20A6CE", }}>
-                                                {credits.used?.toLocaleString("en-IN") ?? 0}
+                                                {credit.used?.toLocaleString("en-IN") ?? 0}
                                             </Title>
 
                                             <Text type="secondary">
-                                                / {credits.limit?.toLocaleString("en-IN") ?? 0}
+                                                / {credit.limit?.toLocaleString("en-IN") ?? 0}
                                             </Text>
                                         </Flex>
 
@@ -275,10 +279,10 @@ export default function Usage() {
                                         </Text>
                                     </Flex>
 
-                                    {/* Status */}
-                                    <Tag color={credits.Status ? "success" : "error"}>
-                                        {credits.Status ? t("available", { defaultValue: "Available" }) : t("unavailable", { defaultValue: "Unavailable" })}
-                                    </Tag>
+                                        {/* Status */}
+                                        <Tag color={credit.Status ? "success" : "error"}>
+                                            {credit.Status ? t("available", { defaultValue: "Available" }) : t("unavailable", { defaultValue: "Unavailable" })}
+                                        </Tag>
 
                                 </Flex>
 
@@ -292,7 +296,7 @@ export default function Usage() {
                                         </Text>
 
                                         <Text strong>
-                                            {credits.used?.toLocaleString("en-IN") ?? 0} {t("used", { defaultValue: "used" })}
+                                            {credit.used?.toLocaleString("en-IN") ?? 0} {t("used", { defaultValue: "used" })}
                                         </Text>
                                     </Flex>
 
@@ -327,7 +331,7 @@ export default function Usage() {
                                             </Text>
 
                                             <Text strong>
-                                                {credits.used?.toLocaleString("en-IN") ?? 0}
+                                                {credit.used?.toLocaleString("en-IN") ?? 0}
                                             </Text>
                                         </Flex>
                                     </Col>
@@ -338,7 +342,7 @@ export default function Usage() {
                                             </Text>
 
                                             <Text strong>
-                                                {credits.reserved?.toLocaleString("en-IN") ?? 0}
+                                                {credit.reserved?.toLocaleString("en-IN") ?? 0}
                                             </Text>
                                         </Flex>
                                     </Col>
@@ -353,7 +357,7 @@ export default function Usage() {
                                                 strong
                                                 style={{ color: "#20A6CE" }}
                                             >
-                                                {credits.remaining?.toLocaleString("en-IN") ?? 0}
+                                                {credit.remaining?.toLocaleString("en-IN") ?? 0}
                                             </Text>
                                         </Flex>
                                     </Col>
@@ -364,7 +368,7 @@ export default function Usage() {
                                             </Text>
 
                                             <Text strong>
-                                                {credits.limit?.toLocaleString("en-IN") ?? 0}
+                                                {credit.limit?.toLocaleString("en-IN") ?? 0}
                                             </Text>
                                         </Flex>
                                     </Col>
@@ -375,7 +379,7 @@ export default function Usage() {
                                             </Text>
 
                                             <Text strong>
-                                                {credits.ExpiresAt ? formatDate(credits?.ExpiresAt) : "N/A"}
+                                                {credit.ExpiresAt ? formatDate(credit?.ExpiresAt) : "N/A"}
                                             </Text>
                                         </Flex>
                                     </Col>
