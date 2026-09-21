@@ -18,7 +18,10 @@ import { Avatar, Breadcrumb, Dropdown, Flex, Grid, Modal, Select, Space, Typogra
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { changeCurrency, changeLanguage, setTheme } from "../Redux/Reducer/reducer.app";
-
+import logoFullDark from "../../assets/logo-full-dark.png";
+import logoFullLight from "../../assets/logo-full-light.png";
+import logoIconDark from "../../assets/logo-icon-dark.png";
+import logoIconLight from "../../assets/logo-icon-light.png";
 import { getMediaPath } from "../../util/getMediaPath";
 import lang from "../../util/lang/lang.json"
 import { logout } from "../Redux/action";
@@ -310,20 +313,19 @@ const ProLayouts = ({ children }) => {
                     >
                         <img
                             src={
-                                <></>
-                                // collapsed
-                                //     ? theme
-                                //         ? logoIconDark
-                                //         : logoIconLight
-                                //     : theme
-                                //         ? logoFullDark
-                                //         : logoFullLight
+                                collapsed
+                                    ? theme
+                                        ? logoIconDark
+                                        : logoIconLight
+                                    : theme
+                                        ? logoFullDark
+                                        : logoFullLight
                             }
                             alt="ESENDER"
                             style={{
-                                height: "100%",
+                                height: collapsed ? 34 : 32,
                                 width: "auto",
-                                maxWidth: "100%",
+                                maxWidth: collapsed ? 34 : 160,
                                 objectFit: "contain",
                                 flexShrink: 0,
                             }}
