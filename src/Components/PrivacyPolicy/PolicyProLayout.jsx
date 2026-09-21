@@ -10,10 +10,10 @@ import lang from "../../util/lang/lang.json";
 import Link from "antd/es/typography/Link";
 import i18next from "i18next";
 import { formatDate } from "../../util/commom.utils";
-// import logoFullDark from "../../assets/logo-full-dark.png";
-// import logoFullLight from "../../assets/logo-full-light.png";
-// import logoIconDark from "../../assets/logo-icon-dark.png";
-// import logoIconLight from "../../assets/logo-icon-light.png";
+import logoFullDark from "../../assets/logo-full-dark.png";
+import logoFullLight from "../../assets/logo-full-light.png";
+import logoIconDark from "../../assets/logo-icon-dark.png";
+import logoIconLight from "../../assets/logo-icon-light.png";
 
 const PolicyProLayout = ({ children }) => {
     const navigate = useNavigate();
@@ -173,15 +173,15 @@ const PolicyProLayout = ({ children }) => {
                                     }}
                                 >
                                     <img
-                                        // src={
-                                        //     collapsed
-                                        //         ? theme
-                                        //             ? logoIconDark
-                                        //             : logoIconLight
-                                        //         : theme
-                                        //             ? logoFullDark
-                                        //             : logoFullLight
-                                        // }
+                                        src={
+                                            collapsed
+                                                ? theme
+                                                    ? logoIconDark
+                                                    : logoIconLight
+                                                : theme
+                                                    ? logoFullDark
+                                                    : logoFullLight
+                                        }
                                         alt="E-Sender"
                                         style={{
                                             height: collapsed ? 34 : 32,
