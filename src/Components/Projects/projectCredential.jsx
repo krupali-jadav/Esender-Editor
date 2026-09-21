@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
-import { Badge, Button, Card, Flex, Table, Tag, Tooltip, Typography, message, } from "antd";
-import { KeyOutlined, PlusOutlined } from "@ant-design/icons";
+import { Badge, Button, Card, Dropdown, Flex, Table, Tag, Tooltip, Typography, message, } from "antd";
+import { DownloadOutlined, KeyOutlined, MoreOutlined, PlusOutlined } from "@ant-design/icons";
 import { t } from "i18next";
 import { useSelector } from "react-redux";
 import EmptyState from "../Styles/EmptyState";
 import { getEditorApiKeys, revokeEditorApiKey, rotateEditorApiKey } from "./ProjectsApi";
 import CreateEditorKey from "./CreateEditorKey";
 import { FaRotateLeft, FaRotateRight } from "react-icons/fa6";
+import { getCurrentTime } from "../../util/commom.utils";
+import { exportToExcel } from "react-json-to-excel";
 const { Text } = Typography;
 
 function ProjectCredential() {
@@ -16,6 +18,7 @@ function ProjectCredential() {
     const [apiKeys, setApiKeys] = useState([]);
     const [loading, setLoading] = useState(false);
     const [createEditorKeyOpen, setCreateEditorKeyOpen] = useState(false);
+    const [exporting, setExporting] = useState(false);
 
     const fetchEditorApiKeys = async () => {
         try {
@@ -44,6 +47,35 @@ function ProjectCredential() {
         }
     }, [projectId]);
 
+    const onExport = async () => {
+        try {
+            setExporting(true);
+
+            const data = await getEditorApiKeys(projectId);
+
+            if (data?.status) {
+                const allKeys = data?.keys || [];
+
+                const exportData = allKeys.map((key) => ({
+                    keyId: key?.id,
+                    KeyName: key?.name,
+                    EditorApiKey: key?.publicPrefix,
+                    Environment: key?.environment,
+                    Status: key?.status,
+                    createdAt: key?.createdAt,
+                    ExpiresAt: key?.expiresAt,
+                }));
+                exportToExcel(exportData, `all_Keys_${getCurrentTime()}`);
+            } else {
+                message.error(data?.message);
+            }
+        } catch (error) {
+            message.error(error?.message);
+        } finally {
+            setExporting(false);
+        }
+    };
+
     const handleRotate = async (editorKeyId) => {
         try {
             const response = await rotateEditorApiKey(
@@ -52,11 +84,11 @@ function ProjectCredential() {
             );
 
             if (response?.status) {
-                message.success(response?.message || "Editor API key rotated successfully");
+                message.success(response?.message);
                 fetchEditorApiKeys();
             }
         } catch (error) {
-            message.error(error?.message || "Failed to rotate Editor API key");
+            message.error(error?.message);
         }
     };
 
@@ -135,41 +167,50 @@ function ProjectCredential() {
         {
             title: t("action", { defaultValue: "Action" }),
             key: "action",
-            width: 140,
-            render: (_, record) => {
-                const actionButton = (icon, onClick) => (
+            fixed: "right",
+            width: 90,
+            onCell: () => ({
+                style: {
+                    background: "var(--ant-color-bg-container)",
+                    position: "sticky",
+                    right: 0,
+                    zIndex: 3,
+                },
+            }),
+
+            render: (_, record) => (
+                <Dropdown
+                    menu={{
+                        items: [
+                            {
+                                key: "1",
+                                label: t("edit", { defaultValue: "Rotate", }),
+                                onClick: () => handleRotate(record.id),
+                            },
+                            {
+                                key: "2",
+                                label: t("delete", { defaultValue: "Delete", }),
+                                danger: true,
+                                onClick: () => handleRevoke(record.id),
+                            },
+                        ],
+                    }}
+                    trigger={["click"]}
+                    placement="bottomLeft"
+                >
                     <Button
                         type="text"
-                        icon={icon}
-                        onClick={onClick}
-                        style={{ width: 30, height: 30, borderRadius: 8, border: "1px solid #1d5268", background: "#10283a", color: "#20A6CE" }}
+                        icon={<MoreOutlined />}
+                        onClick={(e) => e.stopPropagation()}
                     />
-                );
-
-                return (
-                    <Flex gap={8} align="center">
-                        <Tooltip title={t("rotate", { defaultValue: "Rotate" })}>
-                            {actionButton(
-                                <FaRotateLeft />,
-                                () => handleRotate(record.id)
-                            )}
-                        </Tooltip>
-
-                        <Tooltip title={t("revoked", { defaultValue: "Revoked" })}>
-                            {actionButton(
-                                <FaRotateRight />,
-                                () => handleRevoke(record.id)
-                            )}
-                        </Tooltip>
-                    </Flex>
-                );
-            },
+                </Dropdown>
+            ),
         },
     ];
 
     return (
         <div style={{ padding: "5px 24px" }}>
-            <Flex justify="end" style={{ marginBottom: 16 }}>
+            <Flex gap="middle" justify="end" style={{ marginBottom: 16 }}>
                 <Button
                     type="primary"
                     icon={<PlusOutlined />}
@@ -177,6 +218,15 @@ function ProjectCredential() {
                     style={{ background: "#20A6CE" }}
                 >
                     {t("create.editor.key", { defaultValue: "Create Editor Key" })}
+                </Button>
+                <Button
+                    type="primary"
+                    icon={<DownloadOutlined />}
+                    onClick={onExport}
+                    loading={exporting}
+                    style={{ background: "#20A6CE" }}
+                >
+                    {t("export", { defaultValue: "Export" })}
                 </Button>
             </Flex>
             <Card styles={{ body: { padding: 0 } }}>
@@ -191,8 +241,8 @@ function ProjectCredential() {
                         emptyText: (
                             <EmptyState
                                 icon={<KeyOutlined />}
-                                title={t("no.editor.api.keys", { defaultValue: "No Editor API Keys Found", })}
-                                description={t("no.editor.api.keys.description", { defaultValue: "There are no Editor API keys available.", })}
+                                title={t("no.editor.api.keys.found", { defaultValue: "No Editor API Keys Found", })}
+                                description={t("no.editor.api.keys.available", { defaultValue: "There are no Editor API keys available.", })}
                             />
                         ),
                     }}

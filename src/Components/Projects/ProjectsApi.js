@@ -157,11 +157,7 @@ export const createEditorApiKey = async (projectId, payload) => {
         return null;
     } catch (error) {
         console.log(error);
-        message.error(
-            error?.response?.data?.message ||
-            error?.message ||
-            "Failed to create Editor API key"
-        );
+        message.error( error?.message);
         return null;
     }
 };
@@ -178,7 +174,7 @@ export const rotateEditorApiKey = async (projectId, editorKeyId) => {
         return null;
     } catch (error) {
         console.log(error);
-        message.error(error?.message || "Failed to rotate Editor API key");
+        message.error(error?.message);
         return null;
     }
 };
@@ -195,7 +191,7 @@ export const revokeEditorApiKey = async (projectId, editorKeyId) => {
         return null;
     } catch (error) {
         console.log(error);
-        message.error(error?.message || "Failed to rotate Editor API key");
+        message.error(error?.message);
         return null;
     }
 };

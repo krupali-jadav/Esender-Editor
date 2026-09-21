@@ -26,14 +26,14 @@ function CreateEditorKey({ open, onClose, projectId, onSuccess, }) {
             );
 
             if (response?.status) {
-                message.success(response?.message || t("editor.key.created", { defaultValue: "Editor API key created successfully", }));
+                message.success(response?.message);
                 form.resetFields();
                 onClose();
                 onSuccess?.();
             }
         } catch (error) {
             console.log(error);
-            message.error(error?.message || "Failed to create Editor API key");
+            message.error(error?.message);
         } finally {
             setLoading(false);
         }
@@ -52,8 +52,8 @@ function CreateEditorKey({ open, onClose, projectId, onSuccess, }) {
                 </Button>,
 
                 <Button key="create" type="primary" loading={loading} onClick={() => form.submit()}>
-                    {t("create", { defaultValue: "Create Editor Key", })}
-                </Button>,
+                    {t("create.editor.key", { defaultValue: "Create Editor Key", })}
+                </Button>
             ]}
         >
             <Text type="secondary">
@@ -69,14 +69,14 @@ function CreateEditorKey({ open, onClose, projectId, onSuccess, }) {
                     rules={[
                         {
                             required: true,
-                            message: t("key.name.required", { defaultValue: "Please enter a key name", }),
+                            message: t("please.enter.key.name", { defaultValue: "Please enter a key name", }),
                         },
                     ]}
                 >
                     <Input
                         size="middle"
                         prefix={<FileTextOutlined />}
-                        placeholder={t("key.name.placeholder", { defaultValue: "e.g., Website Widget", })}
+                        placeholder={t("website.widget", { defaultValue: "e.g., Website Widget", })}
                     />
                 </Form.Item>
 
@@ -86,7 +86,7 @@ function CreateEditorKey({ open, onClose, projectId, onSuccess, }) {
                     rules={[
                         {
                             required: true,
-                            message: t("environment.required", { defaultValue: "Please select an environment", }),
+                            message: t("please.select.environment", { defaultValue: "Please select an environment", }),
                         },
                     ]}
                 >
@@ -118,7 +118,7 @@ function CreateEditorKey({ open, onClose, projectId, onSuccess, }) {
                                                 </Text>
 
                                                 <Text type="secondary">
-                                                    {t("test.environment.description", { defaultValue: "Use this key for testing and development.", })}
+                                                    {t("use.this.key.for.testing.and.development", { defaultValue: "Use this key for testing and development.", })}
                                                 </Text>
                                             </Space>
                                         </Flex>
@@ -147,7 +147,7 @@ function CreateEditorKey({ open, onClose, projectId, onSuccess, }) {
                                                 </Text>
 
                                                 <Text type="secondary">
-                                                    {t("live.environment.description", { defaultValue: "Use this key for your production environment.", })}
+                                                    {t("use.this.key.for.your.production.environment", { defaultValue: "Use this key for your production environment.", })}
                                                 </Text>
                                             </Space>
                                         </Flex>
@@ -166,12 +166,11 @@ function CreateEditorKey({ open, onClose, projectId, onSuccess, }) {
                     rules={[
                         {
                             required: true,
-                            message: t("expiration.required", { defaultValue: "Please select an expiration period", }),
+                            message: t("please.select.expiration.period", { defaultValue: "Please select an expiration period", }),
                         },
                     ]}
                 >
-                    <Select
-                        size="large"
+                    <Select size="large"
                         options={[
                             {
                                 value: 30,
@@ -220,7 +219,7 @@ function CreateEditorKey({ open, onClose, projectId, onSuccess, }) {
                 <Flex justify="center">
                     <Text type="secondary">
                         <SafetyOutlined />{" "}
-                        {t("data.secure", { defaultValue: "Your data is secure and encrypted.", })}
+                        {t("your.data.is.secure.and.encrypted", { defaultValue: "Your data is secure and encrypted.", })}
                     </Text>
                 </Flex>
             </Form>
