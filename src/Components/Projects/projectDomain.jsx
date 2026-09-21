@@ -12,6 +12,7 @@ import {
     Dropdown,
     Flex,
     Badge,
+    message,
 } from 'antd'
 import {
     GlobalOutlined,
@@ -19,11 +20,14 @@ import {
     MoreOutlined,
     SafetyCertificateOutlined,
     PlusOutlined,
+    KeyOutlined,
 } from '@ant-design/icons'
 import { useSelector } from 'react-redux'
 import AddDomain from './AddDomain'
-import { getDomains, validateProjectDomain } from './ProjectsApi'
+import { deleteProjectDomain, getDomains, validateProjectDomain } from './ProjectsApi'
 import { t } from 'i18next'
+import DeleteModal from '../Styles/DeleteModel'
+import EmptyState from '../Styles/EmptyState'
 
 const { Title, Text, Paragraph } = Typography
 
@@ -35,6 +39,9 @@ function ProjectDomain() {
     const [editingDomain, setEditingDomain] = useState(null);
     const [domains, setDomains] = useState([]);
     const [domainsLoading, setDomainsLoading] = useState(false);
+    const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+    const [deleteRecord, setDeleteRecord] = useState(null);
+    const [deleteLoading, setDeleteLoading] = useState(false);
     const theme = useSelector((state) => state?.app?.theme);
     const selectedProject = useSelector((state) => state?.app?.selectedProject);
 
@@ -90,6 +97,44 @@ function ProjectDomain() {
         }
     };
 
+    const handleDeleteDomain = (record = null) => {
+        setDeleteRecord(
+            record
+                ? {
+                    ...record,
+                    name: record.domain,
+                } : null
+        );
+        setDeleteModalOpen(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!deleteRecord?.domain || !selectedProject?._id) {
+            message.warning("Domain is required");
+            return;
+        }
+
+        try {
+            setDeleteLoading(true);
+
+            const payload = {
+                domain: deleteRecord.domain,
+            };
+
+            const response = await deleteProjectDomain(selectedProject._id, payload);
+
+            if (response?.status) {
+                setDeleteModalOpen(false);
+                setDeleteRecord(null);
+                await fetchDomains();
+                message.success(response?.message);
+            }
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setDeleteLoading(false);
+        }
+    };
     useEffect(() => {
         fetchDomains();
     }, [selectedProject?._id]);
@@ -146,24 +191,29 @@ function ProjectDomain() {
                         items: [
                             {
                                 key: "edit",
-                                label: "Edit",
+                                label: t("edit", { defaultValue: "Edit" }),
+                                onClick: () => {
+                                    setEditingDomain(record);
+                                    setAddDomainOpen(true);
+                                    setDeleteLoading(false)
+                                },
                             },
                             {
                                 key: "delete",
-                                label: "Delete",
+                                label: t("delete", { defaultValue: "Delete" }),
                                 danger: true,
+                                onClick: () => handleDeleteDomain(record),
                             },
                         ],
-                        onClick: ({ key }) => {
-                            if (key === "edit") {
-                                setEditingDomain(record);
-                                setAddDomainOpen(true);
-                            }
-                        },
                     }}
                     trigger={["click"]}
+                    placement="bottomLeft"
                 >
-                    <Button type="text" icon={<MoreOutlined />} />
+                    <Button
+                        type="text"
+                        icon={<MoreOutlined />}
+                        onClick={(e) => e.stopPropagation()}
+                    />
                 </Dropdown>
             ),
         },
@@ -177,31 +227,35 @@ function ProjectDomain() {
                         <Card styles={{ header: { padding: "18px", }, body: { padding: 0, } }}
 
                             title={
-                                <Flex vertical gap={4}>
-                                    <Title level={5}>
-                                        {t('allowed.domains', { defaultValue: 'Allowed Domains' })}
-                                    </Title>
+                                <Row gutter={[16, 12]} align="middle" style={{ width: "100%" }}>
+                                    {/* Header Content */}
+                                    <Col xs={24} sm={18}>
+                                        <Flex vertical gap={4} style={{ width: "100%" }}>
+                                            <Title level={5} style={{ margin: 0 }}>
+                                                {t("allowed.domains", { defaultValue: "Allowed Domains", })}
+                                            </Title>
 
-                                    <Text type="secondary" style={{ whiteSpace: "normal", }}>
-                                        {t('manage.origins.permitted.to.send.requests.accepts.patterns.like', { defaultValue: 'Manage origins permitted to send requests. Accepts patterns like' })}{" "}
-                                        <Text code>{t('app.example.com', { defaultValue: 'app.example.com' })}</Text>,{" "}
-                                        <Text code>{t('*.example.com', { defaultValue: '*.example.com' })}</Text>, and{" "}
-                                        <Text code>{t('localhost', { defaultValue: 'localhost' })}</Text>.
-                                    </Text>
-                                </Flex>
-                            }
-                            extra={
-                                <Button
-                                    type="primary"
-                                    icon={<PlusOutlined />}
-                                    onClick={() => {
-                                        setEditingDomain(null);
-                                        setAddDomainOpen(true);
-                                    }}
-                                    style={{ background: "#20A6CE", }}
-                                >
-                                    {t('Add.Domain', { defaultValue: 'Add Domain' })}
-                                </Button>
+                                            <Text type="secondary" size="small" style={{ whiteSpace: "normal", display: "block", }}>
+                                                {t("manage.origins.permitted.to.send.requests.accepts.patterns.like", { defaultValue: "Manage origins permitted to send requests. Accepts patterns like", })}{" "}
+                                                <Text code>{t("app.example.com", { defaultValue: "app.example.com", })}</Text>,{" "}
+                                                <Text code>{t("*.example.com", { defaultValue: "*.example.com", })}</Text>, and{" "}
+                                                <Text code>{t("localhost", { defaultValue: "localhost", })}</Text>.
+                                            </Text>
+                                        </Flex>
+                                    </Col>
+
+                                    {/* Add Domain */}
+                                    <Col xs={24} sm={6} style={{ display: "flex", justifyContent: "flex-end", }}>
+                                        <Button
+                                            type="primary"
+                                            icon={<PlusOutlined />}
+                                            onClick={() => { setEditingDomain(null); setAddDomainOpen(true); }}
+                                            style={{ background: "#20A6CE", }}
+                                        >
+                                            {t("Add.Domain", { defaultValue: "Add Domain", })}
+                                        </Button>
+                                    </Col>
+                                </Row>
                             }
                         />
 
@@ -214,6 +268,15 @@ function ProjectDomain() {
                                 pagination={false}
                                 size="middle"
                                 scroll={{ x: "max-content" }}
+                                locale={{
+                                    emptyText: (
+                                        <EmptyState
+                                            icon={<KeyOutlined />}
+                                            title={t("no.editor.api.keys", { defaultValue: "No Domains Found", })}
+                                            description={t("no.editor.api.keys.description", { defaultValue: "There are no Domains available.", })}
+                                        />
+                                    ),
+                                }}
                                 components={{
                                     header: {
                                         cell: (props) => (
@@ -221,9 +284,7 @@ function ProjectDomain() {
                                                 {...props}
                                                 style={{
                                                     ...props.style,
-                                                    background: theme
-                                                        ? "#0E1C29"
-                                                        : "#F0F0F0",
+                                                    background: theme ? "#0E1C29" : "#F0F0F0",
                                                 }}
                                             />
                                         ),
@@ -322,6 +383,19 @@ function ProjectDomain() {
                     setEditingDomain(null);
                 }}
                 onSuccess={fetchDomains}
+            />
+            <DeleteModal
+                open={deleteModalOpen}
+                record={deleteRecord}
+                selectedRowKeys={[]}
+                loading={deleteLoading}
+                itemName="Domain"
+                itemNamePlural="Domains"
+                onCancel={() => {
+                    setDeleteModalOpen(false);
+                    setDeleteRecord(null);
+                }}
+                onConfirm={handleConfirmDelete}
             />
         </div>
     )

@@ -13,7 +13,7 @@ function DeleteModal({
     onConfirm,
 }) {
     const isMultiple = selectedRowKeys.length > 0 && !record;
-    const {Text} = Typography;
+    const { Text } = Typography;
 
     return (
         <Modal
@@ -45,9 +45,8 @@ function DeleteModal({
         >
             <p>
                 {isMultiple
-                    ? `Are you sure you want to delete ${selectedRowKeys.length} ${itemName.toLowerCase()}${selectedRowKeys.length > 1 ? "s" : ""
-                    }?`
-                    : `Are you sure you want to delete "${record?.name}" ${itemName.toLowerCase()}?`}
+                    ? `${t("are.you.sure.you.want.to.delete", { defaultValue: "Are you sure you want to delete" })} ${selectedRowKeys.length} ${itemName.toLowerCase()}${selectedRowKeys.length > 1 ? t("s", { defaultValue: "s" }) : ""}?`
+                    : <>{t("are.you.sure.you.want.to.delete", { defaultValue: "Are you sure you want to delete" })} <strong>{record?.name}</strong> {itemName.toLowerCase()}?</>}
             </p>
         </Modal>
     );

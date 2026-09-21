@@ -36,7 +36,7 @@ export const saveProfile = async (payload) => {
 export const uploadImage = async (payload) => {
     try {
         const response = await axiosInstance.post(
-            "auth/upload-image",
+            "app/upload-image",
             payload,
             {
                 headers: {

@@ -11,20 +11,25 @@ import EmptyState from "../Styles/EmptyState";
 import { formatDate } from "../../util/commom.utils";
 import { useDebounce } from "../../util/useDebounce";
 import DeleteModal from "../Styles/DeleteModel";
+import { listProjects } from "../SelectProject/SelectProjectApi";
 const { Text } = Typography;
 
 export default function Templates() {
     const navigate = useNavigate();
     const [templates, setTemplates] = useState([]);
+    const [project, setProject] = useState([]);
+    const [selectedProject, setSelectedProject] = useState(null);
     const [loading, setLoading] = useState(false);
     const [search, setSearch] = useState("");
-    const [sortBy, setSortBy] = useState("created-at");
     const [hoveredTemplate, setHoveredTemplate] = useState(null);
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [statusLoading, setStatusLoading] = useState(null);
     const [previewTemplate, setPreviewTemplate] = useState(null);
     const [totalTemplates, setTotalTemplates] = useState(0);
+    const [sortBy, setSortBy] = useState("created-at");
+    const [status, setStatus] = useState("all");
+    const [isApplyFilter, setIsApplyFilter] = useState(false);
     const theme = useSelector((state) => state?.app?.theme);
     const debouncedSearch = useDebounce(search, 700);
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -39,7 +44,7 @@ export default function Templates() {
     const isEmptyEditorHtml = (html) =>
         !html ||
         html.trim() === "" ||
-        html.includes("Drag Content Block Here");
+        html.includes(t("drap.content.block.here", { "defaultValue": "Drag Content Block Here" }));
 
     const fetchTemplates = async () => {
         try {
@@ -50,6 +55,10 @@ export default function Templates() {
                 sort_by: sortBy,
                 filter_by: {
                     enable: true,
+                    ...(status !== "all" && { status }),
+                    ...(selectedProject && selectedProject !== "all" && {
+                        projectId: selectedProject,
+                    }),
                 },
                 page: currentPage - 1,
                 limit: pageSize,
@@ -58,22 +67,50 @@ export default function Templates() {
             const data = await getAllTemplates(payload);
 
             if (data?.status) {
-                setTemplates(data?.templates || []);
-                setTotalTemplates(data?.total || 0);
+                let templateList = data?.templates || [];
+                if (selectedProject && selectedProject !== "all") {
+                    templateList = templateList.filter((template) => template.projectId === selectedProject);
+                }
+
+                setTemplates(templateList);
+                setTotalTemplates(
+                    selectedProject && selectedProject !== "all"
+                        ? templateList.length
+                        : data?.total || 0
+                );
             } else {
                 setTemplates([]);
                 setTotalTemplates(0);
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
+            setTemplates([]);
+            setTotalTemplates(0);
         } finally {
             setLoading(false);
         }
     };
 
+    const fetchProjects = async () => {
+        try {
+            const response = await listProjects();
+
+            if (response?.status) {
+                setProject(response?.projects)
+            }
+            else {
+                setProject([]);
+            }
+        } catch (error) {
+            console.log(error);
+            message.error(error?.message);
+        }
+    }
+
     useEffect(() => {
+        fetchProjects();
         fetchTemplates();
-    }, [debouncedSearch, sortBy, currentPage, pageSize]);
+    }, [debouncedSearch, sortBy, status, currentPage, pageSize, selectedProject]);
 
     const handleDeleteTemplate = (template) => {
         setDeleteTemplateRecord(template);
@@ -92,7 +129,6 @@ export default function Templates() {
             if (data?.status) {
                 setTemplates((prev) => prev.filter((item) => item._id !== deleteTemplateRecord._id));
                 message.success(data?.message);
-
                 setDeleteModalOpen(false);
                 setDeleteTemplateRecord(null);
             } else {
@@ -106,25 +142,33 @@ export default function Templates() {
         }
     };
 
-    const handleChangeStatus = async (template, enable) => {
+    const handleChangeStatus = async (template, checked) => {
         try {
             setStatusLoading(template._id);
-
+            const status = checked ? "published" : "draft";
             const data = await changeTemplateStatus(
                 template._id,
-                enable
+                status
             );
 
             if (data?.status) {
                 setTemplates((prev) =>
-                    prev.map((item) => item._id === template._id ? { ...item, enable, } : item));
-                message.success(enable ? "Template enabled successfully" : "Template disabled successfully");
+                    prev.map((item) =>
+                        item._id === template._id
+                            ? {
+                                ...item,
+                                status,
+                                enable: checked,
+                            } : item
+                    )
+                );
+                message.success(data?.message);
             } else {
-                message.error(data?.message || "Failed to change template status");
+                message.error(data?.message);
             }
         } catch (error) {
             console.error(error);
-            message.error(error?.message || "Failed to change template status");
+            message.error(error?.message);
         } finally {
             setStatusLoading(null);
         }
@@ -143,11 +187,7 @@ export default function Templates() {
 
                     <Col xs={24} lg={10}>
                         <Flex gap={8} justify="end" wrap>
-                            <Button
-                                type="primary"
-                                icon={<PlusOutlined />}
-                                onClick={() => navigate("/templates/create-template")}
-                            >
+                            <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate("/templates/create-template")}>
                                 {t('new.template', { defaultValue: 'New Template' })}
                             </Button>
                         </Flex>
@@ -159,7 +199,7 @@ export default function Templates() {
                     <Flex gap={24} justify="space-between" align="center" wrap="wrap" >
                         {/* Search */}
                         <Input
-                            placeholder="Search templates..."
+                            placeholder={t("search.templates", { defaultValue: "Search templates..." })}
                             prefix={<SearchOutlined />}
                             allowClear
                             value={search}
@@ -173,15 +213,21 @@ export default function Templates() {
                                 <Text type="secondary">{t('project', { defaultValue: 'Project' })}:</Text>
 
                                 <Select
-                                    defaultValue="all"
+                                    value={selectedProject}
+                                    onChange={(value) => { setSelectedProject(value); setCurrentPage(1); setIsApplyFilter(value !== "all"); }}
                                     variant="borderless"
                                     suffixIcon={<DownOutlined />}
-                                    style={{ width: 130, background: theme ? "#0A1622" : "#F5F8FA", borderRadius: 8, }}
+                                    placeholder={t('select.project', { defaultValue: 'Select Project' })}
+                                    style={{ width: 180, background: theme ? "#0A1622" : "#F5F8FA", borderRadius: 8, }}
                                     options={[
-                                        { value: "all", label: t('all.projects', { defaultValue: 'All Projects' }) },
-                                        { value: "marketing", label: t('marketing.hub', { defaultValue: 'Marketing Hub' }) },
-                                        { value: "internal", label: t('internal.comms', { defaultValue: 'Internal Comms' }) },
-                                        { value: "transactional", label: t('transactional', { defaultValue: 'Transactional' }) },
+                                        {
+                                            value: "all",
+                                            label: t('all', { defaultValue: 'All' }),
+                                        },
+                                        ...project.map((project) => ({
+                                            value: project._id,
+                                            label: project.name,
+                                        }))
                                     ]}
                                 />
                             </Space>
@@ -194,11 +240,25 @@ export default function Templates() {
                             <Space size={8}>
                                 <Text type="secondary">{t('status', { defaultValue: 'Status' })}:</Text>
                                 <Segmented
-                                    defaultValue="All"
+                                    value={status}
+                                    onChange={(value) => {
+                                        setStatus(value);
+                                        setIsApplyFilter(value !== "all");
+                                        setCurrentPage(1);
+                                    }}
                                     options={[
-                                        t('all', { defaultValue: 'All' }),
-                                        t('published', { defaultValue: 'Published' }),
-                                        t('draft', { defaultValue: 'Draft' })
+                                        {
+                                            label: t('all', { defaultValue: 'All' }),
+                                            value: "all",
+                                        },
+                                        {
+                                            label: t('published', { defaultValue: 'Published' }),
+                                            value: "published",
+                                        },
+                                        {
+                                            label: t('draft', { defaultValue: 'Draft' }),
+                                            value: "draft",
+                                        },
                                     ]}
                                 />
                             </Space>
@@ -236,55 +296,43 @@ export default function Templates() {
                             </Flex>
                         </Col>
                     ) : templates.length > 0 ? (
-                        templates.map((tpl) => (
-                            <Col key={tpl._id} xs={24} sm={12} lg={6}>
-                                <Card
-                                    hoverable
-                                    style={{ background: theme ? "#0F2233" : "#e1e4e6", }}
+                        templates.map((template) => (
+                            <Col key={template._id} xs={24} sm={12} md={8} lg={8} xl={6}>
+                                <Card hoverable style={{ background: theme ? "#0F2233" : "#e1e4e6", }}
                                     cover={
                                         <div
                                             style={{ position: "relative", height: 200, background: "#dcdfe4", borderBottom: "1px solid #f0f0f0", overflow: "hidden", }}
-                                            onMouseEnter={() => setHoveredTemplate(tpl._id)}
+                                            onMouseEnter={() => setHoveredTemplate(template._id)}
                                             onMouseLeave={() => setHoveredTemplate(null)}
                                         >
-                                            {!isEmptyEditorHtml(tpl.HTML) ? (
+                                            {!isEmptyEditorHtml(template.HTML) ? (
                                                 <iframe
-                                                    title={`template-${tpl._id}`}
-                                                    srcDoc={tpl.HTML}
+                                                    title={`template-${template._id}`}
+                                                    srcDoc={template.HTML}
                                                     scrolling="no"
-                                                    style={{
-                                                        width: "100%",
-                                                        height: "100%",
-                                                        border: "none",
-                                                        pointerEvents: "none",
-                                                        background: "#fff",
-                                                    }}
+                                                    style={{ width: "100%", height: "100%", border: "none", pointerEvents: "none", background: "#fff", }}
                                                 />
-                                            ) : tpl.text?.trim() ? (
+                                            ) : template.text?.trim() ? (
                                                 <Flex align="center" justify="center" style={{ height: "100%", padding: 16, background: "#fff", }}>
                                                     <Text style={{ color: "#000" }}>
-                                                        {tpl.text.replace(/{{\s*[^}]+\s*}}/g, "{{name}}")}
+                                                        {template.text.replace(/{{\s*[^}]+\s*}}/g, "{{name}}")}
                                                     </Text>
                                                 </Flex>
                                             ) : (
                                                 <Flex align="center" justify="center" style={{ height: "100%", }}>
-                                                    <FileImageOutlined
-                                                        style={{ fontSize: 28, color: "#bfbfbf", }}
-                                                    />
+                                                    <FileImageOutlined style={{ fontSize: 28, color: "#bfbfbf", }} />
                                                 </Flex>
                                             )}
 
                                             {/* Delete button */}
-                                            {hoveredTemplate === tpl._id && (
-                                                <Flex justify="center" align="center" gap={10}
-                                                    style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.4)", }}
-                                                >
+                                            {hoveredTemplate === template._id && (
+                                                <Flex justify="center" align="center" gap={10} style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.4)", }}>
                                                     <Button
                                                         shape="circle"
                                                         icon={<EyeOutlined />}
                                                         onClick={(e) => {
                                                             e.stopPropagation();
-                                                            setPreviewTemplate(tpl);
+                                                            setPreviewTemplate(template);
                                                         }}
                                                     />
                                                     <Button
@@ -292,7 +340,7 @@ export default function Templates() {
                                                         icon={<EditOutlined />}
                                                         onClick={(e) => {
                                                             e.stopPropagation();
-                                                            navigate(`/templates/edit-template/${tpl._id}`);
+                                                            navigate(`/templates/edit-template/${template._id}`);
                                                         }}
                                                     />
 
@@ -302,7 +350,7 @@ export default function Templates() {
                                                         icon={<DeleteOutlined />}
                                                         onClick={(e) => {
                                                             e.stopPropagation();
-                                                            handleDeleteTemplate(tpl);
+                                                            handleDeleteTemplate(template);
                                                         }}
                                                     />
                                                 </Flex>
@@ -314,12 +362,12 @@ export default function Templates() {
                                         <Space style={{ width: "100%", justifyContent: "space-between", }} align="start">
                                             <Space>
                                                 <Text strong ellipsis style={{ maxWidth: 130 }}>
-                                                    {tpl.name}
+                                                    {template.name}
                                                 </Text>
                                             </Space>
 
-                                            <Tag color={statusColors[tpl.status]}>
-                                                {tpl.status}
+                                            <Tag color={statusColors[template.status]}>
+                                                {template.status}
                                             </Tag>
                                         </Space>
 
@@ -327,7 +375,7 @@ export default function Templates() {
                                             <Space size={6}>
                                                 <FolderOutlined style={{ color: "#20A6CE", fontSize: 17 }} />
                                                 <Text style={{ color: "#8c8e91", fontWeight: 600 }}>
-                                                    {tpl.project}
+                                                    {template.projectName}
                                                 </Text>
                                             </Space>
                                         </Space>
@@ -336,20 +384,20 @@ export default function Templates() {
                                             <Space size={6}>
                                                 <ClockCircleOutlined style={{ color: "#20A6CE" }} />
                                                 <Text style={{ color: "#8c8e91", fontWeight: 600 }}>
-                                                    {formatDate(tpl.updatedAt)}
+                                                    {formatDate(template.updatedAt)}
                                                 </Text>
                                             </Space>
 
                                             <Row>
                                                 <Switch
                                                     size="small"
-                                                    checked={tpl.enable}
-                                                    loading={statusLoading === tpl._id}
-                                                    onChange={(checked) => handleChangeStatus(tpl, checked)}
+                                                    checked={template.status === "published"}
+                                                    loading={statusLoading === template._id}
+                                                    onChange={(checked) => handleChangeStatus(template, checked)}
                                                     style={{ marginRight: 4, transform: "scale(0.85)", }}
                                                 />
                                                 <Tag variant="filled" style={{ background: theme ? "#0A1622" : "#F5F8FA", }} >
-                                                    {tpl.HTML?.trim() ? "HTML" : "TEXT"}
+                                                    {template.HTML?.trim() ? "HTML" : "TEXT"}
                                                 </Tag>
                                             </Row>
                                         </Row>
@@ -360,14 +408,18 @@ export default function Templates() {
                     ) : (
                         <Col span={24}>
                             <EmptyState
-                                title={t('no.templates.found', { defaultValue: 'No templates found' })}
-                                description={t('create.first.template', { defaultValue: 'Create your first email template to get started.' })}
+                                title={
+                                    isApplyFilter || search
+                                        ? t("no.templates.match.filters", { defaultValue: "No templates match your filters", })
+                                        : t("no.templates.available", { defaultValue: "No templates available", })
+                                }
+                                description={
+                                    isApplyFilter || search
+                                        ? t("try.adjusting.or.clearing.your.search.and.filters", { defaultValue: "Try adjusting or clearing your search and filters.", })
+                                        : t("create.your.first.template.to.start.designing.campaigns", { defaultValue: "Create your first template to start designing campaigns.", })
+                                }
                                 action={
-                                    <Button
-                                        type="primary"
-                                        icon={<PlusOutlined />}
-                                        onClick={() => navigate("/templates/create-template")}
-                                    >
+                                    <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate("/templates/create-template")}>
                                         {t('create.template', { defaultValue: 'Create Template' })}
                                     </Button>
                                 }

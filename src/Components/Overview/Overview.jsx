@@ -1,32 +1,5 @@
-import {
-    Row,
-    Col,
-    Card,
-    Progress,
-    Tag,
-    Typography,
-    Table,
-    List,
-    Space,
-    Avatar,
-    Button,
-    Select,
-    Badge,
-    Flex,
-} from "antd";
-
-import {
-    CreditCardOutlined,
-    FolderOpenOutlined,
-    TeamOutlined,
-    ThunderboltOutlined,
-    FileTextOutlined,
-    CodeOutlined,
-    CustomerServiceOutlined,
-    DownOutlined,
-    ArrowRightOutlined,
-} from "@ant-design/icons";
-
+import { Row, Col, Card, Progress, Tag, Typography, Table, List, Space, Avatar, Button, Select, Badge, Flex, } from "antd";
+import { CreditCardOutlined, FolderOpenOutlined, TeamOutlined, ThunderboltOutlined, FileTextOutlined, CodeOutlined, CustomerServiceOutlined, DownOutlined, ArrowRightOutlined, } from "@ant-design/icons";
 import { PageContainer } from "@ant-design/pro-components";
 import AppPageHeader from "../Styles/AppHeader";
 import { t } from "i18next";
@@ -52,9 +25,9 @@ export default function Overview() {
     });
 
     const quickActions = [
-        { title: "API Docs", icon: <FileTextOutlined /> },
-        { title: "SDK Snippets", icon: <CodeOutlined /> },
-        { title: "Support Center", icon: <CustomerServiceOutlined /> },
+        { title: t("api.docs", { defaultValue: "API Docs" }), icon: <FileTextOutlined /> },
+        { title: t("sdk.snippets", { defaultValue: "SDK Snippets" }), icon: <CodeOutlined /> },
+        { title: t("support.center", { defaultValue: "Support Center" }), icon: <CustomerServiceOutlined /> },
     ];
 
     const fetchOverview = async (selectedRange = range) => {
@@ -171,6 +144,10 @@ export default function Overview() {
                             value: "7",
                             label: t("last7Days", { defaultValue: "Last 7 Days" }),
                         },
+                        // {
+                        //     value: "15",
+                        //     label: t("last15Days", { defaultValue: "Last 15 Days" }),
+                        // },
                     ]}
                 />
             </Flex>
@@ -211,7 +188,15 @@ export default function Overview() {
                             </Space>
 
                             <Title level={3} style={{ margin: "8px 0" }}>
-                                {stats ? `${stats.projectsUsed} / ${stats.projectsLimit}` : "-"}
+                                {stats ? (
+                                    <>
+                                        <span>{stats.projectsUsed}</span> /{" "}<Text style={{ fontSize: 16, }} type="secondary">
+                                            {stats.projectsLimit === -1 ? "Unlimited" : stats.projectsLimit}
+                                        </Text>
+                                    </>
+                                ) : (
+                                    "-"
+                                )}
                             </Title>
 
                             <Progress
@@ -235,7 +220,16 @@ export default function Overview() {
                             </Space>
 
                             <Title level={3} style={{ margin: "8px 0" }}>
-                                {stats ? `${stats.monthlyEditorUsersUsed} / ${stats.monthlyEditorUsersLimit}` : "-"}
+                                {stats ? (
+                                    <>
+                                        <span>{stats.monthlyEditorUsersUsed}</span> /{" "}
+                                        <Text style={{ fontSize: 16, }} type="secondary">
+                                            {stats.monthlyEditorUsersLimit === -1 ? "Unlimited" : stats.monthlyEditorUsersLimit}
+                                        </Text>
+                                    </>
+                                ) : (
+                                    "-"
+                                )}
                             </Title>
 
                             <Progress
@@ -258,7 +252,12 @@ export default function Overview() {
                             </Space>
 
                             <Title level={3} style={{ margin: "8px 0" }}>
-                                {stats ? `${stats.monthlySessionsUsed} / ${stats.monthlySessionsLimit}` : "-"}
+                                {stats ? (<>
+                                    <span>{stats.monthlySessionsUsed}</span> /{" "}
+                                    <Text style={{ fontSize: 16, }} type="secondary">
+                                        {stats.monthlySessionsLimit === -1 ? "Unlimited" : stats.monthlySessionsLimit}
+                                    </Text>
+                                </>) : ("-")}
                             </Title>
 
                             <Progress
@@ -285,10 +284,10 @@ export default function Overview() {
                                     suffixIcon={<DownOutlined />}
                                     options={[
                                         { value: "7", label: t("last.7.Days", { defaultValue: "Last 7 Days" }) },
+                                        // { value: "15", label: t("last.15.Days", { defaultValue: "Last 15 Days" }) },
                                     ]}
                                 />
                             }
-                            style={{ height: "100%" }}
                         >
                             <div>
                                 <Column
@@ -303,12 +302,7 @@ export default function Overview() {
                                     xField="day"
                                     yField="sessions"
                                     height={230}
-                                    style={{
-                                        maxWidth: 50,
-                                        fill: "#adc6ff",
-                                        radiusTopLeft: 4,
-                                        radiusTopRight: 4,
-                                    }}
+                                    style={{ maxWidth: 50, fill: "#adc6ff", radiusTopLeft: 4, radiusTopRight: 4, }}
                                     theme={{
                                         type: theme ? "dark" : "light",
                                         axis: {
@@ -321,19 +315,10 @@ export default function Overview() {
                                         },
                                     }}
                                     axis={{
-                                        x: {
-                                            line: false,
-                                            tickLine: false,
-                                        },
+                                        x: { line: false, tickLine: false, },
                                         y: {
                                             label: false,
-                                            grid: {
-                                                line: {
-                                                    style: {
-                                                        stroke: theme ? "#243746" : "#f0f0f0",
-                                                    },
-                                                },
-                                            },
+                                            grid: { line: { style: { stroke: theme ? "#243746" : "#f0f0f0", }, }, },
                                         },
                                     }}
                                     tooltip={{

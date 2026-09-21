@@ -1,119 +1,257 @@
-import { FilePdfOutlined, FileTextOutlined } from "@ant-design/icons";
+import { DownloadOutlined, DownOutlined, FileTextOutlined, FilterOutlined, SearchOutlined } from "@ant-design/icons";
 import { PageContainer } from "@ant-design/pro-components";
-import { Card, Table, Tag, Typography } from "antd"
+import { Button, Card, Flex, Input, message, Segmented, Select, Space, Table, Typography } from "antd"
 import { t } from "i18next";
+import { exportToExcel } from "react-json-to-excel";
 import { useSelector } from "react-redux";
 import AppPageHeader from "../Styles/AppHeader";
 import { useEffect, useState } from "react";
-import { getInvoices } from "../Plans/PlanApi";
+import { getOrders } from "./OrderApi";
 import EmptyState from "../Styles/EmptyState";
+import { Link } from "react-router-dom";
+import { CURRENCIES_SYMBOL, formatDate, getCurrentTime } from "../../util/commom.utils";
+import StatusBadge from "../Styles/StatusBadge";
+const { Text } = Typography;
 
-const { Text, Link } = Typography;
 function Order() {
     const theme = useSelector((state) => state?.app?.theme);
-    const [invoices, setInvoices] = useState([]);
+    const [order, setOrder] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [search, setSearch] = useState("");
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [sortBy, setSortBy] = useState("created-at");
+    const [exporting, setExporting] = useState(false);
 
-    const fetchInvoices = async () => {
+    const fetchOrders = async () => {
         try {
             setLoading(true);
 
-            const response = await getInvoices(0, 20);
+            const response = await getOrders(0, 20);
 
             if (response?.status) {
-                setInvoices(
-                    (response.invoices || []).map((invoice, index) => ({
+                setOrder(
+                    (response.orders || []).map((invoice, index) => ({
                         ...invoice,
                         key: invoice._id || index,
                     }))
                 );
             } else {
-                setInvoices([]);
+                setOrder([]);
             }
         } catch (error) {
             console.log(error);
-            setInvoices([]);
+            setOrder([]);
         } finally {
             setLoading(false);
         }
     };
 
+    const onExport = async () => {
+        try {
+            setExporting(true);
+
+            const data = await getOrders(0, 1000);
+
+            if (data?.status) {
+                const allOrders = data?.orders || [];
+
+                const exportData = allOrders.map((ord) => ({
+                    orderId: ord?._id,
+                    PlanName: ord?.planName,
+                    BiilingInterval: ord?.billingInterval,
+                    Amount: ord?.total,
+                    Status: ord?.status,
+                    PaymentGateway: ord?.gateway,
+                    createdAt: ord?.createdAt,
+                }));
+
+                exportToExcel(exportData, `all_Orders_${getCurrentTime()}`);
+            } else {
+                message.error(data?.message);
+            }
+        } catch (error) {
+            message.error(error?.message);
+        } finally {
+            setExporting(false);
+        }
+    };
+
     useEffect(() => {
-        fetchInvoices();
+        fetchOrders();
     }, []);
-    const invoiceColumns = [
+
+    const orderColumns = [
         {
-            title: t("invoice.id", { defaultValue: "Invoice ID" }),
-            dataIndex: "id",
+            title: t("sn", { defaultValue: "SN" }),
+            key: "sn",
+            render: (_, __, index) => (page - 1) * pageSize + (index + 1),
+            width: 100,
+        },
+        {
+            title: t("order.id", { defaultValue: "Order ID" }),
+            dataIndex: "_id",
             key: "id",
-            render: (id) => <Text underline strong>{id}</Text>,
+            render: (id) => (
+                <Text copyable={{ text: id }}>
+                    <Link to={`/invoice/${id}`}>
+                        {id}
+                    </Link>
+                </Text>
+            ),
         },
         {
-            title: t("invoice.date", { defaultValue: "Date" }),
-            dataIndex: "date",
-            key: "date"
+            title: t("plan.name", { defaultValue: "Plan Name" }),
+            dataIndex: "planName",
+            key: "planName"
         },
         {
-            title: t("invoice.amount", { defaultValue: "Amount" }),
-            dataIndex: "amount",
-            key: "amount"
+            title: t("billing.interval", { defaultValue: "Billing Interval" }),
+            dataIndex: "billingInterval",
+            key: "billingInterval"
         },
         {
-            title: t("invoice.status", { defaultValue: "Status" }),
+            title: t("billing.amount", { defaultValue: "Amount" }),
+            dataIndex: "total",
+            key: "amount",
+            render: (_, record) => (
+                <>
+                    {CURRENCIES_SYMBOL[record.currency]} {record.total}
+                </>
+            )
+        },
+        {
+            title: t("status", { defaultValue: "Status" }),
             dataIndex: "status",
             key: "status",
-            render: (status) => <Tag color="success">{status}</Tag>,
+            render: (status) => (
+                <StatusBadge status={status === "paid" ? "completed" : "failed"} label={status} />
+            )
         },
         {
-            title: t("invoice.action", { defaultValue: "Action" }),
-            key: "action",
-            align: "right",
-            render: () => (
-                <Link>
-                    <FilePdfOutlined /> {t("view.Pdf", { defaultValue: "View PDF" })}
-                </Link>
-            ),
+            title: t("payment.gateway", { defaultValue: "Payment Gateway" }),
+            dataIndex: "gateway",
+            key: "gateway"
+        },
+        {
+            title: t("created.at", { defaultValue: "Created At" }),
+            dataIndex: "createdAt",
+            key: "createdAt",
+            render: (date) => formatDate(date),
         },
     ];
     return (
         <PageContainer title={false}>
             <AppPageHeader
+                eyebrow={t("account", { defaultValue: "Account" })}
                 title={t("orders", { defaultValue: "Orders" })}
                 description={t("orders.description", { defaultValue: "View and manage your order history, invoices, and payment details." })}
             />
-            <Card title={t("billing.invoiceHistory", { defaultValue: "Invoice History" })}
-                styles={{ body: { padding: 0 } }}
-            >
-                <Table
-                    columns={invoiceColumns}
-                    dataSource={invoices}
-                    loading={loading}
-                    pagination={false}
-                    scroll={{ x: "max-content" }}
-                    locale={{
-                        emptyText: (
-                            <EmptyState
-                                icon={<FileTextOutlined />}
-                                title={t("no.orders.found", { defaultValue: "No Orders found" })}
-                                description={t("no.orders.description", { defaultValue: "There are no Orders available.", })}
-                            />
-                        ),
-                    }}
-                    components={{
-                        header: {
-                            cell: (props) => (
-                                <th
-                                    {...props}
-                                    style={{
-                                        ...props.style,
-                                        background: theme ? "#0e1c29" : "#f0f0f0",
-                                    }}
+
+            <Space direction="vertical" size="large" style={{ width: "100%" }}>
+
+                <Card size="small">
+                    <Flex gap={24} justify="space-between" align="center" wrap="wrap" >
+                        {/* Search */}
+                        <Input
+                            placeholder="Search Orders..."
+                            prefix={<SearchOutlined />}
+                            allowClear
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            style={{ flex: 1, width: "100%", maxWidth: 500, minWidth: 200, }}
+                        />
+
+                        {/* Filters */}
+                        <Flex gap={16} justify="end" wrap="wrap">
+
+                            <Space size={4}>
+                                <FilterOutlined />
+                                <Text strong>{t('filters', { defaultValue: 'FILTERS' })}</Text>
+                            </Space>
+
+                            <Space size={8}>
+                                <Text type="secondary">{t('status', { defaultValue: 'Status' })}:</Text>
+                                <Segmented
+                                    defaultValue="all"
+                                    options={[
+                                        t('all', { defaultValue: 'All' }),
+                                        t('paid', { defaultValue: 'Paid' }),
+                                        t('pending', { defaultValue: 'Pending' })
+                                    ]}
+                                />
+                            </Space>
+
+                            <Space size={8}>
+                                <Text type="secondary">{t('sort', { defaultValue: 'Sort' })}:</Text>
+                                <Select
+                                    value={sortBy}
+                                    onChange={(value) => setSortBy(value)}
+                                    variant="borderless"
+                                    suffixIcon={<DownOutlined />}
+                                    style={{ width: 150, background: theme ? "#0A1622" : "#F5F8FA", borderRadius: 8, }}
+                                    options={[
+                                        {
+                                            value: "created-at",
+                                            label: t('sort.created.at', { defaultValue: 'Sort by Created At' }),
+                                        },
+                                        {
+                                            value: "name",
+                                            label: t('sort.name', { defaultValue: 'Sort by Name' }),
+                                        },
+                                    ]}
+                                />
+                            </Space>
+
+                            <Space>
+                                <Button type="primary" style={{ minWidth: "18%" }} icon={<DownloadOutlined />} onClick={onExport} loading={exporting}>
+                                    {t("export", { defaultValue: "Export", })}
+                                </Button>
+                            </Space>
+                        </Flex>
+                    </Flex>
+                </Card>
+
+                <Card styles={{ body: { padding: 0 } }}>
+                    <Table
+                        columns={orderColumns}
+                        dataSource={order}
+                        loading={loading}
+                        scroll={{ x: "max-content" }}
+                        pagination={{
+                            current: page,
+                            pageSize: pageSize,
+                            showSizeChanger: false,
+                            onChange: (newPage, pageSize) => {
+                                setPage(newPage);
+                                setPageSize(pageSize)
+                            },
+                        }}
+                        locale={{
+                            emptyText: (
+                                <EmptyState
+                                    icon={<FileTextOutlined />}
+                                    title={t("no.orders.found", { defaultValue: "No Orders Found" })}
+                                    description={t("no.orders.description", { defaultValue: "There are no Orders available.", })}
                                 />
                             ),
-                        },
-                    }}
-                />
-            </Card>
+                        }}
+                        components={{
+                            header: {
+                                cell: (props) => (
+                                    <th
+                                        {...props}
+                                        style={{
+                                            ...props.style,
+                                            background: theme ? "#0e1c29" : "#f0f0f0",
+                                        }}
+                                    />
+                                ),
+                            },
+                        }}
+                    />
+                </Card>
+            </Space>
         </PageContainer>
     )
 }

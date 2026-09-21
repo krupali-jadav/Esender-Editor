@@ -15,7 +15,7 @@ export const saveBasicInfo = async (payload) => {
         }
     } catch (error) {
         console.log(error);
-        message.error(error?.message || "Failed to save basic information");
+        message.error(error?.message);
     }
 };
 export const saveBillingDetails = async (payload) => {
@@ -32,7 +32,7 @@ export const saveBillingDetails = async (payload) => {
         }
     } catch (error) {
         console.log(error);
-        message.error(error?.message || "Failed to save billing details");
+        message.error(error?.message);
     }
 };
 export const getUserSetting = async (payload) => {
@@ -49,7 +49,7 @@ export const getUserSetting = async (payload) => {
         }
     } catch (error) {
         console.log(error);
-        message.error(error?.message || "Failed to get user setting");
+        message.error(error?.message);
     }
 };
 export const addSupport = async (payload) => {
@@ -66,7 +66,7 @@ export const addSupport = async (payload) => {
         }
     } catch (error) {
         console.log(error);
-        message.error(error?.message || "Failed to save support details");
+        message.error(error?.message);
     }
 }
 export const updateSupport = async (payload) => {
@@ -83,7 +83,7 @@ export const updateSupport = async (payload) => {
         }
     } catch (error) {
         console.log(error);
-        message.error(error?.message || "Failed to save support details");
+        message.error(error?.message);
     }
 }
 export const deleteSupport = async (payload) => {
@@ -100,7 +100,7 @@ export const deleteSupport = async (payload) => {
         }
     } catch (error) {
         console.log(error);
-        message.error(error?.message || "Failed to delete support");
+        message.error(error?.message);
     }
 };
 export const saveSocialMedia = async (payload) => {
@@ -133,6 +133,6 @@ export const generateApiKey = async () => {
         }
     } catch (error) {
         console.log(error);
-        message.error(error?.message );
+        message.error(error?.message);
     }
 };

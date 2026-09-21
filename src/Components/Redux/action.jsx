@@ -27,7 +27,7 @@ export const getAppDetails = async () => {
 export const getExchangeRates = () => {
   return async (dispatch, getState) => {
     try {
-      const { data } = await axiosInstance.get("exchange-rates");
+      const { data } = await axiosInstance.get("/app/exchange-rates");
 
       if (data?.status) {
         const panel = getState().app.panel;
@@ -35,7 +35,8 @@ export const getExchangeRates = () => {
         dispatch(
           setPanel({
             ...panel,
-            currencies: Object.keys(data.rates),
+            exchangeRates: data.rates,
+            exchangeRatesBase: data.baseCurrency,
           })
         );
 

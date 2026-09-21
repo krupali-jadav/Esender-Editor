@@ -19,15 +19,11 @@ const Profile = () => {
   const [phone, setPhone] = useState("");
   const [profileUrl, setProfileUrl] = useState("");
   const [isProfileUploading, setIsProfileUploading] = useState(false);
-
   const profile = useSelector((state) => state?.user?.profile);
-  const phoneCountry = useSelector(
-    (state) => state?.setting?.panel?.crm?.country?.toLowerCase() ?? "in"
-  );
+  const phoneCountry = useSelector((state) => state?.setting?.panel?.crm?.country?.toLowerCase() ?? "in");
 
   useEffect(() => {
     if (!profile) return;
-
     setProfileUrl(profile.profile || "");
 
     form.setFieldsValue({
@@ -86,13 +82,8 @@ const Profile = () => {
       setIsProfileUploading(true);
       const data = await uploadImage(formData);
       if (data?.status) {
-        message.success(data.message);
-        setProfileUrl(
-          data.downloadUrl ||
-          data.url ||
-          data.profile ||
-          ""
-        );
+        message.success(data.message || "Image uploaded successfully");
+        setProfileUrl(data.url || "");
       }
     } catch (error) {
       console.log(error);
@@ -295,11 +286,7 @@ const Profile = () => {
               <br />
 
               <Flex justify="end">
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  loading={loading}
-                >
+                <Button type="primary" htmlType="submit" loading={loading}>
                   {t("save", { defaultValue: "Save" })}
                 </Button>
               </Flex>

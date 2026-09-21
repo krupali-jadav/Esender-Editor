@@ -2,6 +2,7 @@ import { ProLayout } from "@ant-design/pro-components";
 import {
     AppstoreAddOutlined,
     BarChartOutlined,
+    FileTextOutlined,
     FolderOpenOutlined,
     HomeOutlined,
     InfoCircleFilled,
@@ -9,6 +10,8 @@ import {
     LogoutOutlined,
     MailOutlined,
     MoonOutlined,
+    ReadOutlined,
+    SafetyCertificateOutlined,
     SettingOutlined,
     SunOutlined,
     UserOutlined,
@@ -18,7 +21,10 @@ import { Avatar, Breadcrumb, Dropdown, Flex, Grid, Modal, Select, Space, Typogra
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { changeCurrency, changeLanguage, setTheme } from "../Redux/Reducer/reducer.app";
-
+import logoFullDark from "../../assets/logo-full-dark.png";
+import logoFullLight from "../../assets/logo-full-light.png";
+import logoIconDark from "../../assets/logo-icon-dark.png";
+import logoIconLight from "../../assets/logo-icon-light.png";
 import { getMediaPath } from "../../util/getMediaPath";
 import lang from "../../util/lang/lang.json"
 import { logout } from "../Redux/action";
@@ -91,6 +97,28 @@ const ProLayouts = ({ children }) => {
                 path: "/settings",
                 name: t("settings", { defaultValue: "Settings" }),
                 icon: <SettingOutlined />,
+            },
+            {
+                path: "/legal-policies",
+                name: t("legal.policies", { defaultValue: "Legal Policies" }),
+                icon: <SafetyCertificateOutlined />,
+                routes: [
+                    {
+                        path: "/privacy-policy",
+                        name: t("privacy.policy", { defaultValue: "Privacy Policy" }),
+                        icon: <SafetyCertificateOutlined />,
+                    },
+                    {
+                        path: "/terms-and-conditions",
+                        name: t("terms.and.conditions", { defaultValue: "Terms and Conditions" }),
+                        icon: <FileTextOutlined />,
+                    },
+                    {
+                        path: "/refund-policy",
+                        name: t("refund.policy", { defaultValue: "Refund Policy" }),
+                        icon: <ReadOutlined />,
+                    },
+                ],
             },
         ],
     };
@@ -310,20 +338,19 @@ const ProLayouts = ({ children }) => {
                     >
                         <img
                             src={
-                                <></>
-                                // collapsed
-                                //     ? theme
-                                //         ? logoIconDark
-                                //         : logoIconLight
-                                //     : theme
-                                //         ? logoFullDark
-                                //         : logoFullLight
+                                collapsed
+                                    ? theme
+                                        ? logoIconDark
+                                        : logoIconLight
+                                    : theme
+                                        ? logoFullDark
+                                        : logoFullLight
                             }
                             alt="ESENDER"
                             style={{
-                                height: "100%",
+                                height: collapsed ? 34 : 32,
                                 width: "auto",
-                                maxWidth: "100%",
+                                maxWidth: collapsed ? 34 : 160,
                                 objectFit: "contain",
                                 flexShrink: 0,
                             }}
@@ -524,18 +551,40 @@ const ProLayouts = ({ children }) => {
                     );
                 }}
                 menu={{ type: "sub", collapsedShowGroupTitle: false }}
-                menuItemRender={(item, dom) => (
-                    <div
-                        onClick={() => {
-                            if (item.path) {
-                                navigate(item.path);
-                            }
-                        }}
-                        style={{ fontSize: 15, fontWeight: 500 }}
-                    >
-                        {dom}
-                    </div>
-                )}
+
+                menuItemRender={(item, dom) => {
+                    const externalPages = [
+                        "/privacy-policy",
+                        "/terms-and-conditions",
+                        "/refund-policy",
+                    ];
+
+                    if (externalPages.includes(item.path)) {
+                        return (
+                            <div
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    window.open(item.path, "_blank", "noopener,noreferrer");
+                                }}
+                            >
+                                {dom}
+                            </div>
+                        );
+                    }
+
+                    return (
+                        <div
+                            onClick={() => {
+                                if (item.path) {
+                                    navigate(item.path);
+                                }
+                            }}
+                        >
+                            {dom}
+                        </div>
+                    );
+                }}
             >
                 {children}
             </ProLayout>

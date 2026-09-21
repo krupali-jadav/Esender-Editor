@@ -16,34 +16,71 @@ export const getPlans = async () => {
         message.error(error?.message);
     }
 };
-export const getSubscriptionPlans = async () => {
+
+export const getCurrentSubscription = async () => {
     try {
-        const response = await axiosInstance.get("subscription");
+        const response = await axiosInstance.get("/subscription/current");
 
         if (response.data?.status) {
             return response.data;
         }
 
+        message.error(response.data?.message);
+        return null;
+    } catch (error) {
+        console.error("GET CURRENT SUBSCRIPTION ERROR:", error);
+        message.error(error?.message);
+        return null;
+    }
+};
+export const getSubscriptionQuote = async ({ slug, billingInterval = "monthly", currency, gateway, }) => {
+    try {
+        const response = await axiosInstance.get("/subscription/quote", {
+            params: {
+                slug,
+                billingInterval,
+                currency,
+                gateway,
+            },
+        });
+
+        return response.data;
+    } catch (error) {
+        console.error("GET SUBSCRIPTION QUOTE ERROR:", error);
+        throw error;
+    }
+};
+export const getAiCapabilities = async (projectId) => {
+    try {
+        const response = await axiosInstance.get("/ai/capabilities", {
+            params: {
+                projectId,
+            },
+        });
+        if (response.data?.status) {
+            return response.data;
+        }
         message.error(response.data?.message);
         return null;
     } catch (error) {
         console.error(error);
         message.error(error?.message);
+        return null;
     }
 };
-export const getInvoices = async (page = 0, limit = 20) => {
+export const chekoutSubscription = async (payload) => {
     try {
-        const response = await axiosInstance.get(`billing/invoices?page=${page}&limit=${limit}`);
+        const response = await axiosInstance.post("/billing/checkout", payload);
 
         if (response.data?.status) {
             return response.data;
         }
-
         message.error(response.data?.message);
         return null;
     } catch (error) {
-        console.log(error);
+        console.error(error);
         message.error(error?.message);
         return null;
     }
-};
+}
+

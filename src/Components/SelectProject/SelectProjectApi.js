@@ -20,9 +20,7 @@ export const listProjects = async () => {
 
 export const getProjectById = async (projectId) => {
     try {
-        const response = await axiosInstance.get(
-            `projects/${projectId}`
-        );
+        const response = await axiosInstance.get(`projects/${projectId}`);
 
         return response.data;
     } catch (error) {
