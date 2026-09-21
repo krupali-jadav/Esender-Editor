@@ -4,7 +4,6 @@ import { PageContainer } from "@ant-design/pro-components";
 import { useSelector } from "react-redux";
 import { t } from "i18next";
 import AppPageHeader from "../Styles/AppHeader";
-import { t } from "i18next";
 import { useEffect, useState } from "react";
 import { getCurrentSubscription, getAiCapabilities, getPlans, getSubscriptionQuote } from "./PlanApi";
 import EmptyState from "../Styles/EmptyState";
